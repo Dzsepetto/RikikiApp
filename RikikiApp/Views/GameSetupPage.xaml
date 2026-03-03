@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="RikikiApp.Views.GameSetupPage"
+             Shell.NavBarIsVisible="False">
+
+    <Grid Padding="12" RowDefinitions="Auto,*,Auto">
+
+        <Grid ColumnDefinitions="Auto,*,Auto" Row="0">
+            <Button Text="← Back"
+                    Clicked="OnBackClicked"
+                    HorizontalOptions="Start" />
+
+            <Label x:Name="TitleLabel"
+                   Grid.Column="1"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center"
+                   FontSize="18"
+                   FontAttributes="Bold" />
+
+            <Label Grid.Column="2" Text="" />
+        </Grid>
+
+        <VerticalStackLayout Grid.Row="1" Spacing="14" Padding="0,16,0,0">
+
+            <Label Text="Players" FontAttributes="Bold" />
+
+            <Button Text="+ Add player" Clicked="OnAddPlayerClicked" />
+
+            <Label Text="Scoring version" FontAttributes="Bold" />
+            <Picker x:Name="ScoringPicker" />
+
+        </VerticalStackLayout>
+
+        <Button Grid.Row="2"
+                Text="Start game"
+                Clicked="OnStartGameClicked"
+                HorizontalOptions="Fill"
+                Margin="0,12,0,0" />
+    </Grid>
+</ContentPage>

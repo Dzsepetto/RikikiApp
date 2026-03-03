@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="RikikiApp.Views.GamePage"
+             Title="Games"
+             Shell.NavBarIsVisible="False">
+
+    <Grid Padding="12" RowDefinitions="Auto,*">
+        <Grid ColumnDefinitions="Auto,*,Auto" Row="0">
+            <Button Text="← Back"
+                    Clicked="OnBackClicked"
+                    HorizontalOptions="Start" />
+
+            <Label Text="Games"
+                   Grid.Column="1"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center"
+                   FontSize="18"
+                   FontAttributes="Bold" />
+
+            <Button Text="+ New"
+                    Grid.Column="2"
+                    Clicked="OnNewGameClicked"
+                    HorizontalOptions="End" />
+        </Grid>
+
+        <VerticalStackLayout Grid.Row="1" Spacing="10" Padding="0,16,0,0">
+            <Label Text="Your games:" FontAttributes="Bold" />
+
+            <Button Text="Game #1 (tap)"
+                    Clicked="OnGameClicked"
+                    CommandParameter="1" />
+
+            <Button Text="Game #2 (tap)"
+                    Clicked="OnGameClicked"
+                    CommandParameter="2" />
+
+            <Button Text="Game #3 (tap)"
+                    Clicked="OnGameClicked"
+                    CommandParameter="3" />
+        </VerticalStackLayout>
+    </Grid>
+</ContentPage>
