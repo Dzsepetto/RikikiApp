@@ -81,5 +81,34 @@ public partial class GameSetupPage : ContentPage
         // Következõ lépés: GamePlayPage-re nav (majd megcsináljuk)
         // await Shell.Current.GoToAsync($"{nameof(GamePlayPage)}?gameId={_game.Id}");
     }
+    private async void OnDeleteClicked(object sender, EventArgs e)
+    {
+        if (_game == null)
+            return;
+
+        var ok = await DisplayAlert(
+            "Delete game?",
+            $"Are you sure you want to delete '{_game.Name}'?",
+            "Delete",
+            "Cancel");
+
+        if (!ok)
+            return;
+
+        await _games.DeleteAsync(_game.Id);
+
+        await Shell.Current.GoToAsync("..");
+    }
+
+    private async void OnEndGameClicked(object sender, EventArgs e)
+    {
+        if (_game == null)
+            return;
+        var ok = await DisplayAlert(
+            "End game?",
+            $"Are you sure you want to end '{_game.Name}'? This cannot be undone.",
+            "End",
+            "Cancel");
+    }
 
 }

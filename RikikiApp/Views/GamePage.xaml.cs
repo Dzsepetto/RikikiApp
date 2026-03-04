@@ -17,6 +17,26 @@ public partial class GamePage : ContentPage
         _games = services.GetRequiredService<IGameRepository>();
     }
 
+    protected override async void OnAppearing()
+    {
+        base.OnAppearing();
+        await ReloadGamesAsync();
+    }
+
+    private async Task ReloadGamesAsync()
+    {
+        try
+        {
+            var list = await _games.GetAllAsync();
+            GamesList.ItemsSource = list;
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine("ReloadGamesAsync error: " + ex);
+            await DisplayAlert("Error", "Could not load games from DB.", "OK");
+        }
+    }
+
     private async void OnBackClicked(object sender, EventArgs e)
         => await Shell.Current.GoToAsync("..");
 
@@ -36,15 +56,25 @@ public partial class GamePage : ContentPage
         {
             Name = name.Trim(),
             CreatedAt = DateTime.UtcNow,
-            ScoringVersion = "classic-v1"
+            ScoringVersion = "classic-v1",
+            Status = GameStatus.Setup
         };
 
         game = await _games.UpsertAsync(game);
 
+        await ReloadGamesAsync();
+
         await Shell.Current.GoToAsync($"{nameof(GameSetupPage)}?gameId={game.Id}");
     }
+
     private async void OnGameClicked(object sender, EventArgs e)
     {
-      Debug.WriteLine("Game clicked");
+        if (sender is not Button btn || btn.CommandParameter is null)
+            return;
+
+        var gameId = btn.CommandParameter.ToString();
+        Debug.WriteLine($"Game clicked: {gameId}");
+
+        await Shell.Current.GoToAsync($"{nameof(GameSetupPage)}?gameId={gameId}");
     }
 }

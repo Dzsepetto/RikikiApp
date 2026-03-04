@@ -27,17 +27,41 @@
         <VerticalStackLayout Grid.Row="1" Spacing="10" Padding="0,16,0,0">
             <Label Text="Your games:" FontAttributes="Bold" />
 
-            <Button Text="Game #1 (tap)"
-                    Clicked="OnGameClicked"
-                    CommandParameter="1" />
+            <CollectionView x:Name="GamesList"
+                            SelectionMode="None">
+                <CollectionView.EmptyView>
+                    <Label Text="No games yet. Tap + New to create one."
+                           Opacity="0.7" />
+                </CollectionView.EmptyView>
 
-            <Button Text="Game #2 (tap)"
-                    Clicked="OnGameClicked"
-                    CommandParameter="2" />
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Border StrokeThickness="1"
+                Padding="10"
+                Margin="0,6">
 
-            <Button Text="Game #3 (tap)"
-                    Clicked="OnGameClicked"
-                    CommandParameter="3" />
+                            <Grid ColumnDefinitions="*,Auto">
+
+                                <VerticalStackLayout>
+                                    <Label Text="{Binding Name}"
+                           FontAttributes="Bold" />
+
+                                    <Label Text="{Binding Status}"
+                           FontSize="12"
+                           Opacity="0.7"/>
+                                </VerticalStackLayout>
+
+                                <Button Grid.Column="1"
+                        Text="Open"
+                        Clicked="OnGameClicked"
+                        CommandParameter="{Binding Id}" />
+
+                            </Grid>
+
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
         </VerticalStackLayout>
     </Grid>
 </ContentPage>

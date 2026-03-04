@@ -8,17 +8,20 @@
 
         <Grid ColumnDefinitions="Auto,*,Auto" Row="0">
             <Button Text="← Back"
-                    Clicked="OnBackClicked"
-                    HorizontalOptions="Start" />
+            Clicked="OnBackClicked"
+            HorizontalOptions="Start" />
 
             <Label x:Name="TitleLabel"
-                   Grid.Column="1"
-                   HorizontalOptions="Center"
-                   VerticalOptions="Center"
-                   FontSize="18"
-                   FontAttributes="Bold" />
+           Grid.Column="1"
+           HorizontalOptions="Center"
+           VerticalOptions="Center"
+           FontSize="18"
+           FontAttributes="Bold" />
 
-            <Label Grid.Column="2" Text="" />
+            <Button Text="🗑"
+            Grid.Column="2"
+            Clicked="OnDeleteClicked"
+            HorizontalOptions="End" />
         </Grid>
 
         <VerticalStackLayout Grid.Row="1" Spacing="14" Padding="0,16,0,0">
@@ -32,10 +35,21 @@
 
         </VerticalStackLayout>
 
-        <Button Grid.Row="2"
-                Text="Start game"
-                Clicked="OnStartGameClicked"
-                HorizontalOptions="Fill"
-                Margin="0,12,0,0" />
+        <Grid Grid.Row="2" ColumnDefinitions="*,*" ColumnSpacing="10" Margin="0,12,0,0">
+
+            <Button Grid.Column="0"
+            x:Name="EndGameButton"
+            Text="End game"
+            BackgroundColor="Red"
+            TextColor="White"
+            Clicked="OnEndGameClicked"
+            IsVisible="False"/>
+
+            <Button Grid.Column="1"
+            x:Name="StartGameButton"
+            Text="Start game"
+            BackgroundColor="Green"
+            Clicked="OnStartGameClicked"/>
+        </Grid>
     </Grid>
 </ContentPage>
