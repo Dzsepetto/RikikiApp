@@ -28,6 +28,38 @@
 
             <Label Text="Players" FontAttributes="Bold" />
 
+            <CollectionView x:Name="PlayersList">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid ColumnDefinitions="*,Auto,Auto" Padding="6" ColumnSpacing="10">
+
+                            <!-- Name -->
+                            <Label
+                            Text="{Binding GuestName}"
+                            FontAttributes="Bold"
+                            VerticalOptions="Center"/>
+
+                                            <!-- Seat -->
+                           <Label
+                            Grid.Column="1"
+                            Text="{Binding SeatOrder, StringFormat='Seat {0}'}"
+                            VerticalOptions="Center"/>
+
+                            <Button
+                            Grid.Column="2"
+                            Text="✕"
+                            WidthRequest="40"
+                            HeightRequest="40"
+                            BackgroundColor="Transparent"
+                            TextColor="Red"
+                            Clicked="OnDeletePlayerClicked"
+                            CommandParameter="{Binding .}" />
+
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
             <Button Text="+ Add player" Clicked="OnAddPlayerClicked" />
 
             <Label Text="Scoring version" FontAttributes="Bold" />
@@ -42,8 +74,7 @@
             Text="End game"
             BackgroundColor="Red"
             TextColor="White"
-            Clicked="OnEndGameClicked"
-            IsVisible="False"/>
+            Clicked="OnEndGameClicked"/>
 
             <Button Grid.Column="1"
             x:Name="StartGameButton"

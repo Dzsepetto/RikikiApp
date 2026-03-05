@@ -11,7 +11,9 @@ public class GamePlayer
     public int GameId { get; set; }
 
     [Indexed]
-    public int PlayerId { get; set; }
+    public int? PlayerId { get; set; }
 
     public int SeatOrder { get; set; }
+
+    public string GuestName { get; set; }
 }
