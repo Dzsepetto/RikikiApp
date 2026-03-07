@@ -15,60 +15,24 @@
             <RoundRectangle CornerRadius="14"/>
         </Border.StrokeShape>
 
-        <VerticalStackLayout Spacing="16">
+        <VerticalStackLayout Padding="20" Spacing="12">
 
-            <Label
-                Text="Add Player"
-                FontSize="20"
-                FontAttributes="Bold"
-                HorizontalOptions="Center"/>
+            <Label Text="Add player"
+           FontAttributes="Bold"
+           FontSize="18"/>
 
-            <VerticalStackLayout>
-                <Label Text="Guest name"/>
+            <Entry x:Name="NameEntry"
+           Placeholder="Player name"/>
 
-                <Entry
-                    x:Name="NameEntry"
-                    Placeholder="Enter name"/>
-            </VerticalStackLayout>
+            <HorizontalStackLayout Spacing="10"
+                           HorizontalOptions="End">
 
-            <VerticalStackLayout>
-                <Label Text="Seat"/>
+                <Button Text="Cancel"
+                Clicked="OnCancelClicked"/>
 
-                <Grid ColumnDefinitions="Auto,*,Auto">
-
-                    <Button
-                        Text="-"
-                        Clicked="OnMinusClicked"/>
-
-                    <Entry
-                        x:Name="SeatEntry"
-                        Grid.Column="1"
-                        Keyboard="Numeric"
-                        HorizontalTextAlignment="Center"/>
-
-                    <Button
-                        Grid.Column="2"
-                        Text="+"
-                        Clicked="OnPlusClicked"/>
-
-                </Grid>
-
-            </VerticalStackLayout>
-
-            <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
-
-                <Button
-                    Text="Cancel"
-                    Clicked="OnCancelClicked"/>
-
-                <Button
-                    Grid.Column="1"
-                    Text="Save"
-                    BackgroundColor="Green"
-                    TextColor="White"
-                    Clicked="OnSaveClicked"/>
-
-            </Grid>
+                <Button Text="Add"
+                Clicked="OnSaveClicked"/>
+            </HorizontalStackLayout>
 
         </VerticalStackLayout>
 

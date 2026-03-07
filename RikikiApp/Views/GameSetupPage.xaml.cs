@@ -31,6 +31,7 @@ public partial class GameSetupPage : ContentPage
             "classic-v2",
             "custom"
         };
+
         ScoringPicker.SelectedIndex = 0;
     }
 
@@ -45,6 +46,7 @@ public partial class GameSetupPage : ContentPage
         }
 
         _game = await _games.GetByIdAsync(id);
+
         if (_game == null)
         {
             await DisplayAlert("Error", "Game not found.", "OK");
@@ -63,9 +65,6 @@ public partial class GameSetupPage : ContentPage
         await LoadPlayers();
     }
 
-    private async void OnBackClicked(object sender, EventArgs e)
-        => await Shell.Current.GoToAsync("..");
-
     private async Task LoadPlayers()
     {
         if (_game == null)
@@ -78,50 +77,69 @@ public partial class GameSetupPage : ContentPage
             .ToList();
     }
 
+    private async void OnBackClicked(object sender, EventArgs e)
+        => await Shell.Current.GoToAsync("..");
+
     private async void OnAddPlayerClicked(object sender, EventArgs e)
     {
         if (_game == null)
             return;
 
-        var players = await _gamePlayers.GetByGameIdAsync(_game.Id);
-
-        var popup = new AddPlayerPopup(1);
+        var popup = new AddPlayerPopup();
 
         await this.ShowPopupAsync(popup);
 
-        var result = popup.Result;
+        var name = popup.Result;
 
-        if (result == null)
+        if (string.IsNullOrWhiteSpace(name))
             return;
+
+        var players = await _gamePlayers.GetByGameIdAsync(_game.Id);
+
+        var nextSeat = players.Any()
+        ? players.Max(p => p.SeatOrder) + 1
+        : 1;
 
         var gp = new GamePlayer
         {
             GameId = _game.Id,
-            SeatOrder = result.Seat,
-            GuestName = result.GuestName
+            SeatOrder = nextSeat,
+            GuestName = name
         };
 
         await _gamePlayers.AddAsync(gp);
 
         await LoadPlayers();
     }
-    private async void OnStartGameClicked(object sender, EventArgs e)
+
+    private async void OnDeletePlayerClicked(object sender, EventArgs e)
     {
-        if (_game == null)
-            return;
+        if (sender is Button button &&
+            button.CommandParameter is GamePlayer player)
+        {
+            var ok = await DisplayAlert(
+                "Delete player?",
+                $"Remove '{player.GuestName}'?",
+                "Delete",
+                "Cancel");
 
-        var selected = ScoringPicker.SelectedItem as string;
-        if (string.IsNullOrWhiteSpace(selected))
-            selected = "classic-v1";
+            if (!ok)
+                return;
 
-        _game.ScoringVersion = selected;
-        await _games.UpsertAsync(_game);
+            var players = await _gamePlayers.GetByGameIdAsync(_game!.Id);
 
-        await DisplayAlert("Start", $"Game '{_game.Name}' started with '{_game.ScoringVersion}'.", "OK");
+            await _gamePlayers.DeleteAsync(player.Id);
 
-        // Következõ lépés: GamePlayPage-re nav (majd megcsináljuk)
-        // await Shell.Current.GoToAsync($"{nameof(GamePlayPage)}?gameId={_game.Id}");
+            foreach (var p in players.Where(x => x.SeatOrder > player.SeatOrder))
+            {
+                p.SeatOrder--;
+                await _gamePlayers.UpdateAsync(p);
+            }
+
+            await LoadPlayers();
+        }
     }
+
     private async void OnDeleteClicked(object sender, EventArgs e)
     {
         if (_game == null)
@@ -141,34 +159,89 @@ public partial class GameSetupPage : ContentPage
         await Shell.Current.GoToAsync("..");
     }
 
-    private async void OnDeletePlayerClicked(object sender, EventArgs e)
+    private async void OnStartGameClicked(object sender, EventArgs e)
     {
-        if (sender is Button button &&
-            button.CommandParameter is GamePlayer player)
-        {
-            var ok = await DisplayAlert(
-                "Delete player?",
-                $"Remove '{player.GuestName}' from the game?",
-                "Delete",
-                "Cancel");
+        if (_game == null)
+            return;
 
-            if (!ok)
-                return;
+        var selected = ScoringPicker.SelectedItem as string;
 
-            await _gamePlayers.DeleteAsync(player.Id);
+        if (string.IsNullOrWhiteSpace(selected))
+            selected = "classic-v1";
 
-            await LoadPlayers();
-        }
+        _game.ScoringVersion = selected;
+
+        await _games.UpsertAsync(_game);
+
+        await DisplayAlert("Start",
+            $"Game '{_game.Name}' started with '{_game.ScoringVersion}'.",
+            "OK");
     }
+
     private async void OnEndGameClicked(object sender, EventArgs e)
     {
         if (_game == null)
             return;
-        var ok = await DisplayAlert(
-            "End game?",
-            $"Are you sure you want to end '{_game.Name}'? This cannot be undone.",
-            "End",
-            "Cancel");
+
+        await DisplayAlert("End", "Game ended.", "OK");
     }
 
+    void OnDragStarting(object sender, DragStartingEventArgs e)
+    {
+        if (sender is Label label && label.BindingContext is GamePlayer player)
+        {
+            e.Data.Properties.Add("player", player);
+        }
+    }
+
+    async void OnDrop(object sender, DropEventArgs e)
+    {
+        if (_game == null)
+            return;
+
+        if (!e.Data.Properties.ContainsKey("player"))
+            return;
+
+        var draggedPlayer = e.Data.Properties["player"] as GamePlayer;
+
+        if (draggedPlayer == null)
+            return;
+
+        if (sender is not Grid grid || grid.BindingContext is not GamePlayer targetPlayer)
+            return;
+
+        var players = await _gamePlayers.GetByGameIdAsync(_game.Id);
+
+        int oldSeat = draggedPlayer.SeatOrder;
+        int newSeat = targetPlayer.SeatOrder;
+
+        if (oldSeat == newSeat)
+            return;
+
+        if (oldSeat < newSeat)
+        {
+            foreach (var p in players.Where(p =>
+                     p.SeatOrder > oldSeat &&
+                     p.SeatOrder <= newSeat))
+            {
+                p.SeatOrder--;
+                await _gamePlayers.UpdateAsync(p);
+            }
+        }
+        else
+        {
+            foreach (var p in players.Where(p =>
+                     p.SeatOrder < oldSeat &&
+                     p.SeatOrder >= newSeat))
+            {
+                p.SeatOrder++;
+                await _gamePlayers.UpdateAsync(p);
+            }
+        }
+
+        draggedPlayer.SeatOrder = newSeat;
+        await _gamePlayers.UpdateAsync(draggedPlayer);
+
+        await LoadPlayers();
+    }
 }
