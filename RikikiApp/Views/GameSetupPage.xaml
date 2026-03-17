@@ -50,11 +50,6 @@
                                    FontSize="18"
                                    VerticalOptions="Center"
                                    HorizontalOptions="Center">
-
-                                <Label.GestureRecognizers>
-                                    <DragGestureRecognizer DragStarting="OnDragStarting"/>
-                                </Label.GestureRecognizers>
-
                             </Label>
 
                             <!-- SEAT -->

@@ -10,6 +10,7 @@ namespace RikikiApp
 
             Routing.RegisterRoute(nameof(GamePage), typeof(GamePage));
             Routing.RegisterRoute(nameof(GameSetupPage), typeof(GameSetupPage));
+            Routing.RegisterRoute(nameof(GamePlayPage), typeof(GamePlayPage));
         }
     }
 }

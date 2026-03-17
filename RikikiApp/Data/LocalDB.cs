@@ -24,6 +24,7 @@ public class LocalDB
         await _db.CreateTableAsync<Game>();
         await _db.CreateTableAsync<GamePlayer>();
         await _db.CreateTableAsync<Round>();
+        await _db.CreateTableAsync<Call>();
 
         return _db;
     }

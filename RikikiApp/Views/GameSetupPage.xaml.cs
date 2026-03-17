@@ -1,8 +1,8 @@
 using CommunityToolkit.Maui.Extensions;
-using Microsoft.Extensions.DependencyInjection;
 using RikikiApp.Models;
 using RikikiApp.Repositories;
 using RikikiApp.Views.Popups;
+using RikikiApp.Services;
 
 namespace RikikiApp.Views;
 
@@ -11,6 +11,7 @@ public partial class GameSetupPage : ContentPage
 {
     private readonly IGameRepository _games;
     private readonly IGamePlayerRepository _gamePlayers;
+    private readonly RikikiGameEngine _engine;
 
     public string GameId { get; set; } = "";
 
@@ -24,6 +25,7 @@ public partial class GameSetupPage : ContentPage
 
         _games = services.GetRequiredService<IGameRepository>();
         _gamePlayers = services.GetRequiredService<IGamePlayerRepository>();
+        _engine = services.GetRequiredService<RikikiGameEngine>();
 
         ScoringPicker.ItemsSource = new List<string>
         {
@@ -96,9 +98,10 @@ public partial class GameSetupPage : ContentPage
 
         var players = await _gamePlayers.GetByGameIdAsync(_game.Id);
 
-        var nextSeat = players.Any()
-        ? players.Max(p => p.SeatOrder) + 1
-        : 1;
+        var nextSeat = players
+            .Select(p => p.SeatOrder)
+            .DefaultIfEmpty(0)
+            .Max() + 1;
 
         var gp = new GamePlayer
         {
@@ -126,13 +129,19 @@ public partial class GameSetupPage : ContentPage
             if (!ok)
                 return;
 
-            var players = await _gamePlayers.GetByGameIdAsync(_game!.Id);
-
             await _gamePlayers.DeleteAsync(player.Id);
 
-            foreach (var p in players.Where(x => x.SeatOrder > player.SeatOrder))
+            var players = await _gamePlayers.GetByGameIdAsync(_game!.Id);
+
+            var ordered = players
+                .OrderBy(p => p.SeatOrder)
+                .ToList();
+
+            int seat = 1;
+
+            foreach (var p in ordered)
             {
-                p.SeatOrder--;
+                p.SeatOrder = seat++;
                 await _gamePlayers.UpdateAsync(p);
             }
 
@@ -173,9 +182,9 @@ public partial class GameSetupPage : ContentPage
 
         await _games.UpsertAsync(_game);
 
-        await DisplayAlert("Start",
-            $"Game '{_game.Name}' started with '{_game.ScoringVersion}'.",
-            "OK");
+        await _engine.StartGame(_game.Id);
+
+        await Shell.Current.GoToAsync($"{nameof(GamePlayPage)}?gameId={_game.Id}");
     }
 
     private async void OnEndGameClicked(object sender, EventArgs e)
@@ -188,9 +197,9 @@ public partial class GameSetupPage : ContentPage
 
     void OnDragStarting(object sender, DragStartingEventArgs e)
     {
-        if (sender is Label label && label.BindingContext is GamePlayer player)
+        if (sender is Grid grid && grid.BindingContext is GamePlayer player)
         {
-            e.Data.Properties.Add("player", player);
+            e.Data.Properties["player"] = player;
         }
     }
 

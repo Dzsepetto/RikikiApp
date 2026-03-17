@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="RikikiApp.Views.GamePlayPage"
+    Shell.NavBarIsVisible="False">
+
+    <VerticalStackLayout Padding="20" Spacing="16">
+
+        <Label
+            x:Name="RoundLabel"
+            FontSize="22"
+            FontAttributes="Bold"/>
+
+        <CollectionView x:Name="CallsList">
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+
+                    <Grid ColumnDefinitions="*,80,80" Padding="8">
+
+                        <Label
+                            Text="{Binding PlayerName}"
+                            VerticalOptions="Center"/>
+
+                        <!-- CALL -->
+                        <Entry
+                            Grid.Column="1"
+                            Text="{Binding Called}"
+                            Keyboard="Numeric"
+                            Placeholder="Call"
+                            IsEnabled="{Binding IsCallEnabled}" />
+
+                        <!-- WON -->
+                        <Entry
+                            Grid.Column="2"
+                            Text="{Binding Won}"
+                            Keyboard="Numeric"
+                            Placeholder="Won"
+                            IsVisible="{Binding IsWonVisible}"
+                            IsEnabled="{Binding IsWonEnabled}" />
+
+                    </Grid>
+
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+
+        </CollectionView>
+
+        <!-- FIX CALLS -->
+        <Button
+            x:Name="FixCallsButton"
+            Text="Fix Calls"
+            Clicked="OnFixCallsClicked"
+            BackgroundColor="Blue"
+            TextColor="White"/>
+
+        <!-- END ROUND -->
+        <Button
+            x:Name="EndRoundButton"
+            Text="End Round"
+            Clicked="OnEndRoundClicked"
+            BackgroundColor="Green"
+            TextColor="White"
+            IsVisible="False"/>
+
+    </VerticalStackLayout>
+
+</ContentPage>

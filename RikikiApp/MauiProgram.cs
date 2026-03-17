@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using RikikiApp.Data;
 using RikikiApp.Repositories;
+using RikikiApp.Services;
 using RikikiApp.Views;
 
 namespace RikikiApp
@@ -26,11 +27,16 @@ namespace RikikiApp
             builder.Services.AddSingleton<App>();
             builder.Services.AddSingleton<LocalDB>();
             builder.Services.AddSingleton<IGameRepository, SqliteGameRepository>();
+            builder.Services.AddSingleton<IGamePlayerRepository, SqliteGamePlayerRepository>();
+            builder.Services.AddSingleton<IRoundRepository, SQLiteRoundRepository>();
+            builder.Services.AddSingleton<ICallRepository, SQLiteCallRepository>();
+
+            builder.Services.AddSingleton<RikikiGameEngine>();
 
             builder.Services.AddTransient<GamePage>();
             builder.Services.AddTransient<GameSetupPage>();
 
-            builder.Services.AddSingleton<IGamePlayerRepository, SqliteGamePlayerRepository>();
+
 //==== ======= ====
 
 
