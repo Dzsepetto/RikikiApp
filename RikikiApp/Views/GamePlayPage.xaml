@@ -5,65 +5,198 @@
     x:Class="RikikiApp.Views.GamePlayPage"
     Shell.NavBarIsVisible="False">
 
-    <VerticalStackLayout Padding="20" Spacing="16">
+    <Grid Padding="20" RowDefinitions="Auto,*">
 
-        <Label
-            x:Name="RoundLabel"
-            FontSize="22"
-            FontAttributes="Bold"/>
+        <!-- ===================== -->
+        <!-- HEADER (FIX) -->
+        <!-- ===================== -->
+        <Grid Grid.Row="0" ColumnDefinitions="Auto,*" VerticalOptions="Center">
 
-        <CollectionView x:Name="CallsList">
+            <Button
+                Text="←"
+                Clicked="OnBackClicked"
+                WidthRequest="40"
+                HeightRequest="40"
+                BackgroundColor="blue"
+                FontSize="18" />
 
-            <CollectionView.ItemTemplate>
-                <DataTemplate>
+            <Label
+                Grid.Column="1"
+                x:Name="RoundLabel"
+                FontSize="22"
+                FontAttributes="Bold"
+                VerticalOptions="Center"
+                Background="Transparent"
+                HorizontalTextAlignment="Center"/>
 
-                    <Grid ColumnDefinitions="*,80,80" Padding="8">
+        </Grid>
+
+        <!-- ===================== -->
+        <!-- SCROLLABLE (CONTENT + BUTTONS) -->
+        <!-- ===================== -->
+        <ScrollView Grid.Row="1">
+
+            <Grid RowDefinitions="*,Auto">
+
+                <!-- ===================== -->
+                <!-- CONTENT -->
+                <!-- ===================== -->
+                <Grid Grid.Row="0">
+
+                    <!-- 🎮 GAME SECTION -->
+                    <VerticalStackLayout 
+                        x:Name="GameSection" 
+                        Spacing="16" 
+                        VerticalOptions="Center">
+
+                        <CollectionView x:Name="CallsList">
+
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+
+                                    <Grid ColumnDefinitions="*,80,80" Padding="8">
+
+                                        <Label
+                                            Text="{Binding PlayerName}"
+                                            VerticalOptions="Center" />
+
+                                        <Entry
+                                            Grid.Column="1"
+                                            Text="{Binding Called}"
+                                            Keyboard="Numeric"
+                                            Placeholder="Call"
+                                            IsEnabled="{Binding IsCallEnabled}" />
+
+                                        <Entry
+                                            Grid.Column="2"
+                                            Text="{Binding Won}"
+                                            Keyboard="Numeric"
+                                            Placeholder="Won"
+                                            IsVisible="{Binding IsWonVisible}"
+                                            IsEnabled="{Binding IsWonEnabled}" />
+
+                                    </Grid>
+
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+
+                        </CollectionView>
+
+                    </VerticalStackLayout>
+
+                    <!-- 🧾 RESULT SECTION -->
+                    <VerticalStackLayout
+                        x:Name="ResultSection"
+                        IsVisible="False"
+                        Spacing="12"
+                        VerticalOptions="Center"
+                        HorizontalOptions="Center">
 
                         <Label
-                            Text="{Binding PlayerName}"
-                            VerticalOptions="Center"/>
+                            Text="Round Results"
+                            FontSize="18"
+                            FontAttributes="Bold"
+                            HorizontalOptions="Center" />
 
-                        <!-- CALL -->
-                        <Entry
-                            Grid.Column="1"
-                            Text="{Binding Called}"
-                            Keyboard="Numeric"
-                            Placeholder="Call"
-                            IsEnabled="{Binding IsCallEnabled}" />
+                        <CollectionView
+                            x:Name="ResultsList"
+                            WidthRequest="300"
+                            HeightRequest="250">
 
-                        <!-- WON -->
-                        <Entry
-                            Grid.Column="2"
-                            Text="{Binding Won}"
-                            Keyboard="Numeric"
-                            Placeholder="Won"
-                            IsVisible="{Binding IsWonVisible}"
-                            IsEnabled="{Binding IsWonEnabled}" />
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
 
-                    </Grid>
+                                    <Grid ColumnDefinitions="*,60,60,80" Padding="6">
 
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
+                                        <Label Text="{Binding PlayerName}" />
 
-        </CollectionView>
+                                        <Label Grid.Column="1"
+                                               Text="{Binding Called}" />
 
-        <!-- FIX CALLS -->
-        <Button
-            x:Name="FixCallsButton"
-            Text="Fix Calls"
-            Clicked="OnFixCallsClicked"
-            BackgroundColor="Blue"
-            TextColor="White"/>
+                                        <Label Grid.Column="2"
+                                               Text="{Binding Won}" />
 
-        <!-- END ROUND -->
-        <Button
-            x:Name="EndRoundButton"
-            Text="End Round"
-            Clicked="OnEndRoundClicked"
-            BackgroundColor="Green"
-            TextColor="White"
-            IsVisible="False"/>
+                                        <Label Grid.Column="3"
+                                               Text="{Binding Score}"
+                                               FontAttributes="Bold" />
 
-    </VerticalStackLayout>
+                                    </Grid>
+
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+
+                        </CollectionView>
+
+                    </VerticalStackLayout>
+
+                </Grid>
+
+                <!-- ===================== -->
+                <!-- BUTTONS (SCROLLAL EGYÜTT) -->
+                <!-- ===================== -->
+                <Grid Grid.Row="1">
+
+                    <!-- 🎮 GAME BUTTONS -->
+                    <VerticalStackLayout
+                        x:Name="GameButtons"
+                        Spacing="10">
+
+                        <Button
+                            x:Name="FixCallsButton"
+                            Text="Fix Calls"
+                            Clicked="OnFixCallsClicked"
+                            BackgroundColor="Blue"
+                            TextColor="White" />
+
+                        <Button
+                            x:Name="EndRoundButton"
+                            Text="End Round"
+                            Clicked="OnEndRoundClicked"
+                            BackgroundColor="Green"
+                            TextColor="White"
+                            IsVisible="False" />
+
+                    </VerticalStackLayout>
+
+                    <!-- 🧾 RESULT BUTTONS -->
+                    <VerticalStackLayout
+                        x:Name="ResultButtons"
+                        IsVisible="False"
+                        Spacing="12"
+                        HorizontalOptions="Center">
+
+                        <HorizontalStackLayout Spacing="10">
+
+                            <Button Text="Less"
+                                    Clicked="OnLessClicked"
+                                    BackgroundColor="Gray" />
+
+                            <Button Text="Same"
+                                    Clicked="OnSameClicked"
+                                    BackgroundColor="Blue"
+                                    TextColor="White" />
+
+                            <Button Text="More"
+                                    Clicked="OnMoreClicked"
+                                    BackgroundColor="Green"
+                                    TextColor="White" />
+
+                        </HorizontalStackLayout>
+
+                        <Button Text="End Game"
+                                Clicked="OnEndGameClicked"
+                                BackgroundColor="Red"
+                                TextColor="White"
+                                WidthRequest="250" />
+
+                    </VerticalStackLayout>
+
+                </Grid>
+
+            </Grid>
+
+        </ScrollView>
+
+    </Grid>
 
 </ContentPage>

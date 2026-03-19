@@ -36,39 +36,32 @@ public class RikikiGameEngine
         game.Status = GameStatus.InProgress;
         await _games.UpsertAsync(game);
 
-        await GenerateRounds(gameId, players.Count);
+       // await GenerateRounds(gameId, players.Count);
+        await CreateNextRound(gameId, 1);
     }
 
-    private async Task GenerateRounds(int gameId, int playerCount)
+    public async Task<Round> CreateNextRound(int gameId, int handSize)
     {
-        int maxHand = Math.Min(10, 52 / playerCount);
+        var rounds = await _rounds.GetByGameIdAsync(gameId);
 
-        var sequence = new List<int>();
+        int nextIndex = rounds.Any() ? rounds.Max(r => r.RoundIndex) + 1 : 1;
 
-        for (int i = 1; i <= maxHand; i++)
-            sequence.Add(i);
-
-        for (int i = maxHand - 1; i >= 1; i--)
-            sequence.Add(i);
-
-        int index = 1;
-
-        foreach (var hand in sequence)
+        var round = new Round
         {
-            var round = new Round
-            {
-                GameId = gameId,
-                RoundIndex = index++,
-                HandSize = hand,
-                State = RoundState.Calling
-            };
+            GameId = gameId,
+            RoundIndex = nextIndex,
+            HandSize = handSize,
+            State = RoundState.Calling
+        };
 
-            await _rounds.AddAsync(round);
+        await _rounds.AddAsync(round);
 
-            await CreateCallsForRound(round);
-        }
+        var savedRound = await _rounds.GetByIdAsync(round.Id);
+
+        await CreateCallsForRound(savedRound!);
+
+        return round;
     }
-
     private async Task CreateCallsForRound(Round round)
     {
         var players = await _players.GetByGameIdAsync(round.GameId);

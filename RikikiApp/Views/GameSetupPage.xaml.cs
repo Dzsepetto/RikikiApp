@@ -16,7 +16,7 @@ public partial class GameSetupPage : ContentPage
     public string GameId { get; set; } = "";
 
     private Game? _game;
-
+    public List<GamePlayer> Players { get; set; } = new();
     public GameSetupPage()
     {
         InitializeComponent();
@@ -35,6 +35,7 @@ public partial class GameSetupPage : ContentPage
         };
 
         ScoringPicker.SelectedIndex = 0;
+
     }
 
     protected override async void OnAppearing()
@@ -74,9 +75,11 @@ public partial class GameSetupPage : ContentPage
 
         var players = await _gamePlayers.GetByGameIdAsync(_game.Id);
 
-        PlayersList.ItemsSource = players
+        Players = players
             .OrderBy(x => x.SeatOrder)
             .ToList();
+
+        BindingContext = this; // ha még nincs beállítva
     }
 
     private async void OnBackClicked(object sender, EventArgs e)

@@ -3,8 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="RikikiApp.Views.GameSetupPage"
              Shell.NavBarIsVisible="False">
-
-    <Grid Padding="12" RowDefinitions="Auto,*,Auto">
+    <ScrollView>
+        <Grid Padding="12" RowDefinitions="Auto,*,Auto">
 
         <Grid ColumnDefinitions="Auto,*,Auto" Row="0">
             <Button Text="← Back"
@@ -24,75 +24,73 @@
                     HorizontalOptions="End" />
         </Grid>
 
-        <VerticalStackLayout Grid.Row="1" Spacing="14" Padding="0,16,0,0">
+            <VerticalStackLayout Grid.Row="1" Spacing="14" Padding="0,16,0,0">
 
             <Label Text="Players" FontAttributes="Bold" />
 
-            <CollectionView x:Name="PlayersList"
-                            ItemsLayout="VerticalList"
-                            Margin="0,6">
+                <VerticalStackLayout  x:Name="PlayersList" BindableLayout.ItemsSource="{Binding Players}" Spacing="6" Margin="0,6">
 
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate>
 
-                        <Grid ColumnDefinitions="40,50,*,50"
-                              Padding="8"
-                              VerticalOptions="Center">
+                            <Grid ColumnDefinitions="40,50,*,50"
+                  Padding="8"
+                  VerticalOptions="Center">
 
-                            <!-- DROP TARGET -->
-                            <Grid.GestureRecognizers>
-                                <DropGestureRecognizer AllowDrop="True"
-                                                       Drop="OnDrop"/>
-                            </Grid.GestureRecognizers>
+                                <!-- DROP TARGET -->
+                                <Grid.GestureRecognizers>
+                                    <DropGestureRecognizer AllowDrop="True"
+                                           Drop="OnDrop"/>
+                                </Grid.GestureRecognizers>
 
-                            <!-- DRAG HANDLE -->
-                            <Label Text="☰"
-                                   FontSize="18"
-                                   VerticalOptions="Center"
-                                   HorizontalOptions="Center">
-                            </Label>
+                                <!-- DRAG HANDLE -->
+                                <Label Text="☰"
+                       FontSize="18"
+                       VerticalOptions="Center"
+                       HorizontalOptions="Center">
+                                </Label>
 
-                            <!-- SEAT -->
-                            <Border Grid.Column="1"
-                                    BackgroundColor="#E8E8E8"
-                                    StrokeThickness="0"
-                                    Padding="6"
-                                    HorizontalOptions="Center"
-                                    VerticalOptions="Center">
+                                <!-- SEAT -->
+                                <Border Grid.Column="1"
+                        BackgroundColor="#E8E8E8"
+                        StrokeThickness="0"
+                        Padding="6"
+                        HorizontalOptions="Center"
+                        VerticalOptions="Center">
 
-                                <Border.StrokeShape>
-                                    <RoundRectangle CornerRadius="10"/>
-                                </Border.StrokeShape>
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="10"/>
+                                    </Border.StrokeShape>
 
-                                <Label Text="{Binding SeatOrder}"
-                                       FontAttributes="Bold"
-                                       HorizontalOptions="Center"
-                                       VerticalOptions="Center"/>
-                            </Border>
+                                    <Label Text="{Binding SeatOrder}"
+                           FontAttributes="Bold"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center"/>
+                                </Border>
 
-                            <!-- PLAYER NAME -->
-                            <Label Grid.Column="2"
-                                   Text="{Binding GuestName}"
-                                   FontSize="16"
-                                   VerticalOptions="Center"
-                                   HorizontalOptions="Start"/>
+                                <!-- PLAYER NAME -->
+                                <Label Grid.Column="2"
+                       Text="{Binding GuestName}"
+                       FontSize="16"
+                       VerticalOptions="Center"
+                       HorizontalOptions="Start"/>
 
-                            <!-- DELETE -->
-                            <Button Grid.Column="3"
-                                    Text="🗑"
-                                    CommandParameter="{Binding .}"
-                                    Clicked="OnDeletePlayerClicked"
-                                    BackgroundColor="Transparent"
-                                    HorizontalOptions="End"/>
+                                <!-- DELETE -->
+                                <Button Grid.Column="3"
+                        Text="🗑"
+                        CommandParameter="{Binding .}"
+                        Clicked="OnDeletePlayerClicked"
+                        BackgroundColor="Transparent"
+                        HorizontalOptions="End"/>
 
-                        </Grid>
+                            </Grid>
 
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
 
-            </CollectionView>
+                </VerticalStackLayout>
 
-            <Button Text="+ Add player"
+                <Button Text="+ Add player"
                     Clicked="OnAddPlayerClicked" />
 
             <Label Text="Scoring version" FontAttributes="Bold" />
@@ -121,5 +119,5 @@
         </Grid>
 
     </Grid>
-
+    </ScrollView>
 </ContentPage>

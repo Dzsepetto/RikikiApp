@@ -20,6 +20,7 @@ public partial class GamePlayPage : ContentPage
     private Round? _round;
 
     private List<CallView> _callViews = new();
+    private List<ScoreView> _results = new();
 
     public GamePlayPage()
     {
@@ -32,6 +33,24 @@ public partial class GamePlayPage : ContentPage
         _rounds = services.GetRequiredService<IRoundRepository>();
         _calls = services.GetRequiredService<ICallRepository>();
         _engine = services.GetRequiredService<RikikiGameEngine>();
+    }
+
+    private void ShowGameUI()
+    {
+        GameSection.IsVisible = true;
+        ResultSection.IsVisible = false;
+
+        GameButtons.IsVisible = true;
+        ResultButtons.IsVisible = false;
+    }
+
+    private void ShowResultUI()
+    {
+        GameSection.IsVisible = false;
+        ResultSection.IsVisible = true;
+
+        GameButtons.IsVisible = false;
+        ResultButtons.IsVisible = true;
     }
 
     protected override async void OnAppearing()
@@ -57,6 +76,8 @@ public partial class GamePlayPage : ContentPage
 
         await LoadCalls();
         UpdateUI();
+
+        ShowGameUI();
     }
 
     private async Task LoadCalls()
@@ -67,24 +88,28 @@ public partial class GamePlayPage : ContentPage
         var calls = await _calls.GetByRoundIdAsync(_round.Id);
         var players = await _players.GetByGameIdAsync(_round.GameId);
 
-        _callViews = calls.Select(c =>
-        {
-            var player = players.First(p => p.Id == c.GamePlayerId);
+        var callDict = calls.ToDictionary(c => c.GamePlayerId);
 
-            return new CallView
+        _callViews = players
+            .Select(p =>
             {
-                CallId = c.Id,
-                GamePlayerId = c.GamePlayerId,
-                PlayerName = player.GuestName,
-                Called = c.Called,
-                Won = c.Won,
+                callDict.TryGetValue(p.Id, out var call);
 
-                IsCallEnabled = _round.State == RoundState.Calling,
-                IsWonEnabled = _round.State == RoundState.Playing,
-                IsWonVisible = _round.State == RoundState.Playing
-            };
+                return new CallView
+                {
+                    CallId = call?.Id ?? 0,
+                    GamePlayerId = p.Id,
+                    PlayerName = p.GuestName,
 
-        }).ToList();
+                    Called = call?.Called,
+                    Won = call?.Won,
+
+                    IsCallEnabled = _round.State == RoundState.Calling,
+                    IsWonEnabled = _round.State == RoundState.Playing,
+                    IsWonVisible = _round.State == RoundState.Playing
+                };
+            })
+            .ToList();
 
         CallsList.ItemsSource = _callViews;
     }
@@ -105,7 +130,71 @@ public partial class GamePlayPage : ContentPage
             EndRoundButton.IsVisible = true;
         }
     }
+    private async Task ShowResults(List<Call> calls)
+    {
+        var players = await _players.GetByGameIdAsync(_round!.GameId);
 
+        var playerDict = players.ToDictionary(p => p.Id);
+
+        _results = calls
+            .Select(c =>
+            {
+                if (!playerDict.TryGetValue(c.GamePlayerId, out var player))
+                {
+                    Console.WriteLine($"Missing player for CallId: {c.Id}");
+                    return null;
+                }
+
+                return new ScoreView
+                {
+                    PlayerName = player.GuestName,
+                    Called = c.Called ?? 0,
+                    Won = c.Won ?? 0,
+                    Score = _engine.CalculateScore(c)
+                };
+            })
+            .Where(x => x != null)
+            .ToList();
+
+        ResultsList.ItemsSource = _results;
+
+        ShowResultUI();
+    }
+
+    private async Task CreateNextRound(int newHandSize)
+    {
+        if (newHandSize <= 0)
+        {
+            await DisplayAlert("Game finished", "No more rounds.", "OK");
+            await Shell.Current.GoToAsync("..");
+            return;
+        }
+
+        var nextRound = await _engine.CreateNextRound(_round!.GameId, newHandSize);
+
+        _round = nextRound;
+
+        RoundLabel.Text = $"Round {_round.RoundIndex} ({_round.HandSize} cards)";
+
+        ShowGameUI();
+
+        await LoadCalls();
+        UpdateUI();
+    }
+    private async void OnLessClicked(object sender, EventArgs e)
+    {
+        await CreateNextRound(_round!.HandSize - 1);
+    }
+
+    private async void OnSameClicked(object sender, EventArgs e)
+    {
+        await CreateNextRound(_round!.HandSize);
+    }
+
+    private async void OnMoreClicked(object sender, EventArgs e)
+    {
+        await CreateNextRound(_round!.HandSize + 1);
+    }
     private async void OnFixCallsClicked(object sender, EventArgs e)
     {
         if (_round == null)
@@ -149,34 +238,28 @@ public partial class GamePlayPage : ContentPage
             return;
         }
 
-        var calls = new List<Call>();
-
-        foreach (var cv in _callViews)
+        var calls = _callViews.Select(cv => new Call
         {
-            calls.Add(new Call
-            {
-                Id = cv.CallId,
-                RoundId = _round.Id,
-                GamePlayerId = cv.GamePlayerId,
-                Called = cv.Called,
-                Won = cv.Won
-            });
-        }
+            Id = cv.CallId,
+            RoundId = _round.Id,
+            GamePlayerId = cv.GamePlayerId,
+            Called = cv.Called,
+            Won = cv.Won
+        }).ToList();
 
-        var nextRound = await _engine.EndRound(calls);
 
-        if (nextRound == null)
-        {
-            await DisplayAlert("Game finished", "No more rounds.", "OK");
-            await Shell.Current.GoToAsync("..");
-            return;
-        }
+        await _engine.EndRound(calls);
 
-        _round = nextRound;
 
-        RoundLabel.Text = $"Round {_round.RoundIndex} ({_round.HandSize} cards)";
-
-        await LoadCalls();
-        UpdateUI();
+        await ShowResults(calls);
+    }
+    private async void OnEndGameClicked(object sender, EventArgs e)
+    {
+        await DisplayAlert("Game ended", "Game has been manually ended.", "OK");
+        await Shell.Current.GoToAsync("..");
+    }
+    private async void OnBackClicked(object sender, EventArgs e)
+    {
+        await Shell.Current.GoToAsync("//MainPage");
     }
 }

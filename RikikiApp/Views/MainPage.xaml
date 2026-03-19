@@ -3,15 +3,19 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="RikikiApp.Views.MainPage">
 
-    <ScrollView>
-        <VerticalStackLayout
-            Padding="30,0"
-            Spacing="25">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
 
-            <Button Text="Games" Clicked="OpenGamesView" HorizontalOptions="Fill" />
-            <Button Text="DB test" Clicked="OnDbTestClicked" />
+        <VerticalStackLayout Grid.Row="0" Padding="30" VerticalOptions="Center" Spacing="30">
+
+            <Button Text="Games" Clicked="OpenGamesView" HorizontalOptions="Fill"  MinimumHeightRequest="100"/>
+            <Button Text="DB test" Clicked="OnDbTestClicked" MinimumHeightRequest="100" />
+
         </VerticalStackLayout>
-    </ScrollView>
+    </Grid>
 
 </ContentPage>
 
