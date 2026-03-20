@@ -101,8 +101,9 @@ public partial class GamePlayPage : ContentPage
                     GamePlayerId = p.Id,
                     PlayerName = p.GuestName,
 
-                    Called = call?.Called,
-                    Won = call?.Won,
+                    Called = call?.Called ?? 0,
+                    Won = call?.Won ?? 0,
+                    MaxValue = _round.HandSize,
 
                     IsCallEnabled = _round.State == RoundState.Calling,
                     IsWonEnabled = _round.State == RoundState.Playing,
@@ -111,6 +112,7 @@ public partial class GamePlayPage : ContentPage
             })
             .ToList();
 
+        CallsList.ItemsSource = null;
         CallsList.ItemsSource = _callViews;
     }
 
@@ -130,6 +132,7 @@ public partial class GamePlayPage : ContentPage
             EndRoundButton.IsVisible = true;
         }
     }
+
     private async Task ShowResults(List<Call> calls)
     {
         var players = await _players.GetByGameIdAsync(_round!.GameId);
@@ -165,7 +168,7 @@ public partial class GamePlayPage : ContentPage
     {
         if (newHandSize <= 0)
         {
-            await DisplayAlert("Game finished", "No more rounds.", "OK");
+            await DisplayAlertAsync("Game finished", "No more rounds.", "OK");
             await Shell.Current.GoToAsync("..");
             return;
         }
@@ -181,6 +184,7 @@ public partial class GamePlayPage : ContentPage
         await LoadCalls();
         UpdateUI();
     }
+
     private async void OnLessClicked(object sender, EventArgs e)
     {
         await CreateNextRound(_round!.HandSize - 1);
@@ -195,16 +199,11 @@ public partial class GamePlayPage : ContentPage
     {
         await CreateNextRound(_round!.HandSize + 1);
     }
+
     private async void OnFixCallsClicked(object sender, EventArgs e)
     {
         if (_round == null)
             return;
-
-        if (_callViews.Any(c => !c.Called.HasValue))
-        {
-            await DisplayAlert("Error", "All players must enter a call.", "OK");
-            return;
-        }
 
         var calls = new List<Call>();
 
@@ -215,7 +214,7 @@ public partial class GamePlayPage : ContentPage
                 Id = cv.CallId,
                 RoundId = _round.Id,
                 GamePlayerId = cv.GamePlayerId,
-                Called = cv.Called
+                Called = (int)cv.Called
             });
         }
 
@@ -232,32 +231,26 @@ public partial class GamePlayPage : ContentPage
         if (_round == null)
             return;
 
-        if (_callViews.Any(c => !c.Won.HasValue))
-        {
-            await DisplayAlert("Error", "All players must enter won tricks.", "OK");
-            return;
-        }
-
         var calls = _callViews.Select(cv => new Call
         {
             Id = cv.CallId,
             RoundId = _round.Id,
             GamePlayerId = cv.GamePlayerId,
-            Called = cv.Called,
-            Won = cv.Won
+            Called = (int)cv.Called,
+            Won = (int)cv.Won
         }).ToList();
-
 
         await _engine.EndRound(calls);
 
-
         await ShowResults(calls);
     }
+
     private async void OnEndGameClicked(object sender, EventArgs e)
     {
-        await DisplayAlert("Game ended", "Game has been manually ended.", "OK");
+        await DisplayAlertAsync("Game ended", "Game has been manually ended.", "OK");
         await Shell.Current.GoToAsync("..");
     }
+
     private async void OnBackClicked(object sender, EventArgs e)
     {
         await Shell.Current.GoToAsync("//MainPage");

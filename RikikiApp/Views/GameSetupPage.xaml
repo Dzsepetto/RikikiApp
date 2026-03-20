@@ -1,123 +1,145 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:Class="RikikiApp.Views.GameSetupPage"
              Shell.NavBarIsVisible="False">
+
     <ScrollView>
         <Grid Padding="12" RowDefinitions="Auto,*,Auto">
 
-        <Grid ColumnDefinitions="Auto,*,Auto" Row="0">
-            <Button Text="← Back"
-                    Clicked="OnBackClicked"
-                    HorizontalOptions="Start" />
+            <!-- TOP BAR -->
+            <Grid ColumnDefinitions="Auto,*,Auto" Row="0">
+                <Button Text="← Back"
+                        Clicked="OnBackClicked"
+                        HorizontalOptions="Start" />
 
-            <Label x:Name="TitleLabel"
-                   Grid.Column="1"
-                   HorizontalOptions="Center"
-                   VerticalOptions="Center"
-                   FontSize="18"
-                   FontAttributes="Bold" />
-
-            <Button Text="🗑"
-                    Grid.Column="2"
-                    Clicked="OnDeleteClicked"
-                    HorizontalOptions="End" />
-        </Grid>
-
-            <VerticalStackLayout Grid.Row="1" Spacing="14" Padding="0,16,0,0">
-
-            <Label Text="Players" FontAttributes="Bold" />
-
-                <VerticalStackLayout  x:Name="PlayersList" BindableLayout.ItemsSource="{Binding Players}" Spacing="6" Margin="0,6">
-
-                    <BindableLayout.ItemTemplate>
-                        <DataTemplate>
-
-                            <Grid ColumnDefinitions="40,50,*,50"
-                  Padding="8"
-                  VerticalOptions="Center">
-
-                                <!-- DROP TARGET -->
-                                <Grid.GestureRecognizers>
-                                    <DropGestureRecognizer AllowDrop="True"
-                                           Drop="OnDrop"/>
-                                </Grid.GestureRecognizers>
-
-                                <!-- DRAG HANDLE -->
-                                <Label Text="☰"
+                <Label x:Name="TitleLabel"
+                       Grid.Column="1"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center"
                        FontSize="18"
-                       VerticalOptions="Center"
-                       HorizontalOptions="Center">
-                                </Label>
+                       FontAttributes="Bold" />
 
-                                <!-- SEAT -->
-                                <Border Grid.Column="1"
-                        BackgroundColor="#E8E8E8"
-                        StrokeThickness="0"
-                        Padding="6"
-                        HorizontalOptions="Center"
-                        VerticalOptions="Center">
+                <Button Text="🗑"
+                        Grid.Column="2"
+                        Clicked="OnDeleteClicked"
+                        HorizontalOptions="End" />
+            </Grid>
 
-                                    <Border.StrokeShape>
-                                        <RoundRectangle CornerRadius="10"/>
-                                    </Border.StrokeShape>
+            <!-- CONTENT -->
+            <VerticalStackLayout Grid.Row="1" Spacing="14" Padding="0,16,0,0">
+                <toolkit:Expander IsExpanded="{Binding IsPlayersExpanded}" x:Name="PlayersExpander">
 
-                                    <Label Text="{Binding SeatOrder}"
-                           FontAttributes="Bold"
-                           HorizontalOptions="Center"
+                    <!-- HEADER -->
+                    <toolkit:Expander.Header>
+                        <Grid ColumnDefinitions="*,Auto" Padding="0,0,0,6">
+                            <Label Text="Players" FontAttributes="Bold" FontSize="16" />
+                            <Label Grid.Column="1" Text="▼">
+                                <Label.Triggers>
+                                    <DataTrigger TargetType="Label" Binding="{Binding Source={x:Reference PlayersExpander}, Path=IsExpanded}" Value="True">
+                                        <Setter Property="Rotation" Value="180"/>
+                                    </DataTrigger>
+                                </Label.Triggers>
+                            </Label>
+                        </Grid>
+                    </toolkit:Expander.Header>
+
+                    <!-- LENYÍLÓ TARTALOM -->
+                    <VerticalStackLayout Spacing="14">
+
+                        <VerticalStackLayout Spacing="10">
+
+                            <!-- EMPTY STATE -->
+                            <VerticalStackLayout IsVisible="{Binding IsEmpty}"
+                         Spacing="6"
+                         Padding="10">
+
+                                <Label Text="No players yet"
+               FontAttributes="Bold"
+               HorizontalOptions="Center" />
+
+                                <Label Text="Add players to start the game"
+               FontSize="12"
+               HorizontalOptions="Center"
+               Opacity="0.7" />
+
+                            </VerticalStackLayout>
+
+                            <!-- LISTA -->
+                            <VerticalStackLayout x:Name="PlayersList"
+                         IsVisible="{Binding IsNotEmpty}"
+                         BindableLayout.ItemsSource="{Binding Players}"
+                         Spacing="6"
+                         Margin="0,6">
+
+                                <BindableLayout.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid ColumnDefinitions="50,*,50"
+                      Padding="8">
+
+                                            <Border Grid.Column="0"
+                            BackgroundColor="#E8E8E8"
+                            Padding="6">
+                                                <Border.StrokeShape>
+                                                    <RoundRectangle CornerRadius="10"/>
+                                                </Border.StrokeShape>
+
+                                                <Label Text="{Binding SeatOrder}"
+                               HorizontalOptions="Center"/>
+                                            </Border>
+
+                                            <Label Grid.Column="1"
+                           Text="{Binding GuestName}"
                            VerticalOptions="Center"/>
-                                </Border>
 
-                                <!-- PLAYER NAME -->
-                                <Label Grid.Column="2"
-                       Text="{Binding GuestName}"
-                       FontSize="16"
-                       VerticalOptions="Center"
-                       HorizontalOptions="Start"/>
+                                            <Button Grid.Column="2"
+                            Text="🗑"
+                            CommandParameter="{Binding .}"
+                            Clicked="OnDeletePlayerClicked"
+                            BackgroundColor="Transparent"/>
+                                        </Grid>
+                                    </DataTemplate>
+                                </BindableLayout.ItemTemplate>
 
-                                <!-- DELETE -->
-                                <Button Grid.Column="3"
-                        Text="🗑"
-                        CommandParameter="{Binding .}"
-                        Clicked="OnDeletePlayerClicked"
-                        BackgroundColor="Transparent"
-                        HorizontalOptions="End"/>
+                            </VerticalStackLayout>
 
-                            </Grid>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
 
-                        </DataTemplate>
-                    </BindableLayout.ItemTemplate>
-
-                </VerticalStackLayout>
-
+                </toolkit:Expander>
                 <Button Text="+ Add player"
-                    Clicked="OnAddPlayerClicked" />
+                        Clicked="OnAddPlayerClicked" />
 
-            <Label Text="Scoring version" FontAttributes="Bold" />
-            <Picker x:Name="ScoringPicker" />
+                <Label Text="Scoring version" FontAttributes="Bold" />
+                <Picker x:Name="ScoringPicker" />
 
-        </VerticalStackLayout>
+                <Button Text="Show Stats"
+                        Clicked="OnShowStatsClicked" />
 
-        <Grid Grid.Row="2"
-              ColumnDefinitions="*,*"
-              ColumnSpacing="10"
-              Margin="0,12,0,0">
+            </VerticalStackLayout>
 
-            <Button Grid.Column="0"
-                    x:Name="EndGameButton"
-                    Text="End game"
-                    BackgroundColor="Red"
-                    TextColor="White"
-                    Clicked="OnEndGameClicked"/>
+            <!-- BOTTOM BUTTONS -->
+            <Grid Grid.Row="2"
+                  ColumnDefinitions="*,*"
+                  ColumnSpacing="10"
+                  Margin="0,12,0,0">
 
-            <Button Grid.Column="1"
-                    x:Name="StartGameButton"
-                    Text="Start game"
-                    BackgroundColor="Green"
-                    Clicked="OnStartGameClicked"/>
+                <Button Grid.Column="0"
+                        x:Name="EndGameButton"
+                        Text="End game"
+                        BackgroundColor="Red"
+                        TextColor="White"
+                        Clicked="OnEndGameClicked"/>
+
+                <Button Grid.Column="1"
+                        x:Name="StartGameButton"
+                        Text="Start game"
+                        BackgroundColor="Green"
+                        Clicked="OnStartGameClicked"/>
+
+            </Grid>
 
         </Grid>
-
-    </Grid>
     </ScrollView>
 </ContentPage>

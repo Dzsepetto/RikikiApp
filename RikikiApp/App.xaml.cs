@@ -1,8 +1,9 @@
 ﻿using Microsoft.Maui.ApplicationModel;
-using System.Diagnostics;
 using RikikiApp.Data;
+using System.Diagnostics;
+using System.Globalization;
 
-namespace RikikiApp;
+namespace RikikiApp { 
 
 public partial class App : Application
 {
@@ -34,4 +35,9 @@ public partial class App : Application
 
         return window;
     }
+
+
+}
+
+
 }

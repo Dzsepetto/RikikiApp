@@ -81,8 +81,17 @@ public class RikikiGameEngine
     // CALL mentése
     public async Task StartRound(List<Call> calls)
     {
-        if (calls.Count == 0)
-            return;
+        foreach (var call in calls)
+        {
+            if (call.Id == 0)
+            {
+                await _calls.AddAsync(call);
+            }
+            else
+            {
+                await _calls.UpdateAsync(call);
+            }
+        }
 
         var round = await _rounds.GetByIdAsync(calls.First().RoundId);
 

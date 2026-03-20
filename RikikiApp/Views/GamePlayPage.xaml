@@ -7,9 +7,7 @@
 
     <Grid Padding="20" RowDefinitions="Auto,*">
 
-        <!-- ===================== -->
-        <!-- HEADER (FIX) -->
-        <!-- ===================== -->
+        <!-- HEADER -->
         <Grid Grid.Row="0" ColumnDefinitions="Auto,*" VerticalOptions="Center">
 
             <Button
@@ -26,120 +24,112 @@
                 FontSize="22"
                 FontAttributes="Bold"
                 VerticalOptions="Center"
-                Background="Transparent"
                 HorizontalTextAlignment="Center"/>
 
         </Grid>
 
-        <!-- ===================== -->
-        <!-- SCROLLABLE (CONTENT + BUTTONS) -->
-        <!-- ===================== -->
+        <!-- CONTENT -->
         <ScrollView Grid.Row="1">
 
             <Grid RowDefinitions="*,Auto">
 
-                <!-- ===================== -->
-                <!-- CONTENT -->
-                <!-- ===================== -->
-                <Grid Grid.Row="0">
+                <!-- GAME -->
+                <VerticalStackLayout 
+                    x:Name="GameSection" 
+                    Spacing="16"
+                    VerticalOptions="Center">
 
-                    <!-- 🎮 GAME SECTION -->
-                    <VerticalStackLayout 
-                        x:Name="GameSection" 
-                        Spacing="16" 
-                        VerticalOptions="Center">
+                    <CollectionView x:Name="CallsList">
 
-                        <CollectionView x:Name="CallsList">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
 
-                            <CollectionView.ItemTemplate>
-                                <DataTemplate>
+                                <Grid ColumnDefinitions="*,120,120" Padding="8">
 
-                                    <Grid ColumnDefinitions="*,80,80" Padding="8">
+                                    <Label
+                                        Text="{Binding PlayerName}"
+                                        VerticalOptions="Center" />
 
-                                        <Label
-                                            Text="{Binding PlayerName}"
-                                            VerticalOptions="Center" />
-
-                                        <Entry
-                                            Grid.Column="1"
-                                            Text="{Binding Called}"
-                                            Keyboard="Numeric"
-                                            Placeholder="Call"
+                                    <!-- CALL -->
+                                    <VerticalStackLayout Grid.Column="1" Spacing="4">
+                                        <Stepper
+                                            Minimum="0"
+                                            Maximum="{Binding MaxValue}"
+                                            Increment="1"
+                                            Value="{Binding Called, Mode=TwoWay}"
                                             IsEnabled="{Binding IsCallEnabled}" />
 
-                                        <Entry
-                                            Grid.Column="2"
-                                            Text="{Binding Won}"
-                                            Keyboard="Numeric"
-                                            Placeholder="Won"
-                                            IsVisible="{Binding IsWonVisible}"
+                                        <Label
+                                            Text="{Binding Called}"
+                                            HorizontalOptions="Center" />
+                                    </VerticalStackLayout>
+
+                                    <!-- WON -->
+                                    <VerticalStackLayout Grid.Column="2" Spacing="4"
+                                                         IsVisible="{Binding IsWonVisible}">
+                                        <Stepper
+                                            Minimum="0"
+                                            Maximum="{Binding MaxValue}"
+                                            Increment="1"
+                                            Value="{Binding Won, Mode=TwoWay}"
                                             IsEnabled="{Binding IsWonEnabled}" />
 
-                                    </Grid>
+                                        <Label
+                                            Text="{Binding Won}"
+                                            HorizontalOptions="Center" />
+                                    </VerticalStackLayout>
 
-                                </DataTemplate>
-                            </CollectionView.ItemTemplate>
+                                </Grid>
 
-                        </CollectionView>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
 
-                    </VerticalStackLayout>
+                    </CollectionView>
 
-                    <!-- 🧾 RESULT SECTION -->
-                    <VerticalStackLayout
-                        x:Name="ResultSection"
-                        IsVisible="False"
-                        Spacing="12"
-                        VerticalOptions="Center"
-                        HorizontalOptions="Center">
+                </VerticalStackLayout>
 
-                        <Label
-                            Text="Round Results"
-                            FontSize="18"
-                            FontAttributes="Bold"
-                            HorizontalOptions="Center" />
+                <!-- RESULTS -->
+                <VerticalStackLayout
+                    x:Name="ResultSection"
+                    IsVisible="False"
+                    Spacing="12"
+                    VerticalOptions="Center"
+                    HorizontalOptions="Center">
 
-                        <CollectionView
-                            x:Name="ResultsList"
-                            WidthRequest="300"
-                            HeightRequest="250">
+                    <Label
+                        Text="Round Results"
+                        FontSize="18"
+                        FontAttributes="Bold"
+                        HorizontalOptions="Center" />
 
-                            <CollectionView.ItemTemplate>
-                                <DataTemplate>
+                    <CollectionView
+                        x:Name="ResultsList"
+                        WidthRequest="300"
+                        HeightRequest="250">
 
-                                    <Grid ColumnDefinitions="*,60,60,80" Padding="6">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
 
-                                        <Label Text="{Binding PlayerName}" />
+                                <Grid ColumnDefinitions="*,60,60,80" Padding="6">
 
-                                        <Label Grid.Column="1"
-                                               Text="{Binding Called}" />
+                                    <Label Text="{Binding PlayerName}" />
+                                    <Label Grid.Column="1" Text="{Binding Called}" />
+                                    <Label Grid.Column="2" Text="{Binding Won}" />
+                                    <Label Grid.Column="3" Text="{Binding Score}" FontAttributes="Bold" />
 
-                                        <Label Grid.Column="2"
-                                               Text="{Binding Won}" />
+                                </Grid>
 
-                                        <Label Grid.Column="3"
-                                               Text="{Binding Score}"
-                                               FontAttributes="Bold" />
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
 
-                                    </Grid>
+                    </CollectionView>
 
-                                </DataTemplate>
-                            </CollectionView.ItemTemplate>
+                </VerticalStackLayout>
 
-                        </CollectionView>
-
-                    </VerticalStackLayout>
-
-                </Grid>
-
-                <!-- ===================== -->
-                <!-- BUTTONS (SCROLLAL EGYÜTT) -->
-                <!-- ===================== -->
+                <!-- BUTTONS -->
                 <Grid Grid.Row="1">
 
-                    <!-- 🎮 GAME BUTTONS -->
-                    <VerticalStackLayout
-                        x:Name="GameButtons"
-                        Spacing="10">
+                    <VerticalStackLayout x:Name="GameButtons" Spacing="10">
 
                         <Button
                             x:Name="FixCallsButton"
@@ -158,7 +148,6 @@
 
                     </VerticalStackLayout>
 
-                    <!-- 🧾 RESULT BUTTONS -->
                     <VerticalStackLayout
                         x:Name="ResultButtons"
                         IsVisible="False"
@@ -167,19 +156,9 @@
 
                         <HorizontalStackLayout Spacing="10">
 
-                            <Button Text="Less"
-                                    Clicked="OnLessClicked"
-                                    BackgroundColor="Gray" />
-
-                            <Button Text="Same"
-                                    Clicked="OnSameClicked"
-                                    BackgroundColor="Blue"
-                                    TextColor="White" />
-
-                            <Button Text="More"
-                                    Clicked="OnMoreClicked"
-                                    BackgroundColor="Green"
-                                    TextColor="White" />
+                            <Button Text="Less" Clicked="OnLessClicked" BackgroundColor="Gray" />
+                            <Button Text="Same" Clicked="OnSameClicked" BackgroundColor="Blue" TextColor="White" />
+                            <Button Text="More" Clicked="OnMoreClicked" BackgroundColor="Green" TextColor="White" />
 
                         </HorizontalStackLayout>
 

@@ -21,7 +21,7 @@ public partial class AddPlayerPopup : Popup
     {
         if (string.IsNullOrWhiteSpace(NameEntry.Text))
         {
-            await Application.Current.MainPage.DisplayAlert(
+            await Application.Current.MainPage.DisplayAlertAsync(
                 "Error",
                 "Name required",
                 "OK");

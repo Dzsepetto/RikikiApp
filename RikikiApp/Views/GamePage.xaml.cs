@@ -1,8 +1,9 @@
+using CommunityToolkit.Maui.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using RikikiApp.Models;
 using RikikiApp.Repositories;
 using System.Diagnostics;
-
+using RikikiApp.Views.Popups;
 namespace RikikiApp.Views;
 
 public partial class GamePage : ContentPage
@@ -33,7 +34,7 @@ public partial class GamePage : ContentPage
         catch (Exception ex)
         {
             Debug.WriteLine("ReloadGamesAsync error: " + ex);
-            await DisplayAlert("Error", "Could not load games from DB.", "OK");
+            await DisplayAlertAsync("Error", "Could not load games from DB.", "OK");
         }
     }
 
@@ -42,29 +43,18 @@ public partial class GamePage : ContentPage
 
     private async void OnNewGameClicked(object sender, EventArgs e)
     {
-        var name = await DisplayPromptAsync(
-            title: "New game",
-            message: "Add game name",
-            accept: "Next",
-            cancel: "Cancel",
-            placeholder: "e.g. Friday night");
+        var popup = new AddGamePopup(_games);
 
-        if (string.IsNullOrWhiteSpace(name))
+        this.ShowPopup(popup);
+
+        var result = await popup.Result.Task;
+
+        if (result == null)
             return;
-
-        var game = new Game
-        {
-            Name = name.Trim(),
-            CreatedAt = DateTime.UtcNow,
-            ScoringVersion = "classic-v1",
-            Status = GameStatus.Setup
-        };
-
-        game = await _games.UpsertAsync(game);
 
         await ReloadGamesAsync();
 
-        await Shell.Current.GoToAsync($"{nameof(GameSetupPage)}?gameId={game.Id}");
+        await Shell.Current.GoToAsync($"{nameof(GameSetupPage)}?gameId={result.Id}");
     }
 
     private async void OnGameClicked(object sender, EventArgs e)

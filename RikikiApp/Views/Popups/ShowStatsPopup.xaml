@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    x:Class="RikikiApp.Views.Popups.ShowStatsPopup"
+    Background="white">
+
+    <Grid>
+
+        <!-- LOADING -->
+        <ActivityIndicator
+        IsRunning="{Binding IsLoading}"
+        IsVisible="{Binding IsLoading}"
+        VerticalOptions="Center"
+        HorizontalOptions="Center"/>
+
+        <!-- CONTENT -->
+        <VerticalStackLayout
+        Spacing="12"
+        IsVisible="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}">
+
+            <Label Text="Game stats"
+               FontAttributes="Bold"
+               FontSize="18"/>
+
+            <CollectionView ItemsSource="{Binding Stats}">
+                <CollectionView.Header>
+                    <Grid ColumnDefinitions="*,*,*">
+                        <Label Text="Name" FontAttributes="Bold"/>
+                        <Label Grid.Column="1" Text="Rounds" FontAttributes="Bold"/>
+                        <Label Grid.Column="2" Text="Total" FontAttributes="Bold"/>
+                    </Grid>
+                </CollectionView.Header>
+
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid ColumnDefinitions="*,*,*" Padding="4">
+                            <Label Text="{Binding Name}" />
+                            <Label Grid.Column="1" Text="{Binding RoundScores}" />
+                            <Label Grid.Column="2"
+                               Text="{Binding TotalScore}"
+                               FontAttributes="Bold"/>
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <Button Text="Close"
+                Clicked="OnCloseClicked"
+                HorizontalOptions="End"/>
+
+        </VerticalStackLayout>
+
+    </Grid>
+</toolkit:Popup>

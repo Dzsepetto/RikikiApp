@@ -19,7 +19,7 @@ namespace RikikiApp.Views
 
             if (services == null)
             {
-                await DisplayAlert("Error", "Services not available", "OK");
+                await DisplayAlertAsync("Error", "Services not available", "OK");
                 return;
             }
 
@@ -34,7 +34,7 @@ namespace RikikiApp.Views
             });
 
             var count = await db.Table<Game>().CountAsync();
-            await DisplayAlert("DB OK", $"Games in DB: {count}", "OK");
+            await DisplayAlertAsync("DB OK", $"Games in DB: {count}", "OK");
         }
     }
 }

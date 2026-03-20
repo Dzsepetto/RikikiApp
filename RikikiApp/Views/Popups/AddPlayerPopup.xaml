@@ -1,41 +1,57 @@
-<toolkit:Popup
+<mct:Popup
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:mct="clr-namespace:CommunityToolkit.Maui.Views;assembly=CommunityToolkit.Maui"
     x:Class="RikikiApp.Views.Popups.AddPlayerPopup"
-    Background="Transparent">
+    BackgroundColor="white"
+    Padding="0"
+    Margin="0">
 
-    <Border
-        Padding="20"
-        StrokeThickness="0"
-        BackgroundColor="White"
-        WidthRequest="300">
+    <!-- Overlay center -->
+    <Grid VerticalOptions="Center" HorizontalOptions="Center" WidthRequest="320" MaximumWidthRequest="400" Margin="0">
 
-        <Border.StrokeShape>
-            <RoundRectangle CornerRadius="14"/>
-        </Border.StrokeShape>
+        <VerticalStackLayout
+        Spacing="16"
 
-        <VerticalStackLayout Padding="20" Spacing="12">
+        Padding="20">
+            <!-- EZ A KULCS -->
 
-            <Label Text="Add player"
-           FontAttributes="Bold"
-           FontSize="18"/>
+            <Label
+            Text="Add player"
+            FontAttributes="Bold"
+            FontSize="22"
+            HorizontalOptions="Center"/>
 
-            <Entry x:Name="NameEntry"
-           Placeholder="Player name"/>
+            <Entry
+            x:Name="NameEntry"
+            Placeholder="Player name"
+            FontSize="16"
+            HeightRequest="45"/>
 
-            <HorizontalStackLayout Spacing="10"
-                           HorizontalOptions="End">
+            <HorizontalStackLayout
+            Spacing="12"
+            HorizontalOptions="Center">
 
-                <Button Text="Cancel"
+                <Button
+                Text="Cancel"
+                BackgroundColor="#E0E0E0"
+                TextColor="Black"
+                CornerRadius="10"
+                Padding="14,8"
+                MinimumWidthRequest="80"
                 Clicked="OnCancelClicked"/>
 
-                <Button Text="Add"
+                <Button
+                Text="Add"
+                BackgroundColor="#6C4DFF"
+                TextColor="White"
+                CornerRadius="10"
+                Padding="14,8"
+                MinimumWidthRequest="80"
                 Clicked="OnSaveClicked"/>
             </HorizontalStackLayout>
 
         </VerticalStackLayout>
 
-    </Border>
-
-</toolkit:Popup>
+    </Grid>
+</mct:Popup>

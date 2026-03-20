@@ -3,11 +3,15 @@ using RikikiApp.Models;
 using RikikiApp.Repositories;
 using RikikiApp.Views.Popups;
 using RikikiApp.Services;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace RikikiApp.Views;
 
 [QueryProperty(nameof(GameId), "gameId")]
-public partial class GameSetupPage : ContentPage
+public partial class GameSetupPage : ContentPage, INotifyPropertyChanged
 {
     private readonly IGameRepository _games;
     private readonly IGamePlayerRepository _gamePlayers;
@@ -16,7 +20,35 @@ public partial class GameSetupPage : ContentPage
     public string GameId { get; set; } = "";
 
     private Game? _game;
-    public List<GamePlayer> Players { get; set; } = new();
+
+    private ObservableCollection<GamePlayer> _players = new();
+    public ObservableCollection<GamePlayer> Players
+    {
+        get => _players;
+        set
+        {
+            if (_players != null)
+                _players.CollectionChanged -= Players_CollectionChanged;
+
+            _players = value;
+
+            if (_players != null)
+                _players.CollectionChanged += Players_CollectionChanged;
+
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(IsEmpty));
+            OnPropertyChanged(nameof(IsNotEmpty));
+        }
+    }
+    public bool IsEmpty => Players == null || Players.Count == 0;
+    public bool IsNotEmpty => !IsEmpty;
+    private bool _isPlayersExpanded;
+    public bool IsPlayersExpanded
+    {
+        get => _isPlayersExpanded;
+        set => SetProperty(ref _isPlayersExpanded, value);
+    }
+
     public GameSetupPage()
     {
         InitializeComponent();
@@ -36,6 +68,7 @@ public partial class GameSetupPage : ContentPage
 
         ScoringPicker.SelectedIndex = 0;
 
+        BindingContext = this;
     }
 
     protected override async void OnAppearing()
@@ -44,7 +77,7 @@ public partial class GameSetupPage : ContentPage
 
         if (!int.TryParse(GameId, out var id))
         {
-            await DisplayAlert("Error", "Invalid game id.", "OK");
+            await DisplayAlertAsync("Error", "Invalid game id.", "OK");
             return;
         }
 
@@ -52,7 +85,7 @@ public partial class GameSetupPage : ContentPage
 
         if (_game == null)
         {
-            await DisplayAlert("Error", "Game not found.", "OK");
+            await DisplayAlertAsync("Error", "Game not found.", "OK");
             return;
         }
 
@@ -74,12 +107,21 @@ public partial class GameSetupPage : ContentPage
             return;
 
         var players = await _gamePlayers.GetByGameIdAsync(_game.Id);
+        var ordered = players.OrderBy(x => x.SeatOrder).ToList();
 
-        Players = players
-            .OrderBy(x => x.SeatOrder)
-            .ToList();
+        Players = new ObservableCollection<GamePlayer>(ordered);
 
-        BindingContext = this; // ha még nincs beállítva
+        IsPlayersExpanded = Players.Count == 0;
+    }
+
+    // FIGYELI A LISTA VÁLTOZÁST
+    private void Players_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    {
+        OnPropertyChanged(nameof(IsEmpty));
+        OnPropertyChanged(nameof(IsNotEmpty));
+
+        if (Players.Count == 0)
+            IsPlayersExpanded = true;
     }
 
     private async void OnBackClicked(object sender, EventArgs e)
@@ -123,7 +165,7 @@ public partial class GameSetupPage : ContentPage
         if (sender is Button button &&
             button.CommandParameter is GamePlayer player)
         {
-            var ok = await DisplayAlert(
+            var ok = await DisplayAlertAsync(
                 "Delete player?",
                 $"Remove '{player.GuestName}'?",
                 "Delete",
@@ -136,9 +178,7 @@ public partial class GameSetupPage : ContentPage
 
             var players = await _gamePlayers.GetByGameIdAsync(_game!.Id);
 
-            var ordered = players
-                .OrderBy(p => p.SeatOrder)
-                .ToList();
+            var ordered = players.OrderBy(p => p.SeatOrder).ToList();
 
             int seat = 1;
 
@@ -157,7 +197,7 @@ public partial class GameSetupPage : ContentPage
         if (_game == null)
             return;
 
-        var ok = await DisplayAlert(
+        var ok = await DisplayAlertAsync(
             "Delete game?",
             $"Are you sure you want to delete '{_game.Name}'?",
             "Delete",
@@ -195,65 +235,30 @@ public partial class GameSetupPage : ContentPage
         if (_game == null)
             return;
 
-        await DisplayAlert("End", "Game ended.", "OK");
+        await DisplayAlertAsync("End", "Game ended.", "OK");
     }
-
-    void OnDragStarting(object sender, DragStartingEventArgs e)
-    {
-        if (sender is Grid grid && grid.BindingContext is GamePlayer player)
-        {
-            e.Data.Properties["player"] = player;
-        }
-    }
-
-    async void OnDrop(object sender, DropEventArgs e)
+    private async void OnShowStatsClicked(object sender, EventArgs e)
     {
         if (_game == null)
             return;
 
-        if (!e.Data.Properties.ContainsKey("player"))
-            return;
+        var popup = new ShowStatsPopup(_game.Id);
 
-        var draggedPlayer = e.Data.Properties["player"] as GamePlayer;
+        await this.ShowPopupAsync(popup);
+    }
+    // PropertyChanged helper
+    public new event PropertyChangedEventHandler? PropertyChanged;
 
-        if (draggedPlayer == null)
-            return;
+    protected new void OnPropertyChanged([CallerMemberName] string? name = null)
+        => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 
-        if (sender is not Grid grid || grid.BindingContext is not GamePlayer targetPlayer)
-            return;
+    protected bool SetProperty<T>(ref T field, T value, [CallerMemberName] string? name = null)
+    {
+        if (EqualityComparer<T>.Default.Equals(field, value))
+            return false;
 
-        var players = await _gamePlayers.GetByGameIdAsync(_game.Id);
-
-        int oldSeat = draggedPlayer.SeatOrder;
-        int newSeat = targetPlayer.SeatOrder;
-
-        if (oldSeat == newSeat)
-            return;
-
-        if (oldSeat < newSeat)
-        {
-            foreach (var p in players.Where(p =>
-                     p.SeatOrder > oldSeat &&
-                     p.SeatOrder <= newSeat))
-            {
-                p.SeatOrder--;
-                await _gamePlayers.UpdateAsync(p);
-            }
-        }
-        else
-        {
-            foreach (var p in players.Where(p =>
-                     p.SeatOrder < oldSeat &&
-                     p.SeatOrder >= newSeat))
-            {
-                p.SeatOrder++;
-                await _gamePlayers.UpdateAsync(p);
-            }
-        }
-
-        draggedPlayer.SeatOrder = newSeat;
-        await _gamePlayers.UpdateAsync(draggedPlayer);
-
-        await LoadPlayers();
+        field = value;
+        OnPropertyChanged(name);
+        return true;
     }
 }

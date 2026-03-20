@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="RikikiApp.Views.MainLayoutPage"
+             Title="MainLayoutPage">
+
+    <Grid RowDefinitions="*,Auto">
+
+        <!-- CONTENT -->
+        <ContentView x:Name="PageContent" Grid.Row="0"/>
+
+        <!-- CUSTOM TAB BAR -->
+        <Grid Grid.Row="1"
+              BackgroundColor="LightGray"
+              HeightRequest="60"
+              ColumnDefinitions="*,*,*"
+              Padding="10"
+              ColumnSpacing="20">
+
+            <!-- Profile -->
+            <Button x:Name="ProfileButton" Grid.Column="0" Text="Profile" Clicked="GoProfile"/>
+            
+            <!-- Home -->
+            <Button x:Name="HomeButton" Grid.Column="1" Text="Home" Clicked="GoHome"/>
+
+            <!-- Stats -->
+            <Button x:Name="StatsButton" Grid.Column="2" Text="Stats" Clicked="GoStats"/>
+
+        </Grid>
+
+    </Grid>
+
+</ContentPage>
