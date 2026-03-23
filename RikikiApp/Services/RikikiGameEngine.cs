@@ -36,7 +36,6 @@ public class RikikiGameEngine
         game.Status = GameStatus.InProgress;
         await _games.UpsertAsync(game);
 
-       // await GenerateRounds(gameId, players.Count);
         await CreateNextRound(gameId, 1);
     }
 
@@ -78,7 +77,6 @@ public class RikikiGameEngine
         }
     }
 
-    // CALL mentése
     public async Task StartRound(List<Call> calls)
     {
         foreach (var call in calls)
@@ -108,7 +106,6 @@ public class RikikiGameEngine
         await _rounds.UpdateAsync(round);
     }
 
-    // ROUND vége
     public async Task<Round?> EndRound(List<Call> calls)
     {
         if (calls.Count == 0)
@@ -159,12 +156,10 @@ public class RikikiGameEngine
 
     public int CalculateScore(Call call)
     {
-        if (!call.Called.HasValue || !call.Won.HasValue)
-            return 0;
+        var scoring = ScoringFactory.Create(ScoringType.Basic);
 
-        if (call.Called == call.Won)
-            return 10 + call.Called.Value;
+        int points = scoring.CalculateScore(call);
 
-        return -Math.Abs(call.Called.Value - call.Won.Value);
+        return points;
     }
 }

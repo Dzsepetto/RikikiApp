@@ -34,7 +34,7 @@
                     <!-- HEADER -->
                     <toolkit:Expander.Header>
                         <Grid ColumnDefinitions="*,Auto" Padding="0,0,0,6">
-                            <Label Text="Players" FontAttributes="Bold" FontSize="16" />
+                            <Label Text="{Binding PlayersTitle}" FontAttributes="Bold" FontSize="16" />
                             <Label Grid.Column="1" Text="▼">
                                 <Label.Triggers>
                                     <DataTrigger TargetType="Label" Binding="{Binding Source={x:Reference PlayersExpander}, Path=IsExpanded}" Value="True">
@@ -110,9 +110,6 @@
                 </toolkit:Expander>
                 <Button Text="+ Add player"
                         Clicked="OnAddPlayerClicked" />
-
-                <Label Text="Scoring version" FontAttributes="Bold" />
-                <Picker x:Name="ScoringPicker" />
 
                 <Button Text="Show Stats"
                         Clicked="OnShowStatsClicked" />

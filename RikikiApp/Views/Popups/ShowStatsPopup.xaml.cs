@@ -4,6 +4,7 @@ using RikikiApp.Repositories;
 using RikikiApp.Services;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Globalization;
 
 namespace RikikiApp.Views.Popups;
 
@@ -26,12 +27,14 @@ public partial class ShowStatsPopup : Popup, INotifyPropertyChanged
     }
 
     private readonly int _gameId;
+
     public class PlayerStat
     {
         public string Name { get; set; } = "";
-        public string RoundScores { get; set; } = "";
+        public List<int?> RoundScores { get; set; } = new();
         public int TotalScore { get; set; }
     }
+
     public ObservableCollection<PlayerStat> Stats { get; set; } = new();
 
     public ShowStatsPopup(int gameId)
@@ -55,9 +58,11 @@ public partial class ShowStatsPopup : Popup, INotifyPropertyChanged
     private async Task LoadData()
     {
         await Task.Delay(200);
+
         try
         {
             IsLoading = true;
+
             var players = await _playersRepo.GetByGameIdAsync(_gameId);
             var rounds = await _roundsRepo.GetByGameIdAsync(_gameId);
 
@@ -66,7 +71,6 @@ public partial class ShowStatsPopup : Popup, INotifyPropertyChanged
                 .OrderBy(r => r.RoundIndex)
                 .ToList();
 
-            //Minden call betöltése roundonként
             var allCalls = new List<Call>();
 
             foreach (var round in orderedRounds)
@@ -77,7 +81,7 @@ public partial class ShowStatsPopup : Popup, INotifyPropertyChanged
 
             foreach (var player in players.OrderBy(p => p.SeatOrder))
             {
-                var scoreStrings = new List<string>();
+                var scoreValues = new List<int?>();
                 var numericScores = new List<int>();
 
                 foreach (var round in orderedRounds)
@@ -88,27 +92,27 @@ public partial class ShowStatsPopup : Popup, INotifyPropertyChanged
 
                     if (call == null || !call.Called.HasValue || !call.Won.HasValue)
                     {
-                        scoreStrings.Add("-");
+                        scoreValues.Add(null);
                         continue;
                     }
 
                     var score = _engine.CalculateScore(call);
 
-                    scoreStrings.Add(score.ToString());
+                    scoreValues.Add(score);
                     numericScores.Add(score);
                 }
 
                 Stats.Add(new PlayerStat
                 {
                     Name = player.GuestName,
-                    RoundScores = string.Join(" ", scoreStrings),
+                    RoundScores = scoreValues,
                     TotalScore = numericScores.Sum()
                 });
             }
         }
         catch (Exception ex)
         {
-            await Application.Current.MainPage.DisplayAlertAsync("Error",ex.Message,"OK");
+            await Application.Current.MainPage.DisplayAlertAsync("Error", ex.Message, "OK");
         }
         finally
         {

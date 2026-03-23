@@ -3,52 +3,113 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:local="clr-namespace:RikikiApp.Converters"
     x:Class="RikikiApp.Views.Popups.ShowStatsPopup"
     Background="white">
+
+    <toolkit:Popup.Resources>
+        <ResourceDictionary>
+            <local:ScoreToColorConverter x:Key="ScoreToColorConverter"/>
+        </ResourceDictionary>
+    </toolkit:Popup.Resources>
 
     <Grid>
 
         <!-- LOADING -->
         <ActivityIndicator
-        IsRunning="{Binding IsLoading}"
-        IsVisible="{Binding IsLoading}"
-        VerticalOptions="Center"
-        HorizontalOptions="Center"/>
+            IsRunning="{Binding IsLoading}"
+            IsVisible="{Binding IsLoading}"
+            VerticalOptions="Center"
+            HorizontalOptions="Center"/>
 
         <!-- CONTENT -->
         <VerticalStackLayout
-        Spacing="12"
-        IsVisible="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}">
+            Spacing="12"
+            IsVisible="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}"
+            Padding="10">
 
             <Label Text="Game stats"
-               FontAttributes="Bold"
-               FontSize="18"/>
+                   FontAttributes="Bold"
+                   FontSize="18"/>
 
             <CollectionView ItemsSource="{Binding Stats}">
+
+                <!-- HEADER -->
                 <CollectionView.Header>
-                    <Grid ColumnDefinitions="*,*,*">
-                        <Label Text="Name" FontAttributes="Bold"/>
-                        <Label Grid.Column="1" Text="Rounds" FontAttributes="Bold"/>
-                        <Label Grid.Column="2" Text="Total" FontAttributes="Bold"/>
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Text="Player" FontAttributes="Bold"/>
+                        <Label Grid.Column="1" Text="Total" FontAttributes="Bold"/>
                     </Grid>
                 </CollectionView.Header>
 
+                <!-- ITEM -->
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
-                        <Grid ColumnDefinitions="*,*,*" Padding="4">
-                            <Label Text="{Binding Name}" />
-                            <Label Grid.Column="1" Text="{Binding RoundScores}" />
-                            <Label Grid.Column="2"
-                               Text="{Binding TotalScore}"
-                               FontAttributes="Bold"/>
-                        </Grid>
+
+                        <toolkit:Expander>
+
+                            <!-- HEADER (összecsukva) -->
+                            <toolkit:Expander.Header>
+                                <Grid ColumnDefinitions="*,Auto" Padding="6">
+
+                                    <Label Text="{Binding Name}"
+                                           FontAttributes="Bold"/>
+
+                                    <Label Grid.Column="1"
+                                           Text="{Binding TotalScore}"
+                                           FontAttributes="Bold"
+                                           HorizontalOptions="End"/>
+
+                                </Grid>
+                            </toolkit:Expander.Header>
+
+                            <!-- LENYITVA -->
+                            <VerticalStackLayout Padding="6" Spacing="6">
+
+                                <Label Text="Round scores"
+                                       FontSize="12"
+                                       Opacity="0.7"/>
+
+                                <FlexLayout
+                                    BindableLayout.ItemsSource="{Binding RoundScores}"
+                                    Direction="Row"
+                                    Wrap="Wrap"
+                                    AlignItems="Start"
+                                    JustifyContent="Start">
+
+                                    <BindableLayout.ItemTemplate>
+                                        <DataTemplate>
+
+                                            <Border BackgroundColor="#222"
+                                                    Padding="6,2"
+                                                    StrokeShape="RoundRectangle 8"
+                                                    Margin="3">
+
+                                                <Label
+                                                    Text="{Binding ., TargetNullValue='-'}"
+                                                    TextColor="{Binding ., Converter={StaticResource ScoreToColorConverter}}"
+                                                    FontSize="12"/>
+
+                                            </Border>
+
+                                        </DataTemplate>
+                                    </BindableLayout.ItemTemplate>
+
+                                </FlexLayout>
+
+                            </VerticalStackLayout>
+
+                        </toolkit:Expander>
+
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
+
             </CollectionView>
 
+            <!-- CLOSE BUTTON -->
             <Button Text="Close"
-                Clicked="OnCloseClicked"
-                HorizontalOptions="End"/>
+                    Clicked="OnCloseClicked"
+                    HorizontalOptions="End"/>
 
         </VerticalStackLayout>
 

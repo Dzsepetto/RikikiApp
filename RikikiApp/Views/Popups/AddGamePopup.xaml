@@ -12,6 +12,10 @@
 
             <Entry x:Name="GameEntry" Placeholder="Game name" FontSize="16" HeightRequest="45"/>
 
+
+            <Label Text="Scoring version" FontAttributes="Bold" />
+            <Picker x:Name="ScoringPicker" />
+
             <HorizontalStackLayout Spacing="12" HorizontalOptions="Center">
 
                 <Button Text="Cancel"

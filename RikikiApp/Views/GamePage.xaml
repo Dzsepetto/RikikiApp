@@ -25,8 +25,17 @@
         </Grid>
 
         <VerticalStackLayout Grid.Row="1" Spacing="10" Padding="0,16,0,0">
-            <Label Text="Your games:" FontAttributes="Bold" />
+            <Label Text="{Binding GamesTitle}" FontAttributes="Bold" TextColor="Black" />
+            <Label Text="Filters: "/>
+            <Grid ColumnDefinitions="Auto,*,Auto" Padding="10,0,10,0">
 
+                <Button x:Name="btnSetupFilter" Text="Setup" Clicked="OnSetupFilterClicked" />
+
+                <Button x:Name="btnInProgressFilter" Grid.Column="1" Text="In Progress" Clicked="OnInProgressFilterClicked" HorizontalOptions="Center"/>
+
+                <Button x:Name="btnFinishedFilter" Grid.Column="2" Text="Finished" Clicked="OnFinishedFilterClicked" />
+
+            </Grid>
             <CollectionView x:Name="GamesList"
                             SelectionMode="None">
                 <CollectionView.EmptyView>

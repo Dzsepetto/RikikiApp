@@ -5,17 +5,23 @@ using RikikiApp.Views.Popups;
 using RikikiApp.Services;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
 namespace RikikiApp.Views;
 
 [QueryProperty(nameof(GameId), "gameId")]
-public partial class GameSetupPage : ContentPage, INotifyPropertyChanged
+public partial class GameSetupPage : ContentPage
 {
     private readonly IGameRepository _games;
     private readonly IGamePlayerRepository _gamePlayers;
     private readonly RikikiGameEngine _engine;
+
+    private string _playersTitle = "Players:";
+    public string PlayersTitle
+    {
+        get => _playersTitle;
+        set => SetProperty(ref _playersTitle, value);
+    }
 
     public string GameId { get; set; } = "";
 
@@ -40,7 +46,7 @@ public partial class GameSetupPage : ContentPage, INotifyPropertyChanged
             OnPropertyChanged(nameof(IsNotEmpty));
         }
     }
-    public bool IsEmpty => Players == null || Players.Count == 0;
+    public bool IsEmpty => Players.Count == 0;
     public bool IsNotEmpty => !IsEmpty;
     private bool _isPlayersExpanded;
     public bool IsPlayersExpanded
@@ -59,22 +65,16 @@ public partial class GameSetupPage : ContentPage, INotifyPropertyChanged
         _gamePlayers = services.GetRequiredService<IGamePlayerRepository>();
         _engine = services.GetRequiredService<RikikiGameEngine>();
 
-        ScoringPicker.ItemsSource = new List<string>
-        {
-            "classic-v1",
-            "classic-v2",
-            "custom"
-        };
-
-        ScoringPicker.SelectedIndex = 0;
-
         BindingContext = this;
     }
 
-    protected override async void OnAppearing()
+    protected override void OnAppearing()
     {
         base.OnAppearing();
-
+        _ = InitAsync();
+    }
+    private async Task InitAsync()
+    {
         if (!int.TryParse(GameId, out var id))
         {
             await DisplayAlertAsync("Error", "Invalid game id.", "OK");
@@ -91,30 +91,22 @@ public partial class GameSetupPage : ContentPage, INotifyPropertyChanged
 
         TitleLabel.Text = _game.Name;
 
-        var idx = ScoringPicker.ItemsSource
-            .OfType<string>()
-            .ToList()
-            .FindIndex(x => x == _game.ScoringVersion);
-
-        ScoringPicker.SelectedIndex = idx >= 0 ? idx : 0;
-
         await LoadPlayers();
     }
-
     private async Task LoadPlayers()
     {
         if (_game == null)
             return;
 
         var players = await _gamePlayers.GetByGameIdAsync(_game.Id);
+        int playersCount = players.Count;
         var ordered = players.OrderBy(x => x.SeatOrder).ToList();
 
         Players = new ObservableCollection<GamePlayer>(ordered);
-
+        PlayersTitle = $"Players ({playersCount})";
         IsPlayersExpanded = Players.Count == 0;
     }
 
-    // FIGYELI A LISTA VÁLTOZÁST
     private void Players_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
         OnPropertyChanged(nameof(IsEmpty));
@@ -123,9 +115,6 @@ public partial class GameSetupPage : ContentPage, INotifyPropertyChanged
         if (Players.Count == 0)
             IsPlayersExpanded = true;
     }
-
-    private async void OnBackClicked(object sender, EventArgs e)
-        => await Shell.Current.GoToAsync("..");
 
     private async void OnAddPlayerClicked(object sender, EventArgs e)
     {
@@ -216,13 +205,6 @@ public partial class GameSetupPage : ContentPage, INotifyPropertyChanged
         if (_game == null)
             return;
 
-        var selected = ScoringPicker.SelectedItem as string;
-
-        if (string.IsNullOrWhiteSpace(selected))
-            selected = "classic-v1";
-
-        _game.ScoringVersion = selected;
-
         await _games.UpsertAsync(_game);
 
         await _engine.StartGame(_game.Id);
@@ -246,11 +228,6 @@ public partial class GameSetupPage : ContentPage, INotifyPropertyChanged
 
         await this.ShowPopupAsync(popup);
     }
-    // PropertyChanged helper
-    public new event PropertyChangedEventHandler? PropertyChanged;
-
-    protected new void OnPropertyChanged([CallerMemberName] string? name = null)
-        => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 
     protected bool SetProperty<T>(ref T field, T value, [CallerMemberName] string? name = null)
     {
@@ -261,4 +238,7 @@ public partial class GameSetupPage : ContentPage, INotifyPropertyChanged
         OnPropertyChanged(name);
         return true;
     }
+    private async void OnBackClicked(object sender, EventArgs e)
+    => await Shell.Current.GoToAsync("..");
+
 }

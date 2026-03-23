@@ -14,6 +14,12 @@ public partial class AddGamePopup : Popup
     {
         InitializeComponent();
         _games = games;
+
+        ScoringPicker.ItemsSource = Enum.GetValues(typeof(ScoringType))
+                                .Cast<ScoringType>()
+                                .ToList();
+
+        ScoringPicker.SelectedItem = ScoringType.Basic;
     }
 
     async void OnSaveClicked(object sender, EventArgs e)
@@ -24,11 +30,15 @@ public partial class AddGamePopup : Popup
             return;
         }
 
+        var selected = ScoringPicker.SelectedItem is ScoringType s
+            ? s
+            : ScoringType.Basic;
+
         var game = new Game
         {
             Name = GameEntry.Text.Trim(),
             CreatedAt = DateTime.UtcNow,
-            ScoringVersion = "classic-v1",
+            ScoringType = selected,
             Status = GameStatus.Setup
         };
 

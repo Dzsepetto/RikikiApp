@@ -30,7 +30,7 @@ namespace RikikiApp.Views
             {
                 Name = "Test game",
                 CreatedAt = DateTime.UtcNow,
-                ScoringVersion = "classic-v1"
+                ScoringType = ScoringType.Basic
             });
 
             var count = await db.Table<Game>().CountAsync();
