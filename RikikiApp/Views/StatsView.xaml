@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="RikikiApp.Views.ProfilePage"
-             Title="ProfilePage">
+             x:Class="RikikiApp.Views.StatsView">
     <VerticalStackLayout>
         <Label 
-            Text="We are going to display Profile Datas"
+            Text="We are Gonna Display stats here"
             VerticalOptions="Center" 
             HorizontalOptions="Center" />
+        
     </VerticalStackLayout>
-</ContentPage>
+</ContentView>

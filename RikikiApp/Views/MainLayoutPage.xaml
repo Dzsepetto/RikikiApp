@@ -7,7 +7,7 @@
     <Grid RowDefinitions="*,Auto">
 
         <!-- CONTENT -->
-        <ContentView x:Name="PageContent" Grid.Row="0"/>
+        <ContentPresenter x:Name="PageContent" Grid.Row="0"/>
 
         <!-- CUSTOM TAB BAR -->
         <Grid Grid.Row="1"

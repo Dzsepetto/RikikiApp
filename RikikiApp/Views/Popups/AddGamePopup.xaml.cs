@@ -2,11 +2,13 @@ using CommunityToolkit.Maui.Views;
 using RikikiApp.Models;
 using RikikiApp.Repositories;
 using System.Diagnostics;
+using RikikiApp.Services;
 
 namespace RikikiApp.Views.Popups;
 
-public partial class AddGamePopup : Popup
+public partial class AddGamePopup : Popup, IPopupResult<Game>
 {
+    public Task<Game?> ResultTask => Result.Task;
     private readonly IGameRepository _games;
     public TaskCompletionSource<Game?> Result { get; } = new();
 

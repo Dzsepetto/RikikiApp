@@ -3,6 +3,8 @@ using Microsoft.Extensions.Logging;
 using RikikiApp.Data;
 using RikikiApp.Repositories;
 using RikikiApp.Services;
+using RikikiApp.ViewModel;
+using RikikiApp.ViewModels;
 using RikikiApp.Views;
 
 namespace RikikiApp
@@ -30,15 +32,30 @@ namespace RikikiApp
             builder.Services.AddSingleton<IGamePlayerRepository, SqliteGamePlayerRepository>();
             builder.Services.AddSingleton<IRoundRepository, SQLiteRoundRepository>();
             builder.Services.AddSingleton<ICallRepository, SQLiteCallRepository>();
+            builder.Services.AddSingleton<IPlayerRepository, SQLitePlayerRepository>();
 
+            //services
             builder.Services.AddSingleton<RikikiGameEngine>();
+            builder.Services.AddSingleton<NavigationService>();
 
-            builder.Services.AddTransient<GamePage>();
-            builder.Services.AddTransient<GameSetupPage>();
+            //page
+            builder.Services.AddSingleton<MainLayoutPage>();
 
+            // views
+            builder.Services.AddTransient<GameViewVM>();
+            builder.Services.AddTransient<GameView>();
 
-//==== ======= ====
+            builder.Services.AddTransient<GameSetupVM>();
+            builder.Services.AddTransient<GameSetupView>();
 
+            builder.Services.AddTransient<ProfileViewVM>();
+            builder.Services.AddTransient<ProfileView>();
+
+            builder.Services.AddTransient<MainView>();
+
+            builder.Services.AddTransient<StatsView>();
+
+            //==== ======= ====
 
 
 #if DEBUG

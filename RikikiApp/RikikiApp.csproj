@@ -85,19 +85,20 @@
 
 	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Maui" Version="14.0.1" />
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.1" />
 		<PackageReference Include="Microsoft.Maui.Controls" Version="10.0.50" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.5" />
 		<PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <MauiXaml Update="Views\GamePage.xaml">
+	  <MauiXaml Update="Views\GameView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\GamePlayPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Views\GameSetupPage.xaml">
+	  <MauiXaml Update="Views\GameSetupView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\MainLayoutPage.xaml">
@@ -112,17 +113,29 @@
 	  <MauiXaml Update="Views\Popups\ShowStatsPopup.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Views\ProfilePage.xaml">
+	  <MauiXaml Update="Views\ProfileView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Views\StatsPage.xaml">
+	  <MauiXaml Update="Views\StatsView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Compile Update="Views\GamePage.xaml.cs">
-	    <DependentUpon>GamePage.xaml</DependentUpon>
+	  <Compile Update="Views\GameView.xaml.cs">
+	    <DependentUpon>GameView.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Views\GameSetupView.xaml.cs">
+	    <DependentUpon>GameSetupView.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Views\MainView.xaml.cs">
+	    <DependentUpon>MainView.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Views\ProfileView.xaml.cs">
+	    <DependentUpon>ProfileView.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Views\StatsView.xaml.cs">
+	    <DependentUpon>StatsView.xaml</DependentUpon>
 	  </Compile>
 	</ItemGroup>
 

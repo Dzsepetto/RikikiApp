@@ -6,40 +6,49 @@ public partial class MainLayoutPage : ContentPage
 {
     private TabType _currentTab = TabType.Home;
 
-    private readonly MainPage _mainPage = new();
-    private readonly ProfilePage _profilePage = new();
-    private readonly StatsPage _statsPage = new();
+    private readonly NavigationService _nav;
+    private bool _initialized;
+    public MainLayoutPage(NavigationService nav)
+    {
+        InitializeComponent();
 
-    public MainLayoutPage()
-	{
-		InitializeComponent();
+        _nav = nav;
+
         UpdateTabUI();
     }
-    protected override async void OnAppearing()
+    public void SetContent(View view)
+    {
+        PageContent.Content = view;
+    }
+    protected override void OnAppearing()
     {
         base.OnAppearing();
 
-        PageContent.Content = _mainPage.Content;
+        if (_initialized)
+            return;
 
+        _initialized = true;
+
+        _nav.SetRoot<MainView>();
     }
     void GoHome(object sender, EventArgs e)
     {
         _currentTab = TabType.Home;
-        PageContent.Content = _mainPage.Content;
+        _nav.SetRoot<MainView>();
         UpdateTabUI();
     }
 
     void GoProfile(object sender, EventArgs e)
     {
         _currentTab = TabType.Profile;
-        PageContent.Content = _profilePage.Content;
+        _nav.SetRoot<ProfileView>();
         UpdateTabUI();
     }
 
     void GoStats(object sender, EventArgs e)
     {
         _currentTab = TabType.Stats;
-        PageContent.Content = _statsPage.Content;
+        _nav.SetRoot<StatsView>();
         UpdateTabUI();
     }
     void UpdateTabUI()
