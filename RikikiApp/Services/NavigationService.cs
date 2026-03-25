@@ -73,16 +73,21 @@ public class NavigationService
     }
 
     // 🔹 BACK
-    public void Pop()
+    public async Task Pop()
     {
         if (_stack.Count <= 1)
             return;
 
         _stack.Pop();
-        GetMainLayout().SetContent(_stack.Peek());
+
+        var view = _stack.Peek();
+        GetMainLayout().SetContent(view);
+
+        if (view.BindingContext is IInitializable initVm)
+            await initVm.InitAsync();
     }
 
-    // 🔹 POPUP (maradhat)
+    // 🔹 POPUP 
     public async Task<T?> ShowPopupAsync<T>(Popup popup) where T : class
     {
         var page = Application.Current!.MainPage!;

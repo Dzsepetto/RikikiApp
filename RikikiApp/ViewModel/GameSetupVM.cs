@@ -1,17 +1,18 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using RikikiApp.Models;
 using RikikiApp.Repositories;
 using RikikiApp.Services;
+using RikikiApp.Views.Popups;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-
+using System.Diagnostics;
 public partial class GameSetupVM : ObservableObject, IInitializable
 {
     private readonly IGameRepository _games;
     private readonly IGamePlayerRepository _gamePlayers;
     private readonly RikikiGameEngine _engine;
+    private readonly NavigationService _nav;
 
     public string GameId { get; set; }
 
@@ -20,28 +21,32 @@ public partial class GameSetupVM : ObservableObject, IInitializable
     public ObservableCollection<GamePlayer> Players { get; } = new();
 
     [ObservableProperty]
-    private string _playersTitle = "Players:";
+    private string title;
+
+    [ObservableProperty]
+    private string playersTitle = "Players:";
+
+    [ObservableProperty]
+    private bool isPlayersExpanded;
 
     public bool IsEmpty => Players.Count == 0;
     public bool IsNotEmpty => !IsEmpty;
 
-    [ObservableProperty]
-    private bool _isPlayersExpanded;
-
-
     public GameSetupVM(
         IGameRepository games,
         IGamePlayerRepository gamePlayers,
-        RikikiGameEngine engine)
+        RikikiGameEngine engine,
+        NavigationService nav)
     {
         _games = games;
         _gamePlayers = gamePlayers;
         _engine = engine;
+        _nav = nav;
 
         Players.CollectionChanged += Players_CollectionChanged;
     }
 
-    // 🔹 INIT
+    // ✅ EZ FUT LE NAV UTÁN
     public async Task InitAsync()
     {
         if (!int.TryParse(GameId, out var id))
@@ -49,13 +54,14 @@ public partial class GameSetupVM : ObservableObject, IInitializable
 
         _game = await _games.GetByIdAsync(id);
 
+        Title = _game.Name;
+
         if (_game == null)
             return;
 
         await LoadPlayers();
     }
 
-    // 🔹 LOAD
     private async Task LoadPlayers()
     {
         if (_game == null)
@@ -75,7 +81,6 @@ public partial class GameSetupVM : ObservableObject, IInitializable
         OnPropertyChanged(nameof(IsNotEmpty));
     }
 
-    // 🔹 COLLECTION CHANGE
     private void Players_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
         OnPropertyChanged(nameof(IsEmpty));
@@ -85,10 +90,15 @@ public partial class GameSetupVM : ObservableObject, IInitializable
             IsPlayersExpanded = true;
     }
 
-    // 🔹 ADD PLAYER (UI fog popup-ot adni)
-    public async Task AddPlayer(string name)
+    [RelayCommand]
+    private async Task AddPlayer()
     {
-        if (_game == null || string.IsNullOrWhiteSpace(name))
+        if (_game == null)
+            return;
+
+        var name = await _nav.ShowPopupAsync<string>(new AddPlayerPopup());
+
+        if (string.IsNullOrWhiteSpace(name))
             return;
 
         var players = await _gamePlayers.GetByGameIdAsync(_game.Id);
@@ -110,8 +120,8 @@ public partial class GameSetupVM : ObservableObject, IInitializable
         await LoadPlayers();
     }
 
-    // 🔹 DELETE PLAYER
-    public async Task DeletePlayer(GamePlayer player)
+    [RelayCommand]
+    private async Task DeletePlayer(GamePlayer player)
     {
         if (_game == null)
             return;
@@ -133,17 +143,8 @@ public partial class GameSetupVM : ObservableObject, IInitializable
         await LoadPlayers();
     }
 
-    // 🔹 DELETE GAME
-    public async Task DeleteGame()
-    {
-        if (_game == null)
-            return;
-
-        await _games.DeleteAsync(_game.Id);
-    }
-
-    // 🔹 START GAME
-    public async Task StartGame()
+    [RelayCommand]
+    private async Task StartGame()
     {
         if (_game == null)
             return;
@@ -152,26 +153,27 @@ public partial class GameSetupVM : ObservableObject, IInitializable
         await _engine.StartGame(_game.Id);
     }
 
-    // 🔹 END GAME
-    public Task EndGame()
+    [RelayCommand]
+    private async Task DeleteGame()
     {
-        // csak state/logika ide
+        if (_game == null) {
+            Debug.WriteLine("no game found");
+            return;
+        }
+        await _games.DeleteAsync(_game.Id);
+
+       await _nav.Pop();
+    }
+
+    [RelayCommand]
+    private async void Back()
+    {
+       await _nav.Pop();
+    }
+
+    [RelayCommand]
+    private Task EndGame()
+    {
         return Task.CompletedTask;
     }
-
-    // 🔹 PROPERTY
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    protected bool SetProperty<T>(ref T field, T value, [CallerMemberName] string name = null)
-    {
-        if (EqualityComparer<T>.Default.Equals(field, value))
-            return false;
-
-        field = value;
-        OnPropertyChanged(name);
-        return true;
-    }
-
-    void OnPropertyChanged([CallerMemberName] string name = null)
-        => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 }

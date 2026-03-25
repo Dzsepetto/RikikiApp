@@ -1,29 +1,22 @@
-using CommunityToolkit.Maui.Extensions;
-using RikikiApp.Models;
-using RikikiApp.Repositories;
-using RikikiApp.Views.Popups;
-using RikikiApp.Services;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.Runtime.CompilerServices;
+using RikikiApp.ViewModel;
+using System.Diagnostics;
 
 namespace RikikiApp.Views;
 
 public partial class GameSetupView : ContentView
 {
-    private readonly NavigationService _nav;
-    public GameSetupView(NavigationService nav)
+    private readonly GameSetupVM _vm;
+
+    public GameSetupView(GameSetupVM vm)
     {
-        InitializeComponent();
-        _nav = nav;
-    }
-    private async void OnAddPlayerClicked(object sender, EventArgs e)
-    {
-        if (BindingContext is GameSetupVM vm)
-            await vm.AddPlayer("valaki");
-    }
-    private void OnBackClicked(object sender, EventArgs e)
-    {
-        _nav.Pop();
+        try
+        {
+            InitializeComponent();
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"💥 XAML CRASH: {ex}");
+            throw;
+        }
     }
 }

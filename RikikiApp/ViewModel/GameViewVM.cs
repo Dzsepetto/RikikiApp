@@ -130,8 +130,8 @@ public partial class GameViewVM : ObservableObject, IInitializable
         });
     }
     [RelayCommand]
-    private void Back()
+    private async void Back()
     {
-        _nav.Pop();
+        await _nav.Pop();
     }
 }

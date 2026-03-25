@@ -3,28 +3,23 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:Class="RikikiApp.Views.GameSetupView"
-            >
+             x:Name="Root">
 
     <ScrollView>
         <Grid Padding="12" RowDefinitions="Auto,*,Auto">
 
             <!-- TOP BAR -->
             <Grid ColumnDefinitions="Auto,*,Auto" Row="0">
-                <Button Text="← Back"
-                        Clicked="OnBackClicked"
-                        HorizontalOptions="Start" />
+                <Button Text="← Back" Command="{Binding BackCommand}" />
 
-                <Label x:Name="TitleLabel"
+                <Label Text="{Binding Title}"
                        Grid.Column="1"
                        HorizontalOptions="Center"
                        VerticalOptions="Center"
                        FontSize="18"
                        FontAttributes="Bold" />
 
-                <Button Text="🗑"
-                        Grid.Column="2"
-                        Clicked="OnDeleteClicked"
-                        HorizontalOptions="End" />
+                <Button Text="🗑" Grid.Column="2" Command="{Binding DeleteGameCommand}" />
             </Grid>
 
             <!-- CONTENT -->
@@ -93,11 +88,11 @@
                            Text="{Binding GuestName}"
                            VerticalOptions="Center"/>
 
-                                            <Button Grid.Column="2"
-                            Text="🗑"
-                            CommandParameter="{Binding .}"
-                            Clicked="OnDeletePlayerClicked"
-                            BackgroundColor="Transparent"/>
+                                <Button Grid.Column="2"
+                                        Text="🗑"
+                                        BackgroundColor="Transparent"
+                                        Command="{Binding Source={x:Reference Root}, Path=BindingContext.DeletePlayerCommand}"
+                                        CommandParameter="{Binding .}" />
                                         </Grid>
                                     </DataTemplate>
                                 </BindableLayout.ItemTemplate>
@@ -108,8 +103,7 @@
                     </VerticalStackLayout>
 
                 </toolkit:Expander>
-                <Button Text="+ Add player"
-                        Clicked="OnAddPlayerClicked" />
+                <Button Text="+ Add player" Command="{Binding AddPlayerCommand}" />
 
                 <Button Text="Show Stats"
                         Clicked="OnShowStatsClicked" />
@@ -123,17 +117,15 @@
                   Margin="0,12,0,0">
 
                 <Button Grid.Column="0"
-                        x:Name="EndGameButton"
-                        Text="End game"
-                        BackgroundColor="Red"
-                        TextColor="White"
-                        Clicked="OnEndGameClicked"/>
+        Text="End game"
+        BackgroundColor="Red"
+        TextColor="White"
+        Command="{Binding EndGameCommand}" />
 
                 <Button Grid.Column="1"
-                        x:Name="StartGameButton"
-                        Text="Start game"
-                        BackgroundColor="Green"
-                        Clicked="OnStartGameClicked"/>
+                Text="Start game"
+                BackgroundColor="Green"
+                Command="{Binding StartGameCommand}" />
 
             </Grid>
 
