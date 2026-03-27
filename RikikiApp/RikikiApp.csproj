@@ -95,7 +95,7 @@
 	  <MauiXaml Update="Views\GameView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Views\GamePlayPage.xaml">
+	  <MauiXaml Update="Views\GamePlayView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\GameSetupView.xaml">
@@ -122,6 +122,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Update="Views\GamePlayView.xaml.cs">
+	    <DependentUpon>GamePlayView.xaml</DependentUpon>
+	  </Compile>
 	  <Compile Update="Views\GameView.xaml.cs">
 	    <DependentUpon>GameView.xaml</DependentUpon>
 	  </Compile>

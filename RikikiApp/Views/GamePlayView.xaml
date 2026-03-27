@@ -1,0 +1,106 @@
+<ContentView
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="RikikiApp.Views.GamePlayView">
+
+    <Grid Padding="20" RowDefinitions="Auto,*">
+
+        <!-- HEADER -->
+        <Grid ColumnDefinitions="Auto,*">
+
+            <Button Text="←"
+                    Command="{Binding BackCommand}" />
+
+            <Label Grid.Column="1"
+                   Text="{Binding RoundText}"
+                   FontSize="22"
+                   HorizontalTextAlignment="Center"/>
+        </Grid>
+
+        <ScrollView Grid.Row="1">
+
+            <VerticalStackLayout Spacing="16">
+
+                <!-- GAME -->
+                <CollectionView ItemsSource="{Binding Calls}"
+                                IsVisible="{Binding IsGameVisible}">
+
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+
+                            <Grid ColumnDefinitions="*,120,120">
+
+                                <Label Text="{Binding PlayerName}" />
+
+                                <VerticalStackLayout Grid.Column="1">
+                                    <Stepper Value="{Binding Called}"
+                                             Maximum="{Binding MaxValue}"
+                                             IsEnabled="{Binding IsCallEnabled}" />
+                                    <Label Text="{Binding Called}" />
+                                </VerticalStackLayout>
+
+                                <VerticalStackLayout Grid.Column="2"
+                                                     IsVisible="{Binding IsWonVisible}">
+                                    <Stepper Value="{Binding Won}"
+                                             Maximum="{Binding MaxValue}"
+                                             IsEnabled="{Binding IsWonEnabled}" />
+                                    <Label Text="{Binding Won}" />
+                                </VerticalStackLayout>
+
+                            </Grid>
+
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+
+                </CollectionView>
+
+                <!-- RESULTS -->
+                <CollectionView ItemsSource="{Binding Results}"
+                                IsVisible="{Binding IsResultVisible}">
+
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+
+                            <Grid ColumnDefinitions="*,60,60,80">
+
+                                <Label Text="{Binding PlayerName}" />
+                                <Label Grid.Column="1" Text="{Binding Called}" />
+                                <Label Grid.Column="2" Text="{Binding Won}" />
+                                <Label Grid.Column="3" Text="{Binding Score}" />
+
+                            </Grid>
+
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+
+                </CollectionView>
+
+                <!-- BUTTONS -->
+                <VerticalStackLayout>
+
+                    <Button Text="Fix Calls"
+                            Command="{Binding FixCallsCommand}"
+                            IsVisible="{Binding IsFixCallsVisible}" />
+
+                    <Button Text="End Round"
+                            Command="{Binding EndRoundCommand}"
+                            IsVisible="{Binding IsEndRoundVisible}" />
+
+                    <HorizontalStackLayout IsVisible="{Binding IsResultVisible}">
+                        <Button Text="Less" Command="{Binding LessCommand}" />
+                        <Button Text="Same" Command="{Binding SameCommand}" />
+                        <Button Text="More" Command="{Binding MoreCommand}" />
+                    </HorizontalStackLayout>
+
+                    <Button Text="End Game"
+                            Command="{Binding EndGameCommand}"
+                            IsVisible="{Binding IsResultVisible}" />
+
+                </VerticalStackLayout>
+
+            </VerticalStackLayout>
+
+        </ScrollView>
+
+    </Grid>
+</ContentView>

@@ -1,35 +1,21 @@
 using CommunityToolkit.Maui.Views;
+using Microsoft.Extensions.DependencyInjection;
+using RikikiApp.Models;
+using RikikiApp.Repositories;
+using System.Diagnostics;
 
 namespace RikikiApp.Views.Popups;
 
 public partial class AddPlayerPopup : Popup
 {
-    public string? Result { get; private set; }
-
     public AddPlayerPopup()
     {
         InitializeComponent();
-    }
 
-    async void OnCancelClicked(object sender, EventArgs e)
+    }
+    void TestClick(object sender, EventArgs e)
     {
-        Result = null;
-        await CloseAsync();
+        Debug.WriteLine("BUTTON CLICKED");
     }
 
-    async void OnSaveClicked(object sender, EventArgs e)
-    {
-        if (string.IsNullOrWhiteSpace(NameEntry.Text))
-        {
-            await Application.Current.MainPage.DisplayAlertAsync(
-                "Error",
-                "Name required",
-                "OK");
-            return;
-        }
-
-        Result = NameEntry.Text;
-
-        await CloseAsync();
-    }
 }

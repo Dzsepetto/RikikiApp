@@ -10,30 +10,21 @@
 
             <Label Text="Add Game" FontAttributes="Bold" FontSize="22" HorizontalOptions="Center"/>
 
-            <Entry x:Name="GameEntry" Placeholder="Game name" FontSize="16" HeightRequest="45"/>
+            <Entry  Text="{Binding GameName}" Placeholder="Game name" FontSize="16" HeightRequest="45"/>
 
 
             <Label Text="Scoring version" FontAttributes="Bold" />
-            <Picker x:Name="ScoringPicker" />
+            <Picker ItemsSource="{Binding ScoringTypes}" SelectedItem="{Binding SelectedScoringType}" />
 
             <HorizontalStackLayout Spacing="12" HorizontalOptions="Center">
 
-                <Button Text="Cancel"
-             BackgroundColor="#E0E0E0"
-             TextColor="Black"
-             CornerRadius="10"
-             Padding="14,8"
-             MinimumWidthRequest="80"
-             Clicked="OnCancelClicked"/>
 
-                <Button
-             Text="Add"
-             BackgroundColor="#6C4DFF"
-             TextColor="White"
-             CornerRadius="10"
-             Padding="14,8"
-             MinimumWidthRequest="80"
-             Clicked="OnSaveClicked"/>
+
+                <Button Text="Cancel"
+        Command="{Binding CancelCommand}" />
+                <Button Text="Save"
+        Command="{Binding SaveCommand}" />
+
             </HorizontalStackLayout>
 
         </VerticalStackLayout>

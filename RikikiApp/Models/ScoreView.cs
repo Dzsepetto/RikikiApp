@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RikikiApp.Models
 {
-    internal class ScoreView
+    public class ScoreView
     {
         public string PlayerName { get; set; } = "";
         public int Called { get; set; }

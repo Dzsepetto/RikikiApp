@@ -2,53 +2,91 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:mct="clr-namespace:CommunityToolkit.Maui.Views;assembly=CommunityToolkit.Maui"
-    x:Class="RikikiApp.Views.Popups.AddPlayerPopup"
-    BackgroundColor="white"
-    Padding="0"
-    Margin="0">
+    x:Class="RikikiApp.Views.Popups.AddPlayerPopup">
 
-    <!-- Overlay center -->
-    <Grid VerticalOptions="Center" HorizontalOptions="Center" WidthRequest="320" MaximumWidthRequest="400" Margin="0">
+    <Grid VerticalOptions="Center" HorizontalOptions="Center"
+          WidthRequest="320">
 
-        <VerticalStackLayout
-        Spacing="16"
+        <VerticalStackLayout Padding="10" Spacing="12">
+            <HorizontalStackLayout HorizontalOptions="Center" Spacing="10">
 
-        Padding="20">
-            <!-- EZ A KULCS -->
+                <Label Text="Select" VerticalOptions="Center"/>
 
-            <Label
-            Text="Add player"
-            FontAttributes="Bold"
-            FontSize="22"
-            HorizontalOptions="Center"/>
+                <Switch IsToggled="{Binding IsAddMode}" />
 
-            <Entry
-            x:Name="NameEntry"
-            Placeholder="Player name"
-            FontSize="16"
-            HeightRequest="45"/>
+                <Label Text="Add new" VerticalOptions="Center"/>
 
-            <HorizontalStackLayout
-            Spacing="12"
-            HorizontalOptions="Center">
+            </HorizontalStackLayout>
+            <Label Text="Select or add player"
+                   FontAttributes="Bold"
+                   FontSize="20"
+                   HorizontalOptions="Center"/>
+            <Entry Placeholder="Search players"
+       Text="{Binding SearchText}"
+       IsVisible="{Binding IsAddMode, Converter={StaticResource InverseBoolConverter}}" />
+            <!-- LISTA -->
+            <CollectionView 
+    ItemsSource="{Binding Players}"
+    HeightRequest="180"
+    IsVisible="{Binding IsAddMode, Converter={StaticResource InverseBoolConverter}}">
+                <CollectionView.ItemsLayout>
+                    <LinearItemsLayout Orientation="Vertical" ItemSpacing="10" />
+                </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Border 
+        BackgroundColor="#1E1E1E"
+        Stroke="#3A3A3A"
+        StrokeThickness="1"
+        StrokeShape="RoundRectangle 12"
+        Padding="0"
+        Margin="0,0,0,10">
 
-                <Button
-                Text="Cancel"
-                BackgroundColor="#E0E0E0"
-                TextColor="Black"
-                CornerRadius="10"
-                Padding="14,8"
-                MinimumWidthRequest="80"
-                Clicked="OnCancelClicked"/>
+                            <Grid ColumnDefinitions="Auto,*"
+              ColumnSpacing="10"
+              VerticalOptions="Center">
 
-                <Button
-                Text="Add"
-                BackgroundColor="#6C4DFF"
+                                <Grid.GestureRecognizers>
+                                    <TapGestureRecognizer
+                    Command="{Binding Source={RelativeSource AncestorType={x:Type mct:Popup}}, Path=BindingContext.TogglePlayerCommand}"
+                    CommandParameter="{Binding .}" />
+                                </Grid.GestureRecognizers>
+
+                                <CheckBox 
+                Grid.Column="0"
+                IsChecked="{Binding IsSelected}"
+                VerticalOptions="Center"/>
+
+                                <Label 
+                Grid.Column="1"
+                Text="{Binding Name}"
                 TextColor="White"
-                CornerRadius="10"
-                Padding="14,8"
-                MinimumWidthRequest="80"
-                Clicked="OnSaveClicked"/>
+                VerticalOptions="Center"
+                FontSize="16" HorizontalOptions="Center"/>
+
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+
+            </CollectionView>
+
+            <!-- ÚJ -->
+            <Entry 
+    Placeholder="New player name"
+    Text="{Binding NewPlayerName}"
+    IsVisible="{Binding IsAddMode}" />
+
+            <HorizontalStackLayout Spacing="12"
+                                   HorizontalOptions="Center">
+
+                <Button Text="Cancel"
+                        Command="{Binding CancelCommand}" />
+
+                <Button Text="Add"
+                Clicked="TestClick"
+                Command="{Binding AddCommand}" />
+
             </HorizontalStackLayout>
 
         </VerticalStackLayout>

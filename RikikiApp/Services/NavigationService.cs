@@ -1,8 +1,10 @@
 ﻿using CommunityToolkit.Maui.Extensions;
 using CommunityToolkit.Maui.Views;
 using RikikiApp.Services;
+using RikikiApp.ViewModel.Popups;
 using RikikiApp.Views;
 using RikikiApp.Views.Popups;
+using static SQLite.SQLite3;
 
 public class NavigationService 
 {
@@ -88,14 +90,30 @@ public class NavigationService
     }
 
     // 🔹 POPUP 
-    public async Task<T?> ShowPopupAsync<T>(Popup popup) where T : class
+    public async Task<TResult?> ShowPopupAsync<TView, TViewModel, TResult>(
+        Action<TViewModel>? init = null)
+        where TView : Popup
+        where TViewModel : class
     {
+        var popup = _services.GetRequiredService<TView>();
+        var vm = _services.GetRequiredService<TViewModel>();
+
+        init?.Invoke(vm);
+
+        popup.BindingContext = vm;
+
+        if (vm is IPopupAware popupVm)
+            popupVm.PopupInstance = popup;
+
+        if (vm is IInitializable initVm)
+            await initVm.InitAsync();
+
         var page = Application.Current!.MainPage!;
         await page.ShowPopupAsync(popup);
 
-        if (popup is IPopupResult<T> resultPopup)
-            return await resultPopup.ResultTask;
+        if (vm is IPopupResults<TResult> resultVm)
+            return await resultVm.ResultTask;
 
-        return null;
+        return default;
     }
 }

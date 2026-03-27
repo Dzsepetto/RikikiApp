@@ -105,8 +105,7 @@
                 </toolkit:Expander>
                 <Button Text="+ Add player" Command="{Binding AddPlayerCommand}" />
 
-                <Button Text="Show Stats"
-                        Clicked="OnShowStatsClicked" />
+                <Button Text="Show Stats" Command="{Binding ShowStatsCommand}" />
 
             </VerticalStackLayout>
 

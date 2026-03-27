@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using RikikiApp.Models;
 using RikikiApp.Repositories;
 using RikikiApp.Services;
+using RikikiApp.Views;
 using RikikiApp.Views.Popups;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -96,26 +97,29 @@ public partial class GameSetupVM : ObservableObject, IInitializable
         if (_game == null)
             return;
 
-        var name = await _nav.ShowPopupAsync<string>(new AddPlayerPopup());
+        var names = await _nav.ShowPopupAsync<AddPlayerPopup, AddPlayerPopupVM, List< string >> ();
 
-        if (string.IsNullOrWhiteSpace(name))
+        if (names == null || !names.Any())
             return;
 
-        var players = await _gamePlayers.GetByGameIdAsync(_game.Id);
-
-        var nextSeat = players
-            .Select(p => p.SeatOrder)
-            .DefaultIfEmpty(0)
-            .Max() + 1;
-
-        var gp = new GamePlayer
+        foreach (var name in names)
         {
-            GameId = _game.Id,
-            SeatOrder = nextSeat,
-            GuestName = name
-        };
+            var players = await _gamePlayers.GetByGameIdAsync(_game.Id);
 
-        await _gamePlayers.AddAsync(gp);
+            var nextSeat = players
+                .Select(p => p.SeatOrder)
+                .DefaultIfEmpty(0)
+                .Max() + 1;
+
+            var gp = new GamePlayer
+            {
+                GameId = _game.Id,
+                SeatOrder = nextSeat,
+                GuestName = name
+            };
+
+            await _gamePlayers.AddAsync(gp);
+        }
 
         await LoadPlayers();
     }
@@ -144,6 +148,15 @@ public partial class GameSetupVM : ObservableObject, IInitializable
     }
 
     [RelayCommand]
+    private async Task ShowStats()
+    {
+        if (_game == null)
+            return;
+
+       await _nav.ShowPopupAsync<AddPlayerPopup, AddPlayerPopupVM, List<string>>();
+    }
+
+    [RelayCommand]
     private async Task StartGame()
     {
         if (_game == null)
@@ -151,6 +164,11 @@ public partial class GameSetupVM : ObservableObject, IInitializable
 
         await _games.UpsertAsync(_game);
         await _engine.StartGame(_game.Id);
+
+        await _nav.Push<GamePlayView, GamePlayVM>(vm =>
+        {
+            vm.GameId = _game.Id.ToString();
+        });
     }
 
     [RelayCommand]

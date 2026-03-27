@@ -4,8 +4,10 @@ using RikikiApp.Data;
 using RikikiApp.Repositories;
 using RikikiApp.Services;
 using RikikiApp.ViewModel;
+using RikikiApp.ViewModel.Popups;
 using RikikiApp.ViewModels;
 using RikikiApp.Views;
+using RikikiApp.Views.Popups;
 
 namespace RikikiApp
 {
@@ -48,12 +50,22 @@ namespace RikikiApp
             builder.Services.AddTransient<GameSetupVM>();
             builder.Services.AddTransient<GameSetupView>();
 
+            builder.Services.AddTransient<GamePlayVM>();
+            builder.Services.AddTransient<GamePlayView>();
+
             builder.Services.AddTransient<ProfileViewVM>();
             builder.Services.AddTransient<ProfileView>();
 
             builder.Services.AddTransient<MainView>();
 
             builder.Services.AddTransient<StatsView>();
+
+            //popus
+            builder.Services.AddTransient<AddGamePopup>();
+            builder.Services.AddTransient<AddGamePopupVM>();
+
+            builder.Services.AddTransient<AddPlayerPopup>();
+            builder.Services.AddTransient<AddPlayerPopupVM>();
 
             //==== ======= ====
 

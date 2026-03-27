@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using RikikiApp.Models;
 using RikikiApp.Repositories;
 using RikikiApp.Services;
+using RikikiApp.ViewModel.Popups;
 using RikikiApp.Views;
 using RikikiApp.Views.Popups;
 using System.Collections.ObjectModel;
@@ -108,7 +109,7 @@ public partial class GameViewVM : ObservableObject, IInitializable
     [RelayCommand]
     private async Task NewGame()
     {
-        var game = await _nav.ShowPopupAsync<Game>(new AddGamePopup(_games));
+        var game = await _nav.ShowPopupAsync<AddGamePopup, AddGamePopupVM, Game>();
 
         if (game is null)
             return;
