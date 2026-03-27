@@ -20,7 +20,7 @@ public partial class MainView : ContentView
 
     private async void OpenGamesView(object sender, EventArgs e)
     {
-       await _nav.Push<GameView, GameViewVM>();
+       await _nav.PushWithLoading<GameView, GameViewVM>();
     }
 
     private async void OnDbTestClicked(object sender, EventArgs e)

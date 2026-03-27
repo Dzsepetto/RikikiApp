@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<mct:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:mct="clr-namespace:CommunityToolkit.Maui.Views;assembly=CommunityToolkit.Maui"
+             x:Class="RikikiApp.Views.Popups.LoadingPopup" >
+    <Grid BackgroundColor="#80000000">
+        <VerticalStackLayout 
+            HorizontalOptions="Center" 
+            VerticalOptions="Center"
+            Spacing="10">
+
+            <ActivityIndicator IsRunning="True" />
+            <Label Text="Loading..." TextColor="White" />
+        </VerticalStackLayout>
+    </Grid>
+</mct:Popup>

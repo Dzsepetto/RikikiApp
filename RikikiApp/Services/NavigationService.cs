@@ -47,14 +47,12 @@ public class NavigationService
         if (vm is IInitializable initVm)
             await initVm.InitAsync();
     }
-
-    // 🔹 NAVIGATE FORWARD
-    public void Push<TView>() where TView : View
+    public async Task PushWithLoading<TView, TViewModel>(Action<TViewModel>? init = null)where TView : View where TViewModel : class
     {
-        var view = _services.GetRequiredService<TView>();
-
-        _stack.Push(view);
-        GetMainLayout().SetContent(view);
+        await RunWithLoading(async () =>
+        {
+            await Push<TView, TViewModel>(init);
+        });
     }
 
     public async Task Push<TView, TViewModel>(Action<TViewModel>? init = null)
@@ -67,11 +65,12 @@ public class NavigationService
         init?.Invoke(vm);
         view.BindingContext = vm;
 
-        _stack.Push(view);
-        GetMainLayout().SetContent(view);
-
         if (vm is IInitializable initVm)
             await initVm.InitAsync();
+
+
+        _stack.Push(view);
+        GetMainLayout().SetContent(view);
     }
 
     // 🔹 BACK
@@ -115,5 +114,24 @@ public class NavigationService
             return await resultVm.ResultTask;
 
         return default;
+    }
+
+    public async Task RunWithLoading(Func<Task> action)
+    {
+        var popup = _services.GetRequiredService<LoadingPopup>();
+        var page = Application.Current.MainPage!;
+
+        popup.CanBeDismissedByTappingOutsideOfPopup = false;
+
+        page.ShowPopupAsync(popup);
+
+        try
+        {
+            await action();
+        }
+        finally
+        {
+            await popup.CloseAsync();
+        }
     }
 }

@@ -116,7 +116,7 @@ public partial class GameViewVM : ObservableObject, IInitializable
 
         await ReloadGamesAsync();
 
-        await _nav.Push<GameSetupView, GameSetupVM>(vm =>
+        await _nav.PushWithLoading<GameSetupView, GameSetupVM>(vm =>
         {
             vm.GameId = game.Id.ToString();
         });
@@ -125,7 +125,7 @@ public partial class GameViewVM : ObservableObject, IInitializable
     [RelayCommand]
     private async Task OpenGame(int gameId)
     {
-        await _nav.Push<GameSetupView, GameSetupVM>(vm =>
+        await _nav.PushWithLoading<GameSetupView, GameSetupVM>(vm =>
         {
             vm.GameId = gameId.ToString();
         });

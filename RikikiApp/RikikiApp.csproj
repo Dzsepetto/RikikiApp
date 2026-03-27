@@ -110,6 +110,9 @@
 	  <MauiXaml Update="Views\Popups\AddPlayerPopup.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Views\Popups\LoadingPopup.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Views\Popups\ShowStatsPopup.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
@@ -133,6 +136,9 @@
 	  </Compile>
 	  <Compile Update="Views\MainView.xaml.cs">
 	    <DependentUpon>MainView.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Views\Popups\LoadingPopup.xaml.cs">
+	    <DependentUpon>LoadingPopup.xaml</DependentUpon>
 	  </Compile>
 	  <Compile Update="Views\ProfileView.xaml.cs">
 	    <DependentUpon>ProfileView.xaml</DependentUpon>

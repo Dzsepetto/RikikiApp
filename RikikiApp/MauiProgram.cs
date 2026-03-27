@@ -60,6 +60,8 @@ namespace RikikiApp
 
             builder.Services.AddTransient<StatsView>();
 
+            builder.Services.AddTransient<LoadingPopup>();
+
             //popus
             builder.Services.AddTransient<AddGamePopup>();
             builder.Services.AddTransient<AddGamePopupVM>();
