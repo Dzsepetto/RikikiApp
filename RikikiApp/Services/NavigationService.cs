@@ -123,7 +123,9 @@ public class NavigationService
 
         popup.CanBeDismissedByTappingOutsideOfPopup = false;
 
-        page.ShowPopupAsync(popup);
+        _ = page.ShowPopupAsync(popup);
+
+        await Task.Delay(50);
 
         try
         {

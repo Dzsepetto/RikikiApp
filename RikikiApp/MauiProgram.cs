@@ -4,9 +4,11 @@ using RikikiApp.Data;
 using RikikiApp.Repositories;
 using RikikiApp.Services;
 using RikikiApp.ViewModel;
+using RikikiApp.ViewModel.Components;
 using RikikiApp.ViewModel.Popups;
 using RikikiApp.ViewModels;
 using RikikiApp.Views;
+using RikikiApp.Views.Components;
 using RikikiApp.Views.Popups;
 
 namespace RikikiApp
@@ -39,6 +41,7 @@ namespace RikikiApp
             //services
             builder.Services.AddSingleton<RikikiGameEngine>();
             builder.Services.AddSingleton<NavigationService>();
+            builder.Services.AddSingleton<UserSessionService>();
 
             //page
             builder.Services.AddSingleton<MainLayoutPage>();
@@ -55,6 +58,8 @@ namespace RikikiApp
 
             builder.Services.AddTransient<ProfileViewVM>();
             builder.Services.AddTransient<ProfileView>();
+            builder.Services.AddTransient<ManagePlayersView>();
+            builder.Services.AddTransient<ManagePlayersVM>();
 
             builder.Services.AddTransient<MainView>();
 

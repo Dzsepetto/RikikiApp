@@ -23,29 +23,69 @@
 
                 <!-- GAME -->
                 <CollectionView ItemsSource="{Binding Calls}"
-                                IsVisible="{Binding IsGameVisible}">
+                IsVisible="{Binding IsGameVisible}">
 
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
 
-                            <Grid ColumnDefinitions="*,120,120">
+                            <Grid ColumnDefinitions="*,Auto,Auto"
+                  Padding="10"
+                  ColumnSpacing="20">
 
-                                <Label Text="{Binding PlayerName}" />
+                                <!-- PLAYER NAME -->
+                                <Label Text="{Binding PlayerName}"
+                       VerticalOptions="Center"
+                       FontAttributes="Bold"
+                       FontSize="16"/>
 
-                                <VerticalStackLayout Grid.Column="1">
-                                    <Stepper Value="{Binding Called}"
-                                             Maximum="{Binding MaxValue}"
-                                             IsEnabled="{Binding IsCallEnabled}" />
-                                    <Label Text="{Binding Called}" />
-                                </VerticalStackLayout>
+                                <!-- CALL -->
+                                <HorizontalStackLayout Grid.Column="1"
+                                       Spacing="6"
+                                       VerticalOptions="Center">
 
-                                <VerticalStackLayout Grid.Column="2"
-                                                     IsVisible="{Binding IsWonVisible}">
-                                    <Stepper Value="{Binding Won}"
-                                             Maximum="{Binding MaxValue}"
-                                             IsEnabled="{Binding IsWonEnabled}" />
-                                    <Label Text="{Binding Won}" />
-                                </VerticalStackLayout>
+                                    <Button Text="−"
+                            WidthRequest="40"
+                            HeightRequest="40"
+                            Command="{Binding DecreaseCallCommand}" />
+
+                                    <Label Text="{Binding Called}"
+                           WidthRequest="30"
+                           HorizontalTextAlignment="Center"
+                           VerticalTextAlignment="Center"
+                           FontSize="18"
+                           FontAttributes="Bold"/>
+
+                                    <Button Text="+"
+                            WidthRequest="40"
+                            HeightRequest="40"
+                            Command="{Binding IncreaseCallCommand}" />
+
+                                </HorizontalStackLayout>
+
+                                <!-- WON -->
+                                <HorizontalStackLayout Grid.Column="2"
+                                       Spacing="6"
+                                       VerticalOptions="Center"
+                                       IsVisible="{Binding IsWonVisible}">
+
+                                    <Button Text="−"
+                            WidthRequest="40"
+                            HeightRequest="40"
+                            Command="{Binding DecreaseWonCommand}" />
+
+                                    <Label Text="{Binding Won}"
+                           WidthRequest="30"
+                           HorizontalTextAlignment="Center"
+                           VerticalTextAlignment="Center"
+                           FontSize="18"
+                           FontAttributes="Bold"/>
+
+                                    <Button Text="+"
+                            WidthRequest="40"
+                            HeightRequest="40"
+                            Command="{Binding IncreaseWonCommand}" />
+
+                                </HorizontalStackLayout>
 
                             </Grid>
 

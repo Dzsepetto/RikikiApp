@@ -2,52 +2,48 @@
 using CommunityToolkit.Mvvm.Input;
 using RikikiApp.Models;
 using RikikiApp.Repositories;
+using RikikiApp.Services;
+using RikikiApp.ViewModel.Components;
+using RikikiApp.Views.Components;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
 namespace RikikiApp.ViewModels;
 
 public partial class ProfileViewVM : ObservableObject
 {
-    private readonly IPlayerRepository _players;
+    private readonly UserSessionService _session;
 
-    [ObservableProperty]
-    private string needsToLoginTxt = "For a better experience, login...";
+    public bool IsLoggedIn => _session.IsLoggedIn;
 
-    [ObservableProperty]
-    private string newPlayerName;
+    public string UserName =>
+        IsLoggedIn
+        ? _session.CurrentUser!.Name
+        : "Guest";
 
-    public ObservableCollection<Player> Players { get; } = new();
 
-    public ProfileViewVM(IPlayerRepository players)
+    public string ProfileImage =>
+        IsLoggedIn
+        ? "user.png" // majd később user-specifikus
+        : "default_user.png";
+
+    public int Wins = 0; //_stats?.Wins ?? 0;
+    public int Losses = 0; // _stats?.Losses ?? 0;
+    public int TotalGames = 0; // _stats?.TotalGames ?? 0;
+    private readonly NavigationService _nav;
+   private string NeedsToLoginTxt => IsLoggedIn ? "" : "Please log in";
+
+    public ProfileViewVM(IPlayerRepository players, NavigationService nav, UserSessionService session)
     {
-        _players = players;
+        _nav = nav;
+        _session = session;
     }
-    public async Task Initialize()
-    {
-        await LoadPlayers();
-    }
-    public async Task LoadPlayers()
-    {
-        Players.Clear();
-
-        var list = await _players.GetAllAsync();
-        foreach (var p in list)
-            Players.Add(p);
-    }
-
+   
     [RelayCommand]
-    private async Task AddPlayer()
+    private async Task MoveToPlayers()
     {
-        if (string.IsNullOrWhiteSpace(NewPlayerName))
-            return;
-
-        var player = new Player { Name = NewPlayerName };
-
-        await _players.AddAsync(player);
-
-        NewPlayerName = "";
-        await LoadPlayers();
+        await _nav.PushWithLoading<ManagePlayersView, ManagePlayersVM>();
     }
 }

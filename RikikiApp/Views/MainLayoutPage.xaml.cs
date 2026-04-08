@@ -1,3 +1,4 @@
+using RikikiApp.ViewModels;
 using System.Data;
 
 namespace RikikiApp.Views;
@@ -38,10 +39,10 @@ public partial class MainLayoutPage : ContentPage
         UpdateTabUI();
     }
 
-    void GoProfile(object sender, EventArgs e)
+    async void GoProfile(object sender, EventArgs e)
     {
         _currentTab = TabType.Profile;
-        _nav.SetRoot<ProfileView>();
+        await _nav.SetRoot<ProfileView, ProfileViewVM>();
         UpdateTabUI();
     }
 
