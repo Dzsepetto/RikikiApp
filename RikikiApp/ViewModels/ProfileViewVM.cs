@@ -1,14 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using RikikiApp.Models;
 using RikikiApp.Repositories;
 using RikikiApp.Services;
-using RikikiApp.ViewModel.Components;
+using RikikiApp.ViewModels.Components;
 using RikikiApp.Views.Components;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Runtime.CompilerServices;
 
 namespace RikikiApp.ViewModels;
 
@@ -44,6 +39,6 @@ public partial class ProfileViewVM : ObservableObject
     [RelayCommand]
     private async Task MoveToPlayers()
     {
-        await _nav.PushWithLoading<ManagePlayersView, ManagePlayersVM>();
+        await _nav.PushWithLoading<ManagePlayersView, ManagePlayersVM>(async vm => vm.InitAsync());
     }
 }

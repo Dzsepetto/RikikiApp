@@ -3,6 +3,8 @@ using CommunityToolkit.Mvvm.Input;
 using RikikiApp.Models;
 using RikikiApp.Repositories;
 using RikikiApp.Services;
+using RikikiApp.ViewModels;
+using RikikiApp.ViewModels.Popups;
 using RikikiApp.Views;
 using RikikiApp.Views.Popups;
 using System.Collections.ObjectModel;
@@ -47,7 +49,6 @@ public partial class GameSetupVM : ObservableObject, IInitializable
         Players.CollectionChanged += Players_CollectionChanged;
     }
 
-    // ✅ EZ FUT LE NAV UTÁN
     public async Task InitAsync()
     {
         if (!int.TryParse(GameId, out var id))
@@ -62,7 +63,6 @@ public partial class GameSetupVM : ObservableObject, IInitializable
 
         await LoadPlayers();
     }
-
     private async Task LoadPlayers()
     {
         if (_game == null)
@@ -97,7 +97,7 @@ public partial class GameSetupVM : ObservableObject, IInitializable
         if (_game == null)
             return;
 
-        var names = await _nav.ShowPopupAsync<AddPlayerPopup, AddPlayerPopupVM, List< string >> ();
+        var names = await _nav.ShowPopupAsync<AddPlayerPopup, AddPlayerPopupVM, List< string >> (async vm => vm.InitAsync());
 
         if (names == null || !names.Any())
             return;
@@ -153,7 +153,8 @@ public partial class GameSetupVM : ObservableObject, IInitializable
         if (_game == null)
             return;
 
-       await _nav.ShowPopupAsync<AddPlayerPopup, AddPlayerPopupVM, List<string>>();
+        await _nav.ShowPopupAsync<ShowStatsPopup, ShowStatsPopupVM, object?>(
+            vm => vm.InitAsync(_game.Id));
     }
 
     [RelayCommand]
@@ -165,9 +166,10 @@ public partial class GameSetupVM : ObservableObject, IInitializable
         await _games.UpsertAsync(_game);
         await _engine.StartGame(_game.Id);
 
-        await _nav.PushWithLoading<GamePlayView, GamePlayVM>(vm =>
+        await _nav.PushWithLoading<GamePlayView, GamePlayVM>(async vm =>
         {
             vm.GameId = _game.Id.ToString();
+            await vm.InitAsync();
         });
     }
 

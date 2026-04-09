@@ -9,7 +9,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Text;
 
-namespace RikikiApp.ViewModel.Components
+namespace RikikiApp.ViewModels.Components
 {
     public partial class ManagePlayersVM : ObservableObject, IInitializable
     {

@@ -6,7 +6,7 @@ using RikikiApp.Services;
 using CommunityToolkit.Maui.Views;
 using System.Collections.ObjectModel;
 
-namespace RikikiApp.ViewModel.Popups;
+namespace RikikiApp.ViewModels.Popups;
 
 public partial class AddGamePopupVM : ObservableObject, IPopupResults<Game>, IPopupAware
 {

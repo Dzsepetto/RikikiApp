@@ -6,7 +6,7 @@
     <Grid Padding="20" RowDefinitions="Auto,*">
 
         <!-- HEADER -->
-        <Grid ColumnDefinitions="Auto,*">
+        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="15">
 
             <Button Text="←"
                     Command="{Binding BackCommand}" />
@@ -116,7 +116,7 @@
                 </CollectionView>
 
                 <!-- BUTTONS -->
-                <VerticalStackLayout>
+                <VerticalStackLayout Spacing="15">
 
                     <Button Text="Fix Calls"
                             Command="{Binding FixCallsCommand}"
@@ -126,15 +126,11 @@
                             Command="{Binding EndRoundCommand}"
                             IsVisible="{Binding IsEndRoundVisible}" />
 
-                    <HorizontalStackLayout IsVisible="{Binding IsResultVisible}">
-                        <Button Text="Less" Command="{Binding LessCommand}" />
+                    <HorizontalStackLayout IsVisible="{Binding IsResultVisible}" HorizontalOptions="Center" Spacing="25" >
+                        <Button Text="Less" Command="{Binding LessCommand}" Background="Red" />
                         <Button Text="Same" Command="{Binding SameCommand}" />
-                        <Button Text="More" Command="{Binding MoreCommand}" />
+                        <Button Text="More" Command="{Binding MoreCommand}" Background="Green"/>
                     </HorizontalStackLayout>
-
-                    <Button Text="End Game"
-                            Command="{Binding EndGameCommand}"
-                            IsVisible="{Binding IsResultVisible}" />
 
                 </VerticalStackLayout>
 

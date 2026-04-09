@@ -1,7 +1,7 @@
 ﻿using RikikiApp.Data;
 using RikikiApp.Models;
 using RikikiApp.Services;
-using RikikiApp.ViewModel;
+using RikikiApp.ViewModels;
 
 namespace RikikiApp.Views;
 
@@ -20,7 +20,7 @@ public partial class MainView : ContentView
 
     private async void OpenGamesView(object sender, EventArgs e)
     {
-       await _nav.PushWithLoading<GameView, GameViewVM>();
+        await _nav.PushWithLoading<GameView, GameViewVM>(vm => vm.InitAsync());
     }
 
     private async void OnDbTestClicked(object sender, EventArgs e)

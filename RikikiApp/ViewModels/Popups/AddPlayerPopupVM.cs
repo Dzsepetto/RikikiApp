@@ -4,9 +4,9 @@ using CommunityToolkit.Mvvm.Input;
 using RikikiApp.Models;
 using RikikiApp.Repositories;
 using RikikiApp.Services;
-using RikikiApp.ViewModel;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
+
+namespace RikikiApp.ViewModels.Popups;
 
 public partial class AddPlayerPopupVM : ObservableObject, IInitializable, IPopupResults<List<string>>, IPopupAware
 {

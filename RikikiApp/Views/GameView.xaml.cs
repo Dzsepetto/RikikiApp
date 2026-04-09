@@ -1,4 +1,4 @@
-using RikikiApp.ViewModel;
+using RikikiApp.ViewModels;
 using System.Diagnostics;
 
 namespace RikikiApp.Views;

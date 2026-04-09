@@ -3,12 +3,12 @@ using CommunityToolkit.Mvvm.Input;
 using RikikiApp.Models;
 using RikikiApp.Repositories;
 using RikikiApp.Services;
-using RikikiApp.ViewModel.Popups;
+using RikikiApp.ViewModels.Popups;
 using RikikiApp.Views;
 using RikikiApp.Views.Popups;
 using System.Collections.ObjectModel;
 
-namespace RikikiApp.ViewModel;
+namespace RikikiApp.ViewModels;
 
 public partial class GameViewVM : ObservableObject, IInitializable
 {
@@ -116,18 +116,20 @@ public partial class GameViewVM : ObservableObject, IInitializable
 
         await ReloadGamesAsync();
 
-        await _nav.PushWithLoading<GameSetupView, GameSetupVM>(vm =>
+        await _nav.PushWithLoading<GameSetupView, GameSetupVM>(async vm =>
         {
             vm.GameId = game.Id.ToString();
+            await vm.InitAsync();
         });
     }
 
     [RelayCommand]
     private async Task OpenGame(int gameId)
     {
-        await _nav.PushWithLoading<GameSetupView, GameSetupVM>(vm =>
+        await _nav.PushWithLoading<GameSetupView, GameSetupVM>(async vm =>
         {
             vm.GameId = gameId.ToString();
+            await vm.InitAsync();
         });
     }
     [RelayCommand]

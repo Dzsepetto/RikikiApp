@@ -62,15 +62,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <AndroidResource Remove="ViewModels\**" />
-	  <Compile Remove="ViewModels\**" />
-	  <EmbeddedResource Remove="ViewModels\**" />
-	  <MauiCss Remove="ViewModels\**" />
-	  <MauiXaml Remove="ViewModels\**" />
-	  <None Remove="ViewModels\**" />
-	</ItemGroup>
-
-	<ItemGroup>
 	  <None Remove="Resources\Images\SVG\home_icon.svg" />
 	  <None Remove="Resources\Images\SVG\new_icon.svg" />
 	  <None Remove="Resources\Images\SVG\user_icon.svg" />

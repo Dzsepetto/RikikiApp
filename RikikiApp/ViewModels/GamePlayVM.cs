@@ -4,6 +4,7 @@ using RikikiApp.Models;
 using RikikiApp.Repositories;
 using RikikiApp.Services;
 using System.Collections.ObjectModel;
+using RikikiApp.ViewModels;
 
 public partial class GamePlayVM : ObservableObject, IInitializable
 {
@@ -19,7 +20,7 @@ public partial class GamePlayVM : ObservableObject, IInitializable
     private Game? _game;
     private Round? _round;
 
-    public ObservableCollection<CallView> Calls { get; } = new();
+    public ObservableCollection<CallViewVM> Calls { get; } = new();
     public ObservableCollection<ScoreView> Results { get; } = new();
 
     [ObservableProperty]
@@ -91,7 +92,7 @@ public partial class GamePlayVM : ObservableObject, IInitializable
         {
             dict.TryGetValue(p.Id, out var call);
 
-            Calls.Add(new CallView
+            Calls.Add(new CallViewVM
             {
                 CallId = call?.Id ?? 0,
                 GamePlayerId = p.Id,
@@ -125,7 +126,7 @@ public partial class GamePlayVM : ObservableObject, IInitializable
         IsResultVisible = true;
     }
 
-    // 🔥 COMMANDOK
+    // COMMANDOK
 
     [RelayCommand]
     private async Task FixCalls()
@@ -220,12 +221,6 @@ public partial class GamePlayVM : ObservableObject, IInitializable
 
     [RelayCommand]
     private async Task Back()
-    {
-        await _nav.Pop();
-    }
-
-    [RelayCommand]
-    private async Task EndGame()
     {
         await _nav.Pop();
     }

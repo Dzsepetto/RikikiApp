@@ -3,10 +3,9 @@ using Microsoft.Extensions.Logging;
 using RikikiApp.Data;
 using RikikiApp.Repositories;
 using RikikiApp.Services;
-using RikikiApp.ViewModel;
-using RikikiApp.ViewModel.Components;
-using RikikiApp.ViewModel.Popups;
 using RikikiApp.ViewModels;
+using RikikiApp.ViewModels.Components;
+using RikikiApp.ViewModels.Popups;
 using RikikiApp.Views;
 using RikikiApp.Views.Components;
 using RikikiApp.Views.Popups;
@@ -55,6 +54,7 @@ namespace RikikiApp
 
             builder.Services.AddTransient<GamePlayVM>();
             builder.Services.AddTransient<GamePlayView>();
+            builder.Services.AddTransient<CallViewVM>();
 
             builder.Services.AddTransient<ProfileViewVM>();
             builder.Services.AddTransient<ProfileView>();
@@ -73,6 +73,9 @@ namespace RikikiApp
 
             builder.Services.AddTransient<AddPlayerPopup>();
             builder.Services.AddTransient<AddPlayerPopupVM>();
+
+            builder.Services.AddTransient<ShowStatsPopup>();
+            builder.Services.AddTransient<ShowStatsPopupVM>();
 
             //==== ======= ====
 
