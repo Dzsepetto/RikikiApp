@@ -64,8 +64,9 @@ public partial class GamePlayVM : ObservableObject, IInitializable
             return;
 
         _round = (await _rounds.GetByGameIdAsync(_game.Id))
-            .OrderBy(r => r.RoundIndex)
-            .FirstOrDefault(r => !r.isCompleted);
+            .Where(r => r.State != RoundState.Finished)
+            .OrderByDescending(r => r.RoundIndex)
+            .FirstOrDefault();
 
         if (_round == null)
             return;
@@ -73,6 +74,13 @@ public partial class GamePlayVM : ObservableObject, IInitializable
         RoundText = $"Round {_round.RoundIndex} ({_round.HandSize} cards)";
 
         await LoadCalls();
+
+        if (_round.State == RoundState.WaitingForNextRound)
+        {
+            var calls = await _calls.GetByRoundIdAsync(_round.Id);
+            await LoadResults(calls.ToList());
+        }
+
         UpdateUI();
     }
 
@@ -113,13 +121,31 @@ public partial class GamePlayVM : ObservableObject, IInitializable
         if (_round == null)
             return;
 
-        IsGameVisible = true;
-        IsResultVisible = false;
+        switch (_round.State)
+        {
+            case RoundState.Calling:
+                IsGameVisible = true;
+                IsResultVisible = false;
 
-        IsFixCallsVisible = _round.State == RoundState.Calling;
-        IsEndRoundVisible = _round.State == RoundState.Playing;
+                IsFixCallsVisible = true;
+                IsEndRoundVisible = false;
+                break;
+
+            case RoundState.Playing:
+                IsGameVisible = true;
+                IsResultVisible = false;
+
+                IsFixCallsVisible = false;
+                IsEndRoundVisible = true;
+                break;
+
+            case RoundState.WaitingForNextRound:
+                IsGameVisible = false;
+                IsEndRoundVisible = false;
+                IsResultVisible = true;
+                break;
+        }
     }
-
     private void ShowResultsUI()
     {
         IsGameVisible = false;
@@ -167,7 +193,11 @@ public partial class GamePlayVM : ObservableObject, IInitializable
 
         await _engine.EndRound(calls);
 
+        _round.State = RoundState.WaitingForNextRound;
+
         await LoadResults(calls);
+
+        UpdateUI();
     }
 
     private async Task LoadResults(List<Call> calls)
@@ -205,13 +235,24 @@ public partial class GamePlayVM : ObservableObject, IInitializable
 
     private async Task CreateNextRound(int size)
     {
+        if (_round == null)
+            return;
+
         if (size <= 0)
         {
             await _nav.Pop();
             return;
         }
 
-        _round = await _engine.CreateNextRound(_round!.GameId, size);
+        var next = await _engine.FinishRoundAndCreateNext(_round.GameId, size);
+
+        if (next == null)
+        {
+            await _nav.Pop();
+            return;
+        }
+
+        _round = next;
 
         RoundText = $"Round {_round.RoundIndex} ({_round.HandSize} cards)";
 

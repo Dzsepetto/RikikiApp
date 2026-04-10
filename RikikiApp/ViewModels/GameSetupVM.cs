@@ -165,12 +165,15 @@ public partial class GameSetupVM : ObservableObject, IInitializable
 
         await _games.UpsertAsync(_game);
         await _engine.StartGame(_game.Id);
-
-        await _nav.PushWithLoading<GamePlayView, GamePlayVM>(async vm =>
+        if (_game.Status != GameStatus.Setup)
         {
-            vm.GameId = _game.Id.ToString();
-            await vm.InitAsync();
-        });
+            await _nav.PushWithLoading<GamePlayView, GamePlayVM>(async vm =>
+            {
+                vm.GameId = _game.Id.ToString();
+                await vm.InitAsync();
+            });
+            return;
+        }
     }
 
     [RelayCommand]

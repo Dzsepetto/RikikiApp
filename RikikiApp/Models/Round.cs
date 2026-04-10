@@ -19,5 +19,6 @@ public enum RoundState
 {
     Calling,
     Playing,
+    WaitingForNextRound,
     Finished
 }

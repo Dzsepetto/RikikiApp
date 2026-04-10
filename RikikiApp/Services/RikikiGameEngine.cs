@@ -28,6 +28,9 @@ public class RikikiGameEngine
         if (game == null)
             return;
 
+        if (game.Status != GameStatus.Setup)
+            return;
+
         var players = await _players.GetByGameIdAsync(gameId);
 
         if (players.Count < 2)
@@ -106,10 +109,10 @@ public class RikikiGameEngine
         await _rounds.UpdateAsync(round);
     }
 
-    public async Task<Round?> EndRound(List<Call> calls)
+    public async Task EndRound(List<Call> calls)
     {
         if (calls.Count == 0)
-            return null;
+            return;
 
         var round = await _rounds.GetByIdAsync(calls.First().RoundId);
 
@@ -121,14 +124,29 @@ public class RikikiGameEngine
             await _calls.UpdateAsync(call);
         }
 
-        round.State = RoundState.Finished;
-        round.isCompleted = true;
+        round.State = RoundState.WaitingForNextRound;
 
         await _rounds.UpdateAsync(round);
-
-        return await NextRound(round.GameId);
     }
+    public async Task<Round?> FinishRoundAndCreateNext(int gameId, int nextHandSize)
+    {
+        var rounds = await _rounds.GetByGameIdAsync(gameId);
 
+        var current = rounds
+            .Where(r => r.State == RoundState.WaitingForNextRound)
+            .OrderByDescending(r => r.RoundIndex)
+            .FirstOrDefault();
+
+        if (current == null)
+            return null;
+
+        current.State = RoundState.Finished;
+        current.isCompleted = true;
+
+        await _rounds.UpdateAsync(current);
+
+        return await CreateNextRound(gameId, nextHandSize);
+    }
     public async Task<Round?> NextRound(int gameId)
     {
         var rounds = await _rounds.GetByGameIdAsync(gameId);
