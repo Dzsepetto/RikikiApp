@@ -58,7 +58,7 @@
 
                                 <BindableLayout.ItemTemplate>
                                     <DataTemplate>
-                                        <Border BackgroundColor="#222"
+                                        <Border BackgroundColor="LightGray"
                                                 Padding="6,2"
                                                 StrokeShape="RoundRectangle 8"
                                                 Margin="3">

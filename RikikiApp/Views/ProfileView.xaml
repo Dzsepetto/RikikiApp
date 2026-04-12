@@ -73,16 +73,16 @@
 
                 <Button Text="Stats"
                         Grid.Row="0"
-                        Grid.Column="1"/>
+                        Grid.Column="1" IsEnabled="False"/>
 
                 <Button Text="Settings"
                         Grid.Row="1"
-                        Grid.Column="0"/>
+                        Grid.Column="0" IsEnabled="False"/>
 
                 <Button Text="Login / Logout"
                         Grid.Row="1"
                         Grid.Column="1"
-                        Command="{Binding LoginCommand}"/>
+                        Command="{Binding LoginCommand}" IsEnabled="False"/>
             </Grid>
 
         </VerticalStackLayout>

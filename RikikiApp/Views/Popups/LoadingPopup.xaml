@@ -3,14 +3,14 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:mct="clr-namespace:CommunityToolkit.Maui.Views;assembly=CommunityToolkit.Maui"
              x:Class="RikikiApp.Views.Popups.LoadingPopup" >
-    <Grid BackgroundColor="#80000000">
+    <Grid BackgroundColor="Transparent">
         <VerticalStackLayout 
             HorizontalOptions="Center" 
             VerticalOptions="Center"
             Spacing="10">
 
             <ActivityIndicator IsRunning="True" />
-            <Label Text="Loading..." TextColor="White" />
+            <Label Text="Loading..." TextColor="Black" />
         </VerticalStackLayout>
     </Grid>
 </mct:Popup>

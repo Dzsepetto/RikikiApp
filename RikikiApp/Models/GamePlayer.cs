@@ -1,8 +1,9 @@
-﻿using SQLite;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using SQLite;
 
 namespace RikikiApp.Models;
 
-public class GamePlayer
+public partial class GamePlayer : ObservableObject
 {
     [PrimaryKey, AutoIncrement]
     public int Id { get; set; }
@@ -13,7 +14,9 @@ public class GamePlayer
     [Indexed]
     public int? PlayerId { get; set; }
 
-    public int SeatOrder { get; set; }
+    [ObservableProperty]
+    private int seatOrder;
 
-    public string GuestName { get; set; }
+    [ObservableProperty]
+    private string guestName;
 }

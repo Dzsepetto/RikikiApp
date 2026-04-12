@@ -16,6 +16,7 @@ public partial class GameSetupVM : ObservableObject, IInitializable
     private readonly IGamePlayerRepository _gamePlayers;
     private readonly RikikiGameEngine _engine;
     private readonly NavigationService _nav;
+    private bool _orderChanged = false;
 
     public string GameId { get; set; }
 
@@ -91,21 +92,41 @@ public partial class GameSetupVM : ObservableObject, IInitializable
             IsPlayersExpanded = true;
     }
 
+    public void MovePlayer(GamePlayer from, GamePlayer to)
+    {
+        var fromIndex = Players.IndexOf(from);
+        var toIndex = Players.IndexOf(to);
+
+        if (fromIndex == toIndex || fromIndex < 0 || toIndex < 0)
+            return;
+
+        Players.Move(fromIndex, toIndex);
+
+        for (int i = 0; i < Players.Count; i++)
+        {
+            Players[i].SeatOrder = i + 1;
+        }
+        OnPropertyChanged(nameof(Players));
+
+        _orderChanged = true;
+    }
+
     [RelayCommand]
     private async Task AddPlayer()
     {
         if (_game == null)
             return;
 
-        var names = await _nav.ShowPopupAsync<AddPlayerPopup, AddPlayerPopupVM, List< string >> (async vm => vm.InitAsync());
+        var names = await _nav.ShowPopupAsync<AddPlayerPopup, AddPlayerPopupVM, List<string>>(
+            async vm => await vm.InitAsync());
 
         if (names == null || !names.Any())
             return;
 
+        var players = await _gamePlayers.GetByGameIdAsync(_game.Id);
+
         foreach (var name in names)
         {
-            var players = await _gamePlayers.GetByGameIdAsync(_game.Id);
-
             var nextSeat = players
                 .Select(p => p.SeatOrder)
                 .DefaultIfEmpty(0)
@@ -118,6 +139,7 @@ public partial class GameSetupVM : ObservableObject, IInitializable
                 GuestName = name
             };
 
+            players.Add(gp);
             await _gamePlayers.AddAsync(gp);
         }
 
@@ -163,6 +185,17 @@ public partial class GameSetupVM : ObservableObject, IInitializable
         if (_game == null)
             return;
 
+        if (_orderChanged)
+        {
+            foreach (var p in Players)
+            {
+                await _gamePlayers.UpdateAsync(p);
+            }
+
+            _orderChanged = false;
+        }
+
+
         await _games.UpsertAsync(_game);
         await _engine.StartGame(_game.Id);
         if (_game.Status != GameStatus.Setup)
@@ -189,9 +222,17 @@ public partial class GameSetupVM : ObservableObject, IInitializable
     }
 
     [RelayCommand]
-    private async void Back()
+    private async Task Back()
     {
-       await _nav.Pop();
+        if (_orderChanged)
+        {
+            foreach (var p in Players)
+            {
+                await _gamePlayers.UpdateAsync(p);
+            }
+        }
+
+        await _nav.Pop();
     }
 
     [RelayCommand]

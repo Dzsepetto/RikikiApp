@@ -32,7 +32,9 @@
                             <Label Text="{Binding PlayersTitle}" FontAttributes="Bold" FontSize="16" />
                             <Label Grid.Column="1" Text="▼">
                                 <Label.Triggers>
-                                    <DataTrigger TargetType="Label" Binding="{Binding Source={x:Reference PlayersExpander}, Path=IsExpanded}" Value="True">
+                                    <DataTrigger TargetType="Label"
+                                                 Binding="{Binding Source={x:Reference PlayersExpander}, Path=IsExpanded}"
+                                                 Value="True">
                                         <Setter Property="Rotation" Value="180"/>
                                     </DataTrigger>
                                 </Label.Triggers>
@@ -46,85 +48,78 @@
                         <VerticalStackLayout Spacing="10">
 
                             <!-- EMPTY STATE -->
-                            <VerticalStackLayout IsVisible="{Binding IsEmpty}"
-                         Spacing="6"
-                         Padding="10">
-
-                                <Label Text="No players yet"
-               FontAttributes="Bold"
-               HorizontalOptions="Center" />
-
+                            <VerticalStackLayout IsVisible="{Binding IsEmpty}" Spacing="6" Padding="10">
+                                <Label Text="No players yet" FontAttributes="Bold" HorizontalOptions="Center" />
                                 <Label Text="Add players to start the game"
-               FontSize="12"
-               HorizontalOptions="Center"
-               Opacity="0.7" />
-
+                                       FontSize="12"
+                                       HorizontalOptions="Center"
+                                       Opacity="0.7" />
                             </VerticalStackLayout>
 
-                            <!-- LISTA -->
-                            <VerticalStackLayout x:Name="PlayersList"
-                         IsVisible="{Binding IsNotEmpty}"
-                         BindableLayout.ItemsSource="{Binding Players}"
-                         Spacing="6"
-                         Margin="0,6">
+                            <!-- ✅ LISTA (CollectionView-re cserélve) -->
+                            <CollectionView x:Name="PlayersList"
+                                            ItemsSource="{Binding Players}"
+                                            IsVisible="{Binding IsNotEmpty}"
+                                            SelectionMode="None"
+                                            HeightRequest="300"
+                                            Margin="0,6">
 
-                                <BindableLayout.ItemTemplate>
+                                <CollectionView.ItemTemplate>
                                     <DataTemplate>
-                                        <Grid ColumnDefinitions="50,*,50"
-                      Padding="8">
+                                        <Grid ColumnDefinitions="50,*,50" Padding="8">
+                                            <Grid.GestureRecognizers>
+                                                <DropGestureRecognizer Drop="OnDrop" AllowDrop="True"/>
+                                            </Grid.GestureRecognizers>
 
-                                            <Border Grid.Column="0"
-                            BackgroundColor="#E8E8E8"
-                            Padding="6">
+                                            <Border Grid.Column="0" BackgroundColor="#E8E8E8" Padding="6">
+                                                <Border.GestureRecognizers>
+                                                    <DragGestureRecognizer DragStarting="OnDragStarting"/>
+                                                </Border.GestureRecognizers>
                                                 <Border.StrokeShape>
                                                     <RoundRectangle CornerRadius="10"/>
                                                 </Border.StrokeShape>
 
-                                                <Label Text="{Binding SeatOrder}"
-                               HorizontalOptions="Center"/>
+                                                <Label Text="{Binding SeatOrder}" HorizontalOptions="Center"/>
                                             </Border>
 
                                             <Label Grid.Column="1"
-                           Text="{Binding GuestName}"
-                           VerticalOptions="Center"/>
+                                                   Text="{Binding GuestName}"
+                                                   VerticalOptions="Center"/>
 
-                                <Button Grid.Column="2"
-                                        Text="🗑"
-                                        BackgroundColor="Transparent"
-                                        Command="{Binding Source={x:Reference Root}, Path=BindingContext.DeletePlayerCommand}"
-                                        CommandParameter="{Binding .}" />
+                                            <Button Grid.Column="2"
+                                                    Text="🗑"
+                                                    BackgroundColor="Transparent"
+                                                    Command="{Binding Source={x:Reference Root}, Path=BindingContext.DeletePlayerCommand}"
+                                                    CommandParameter="{Binding .}" />
                                         </Grid>
                                     </DataTemplate>
-                                </BindableLayout.ItemTemplate>
+                                </CollectionView.ItemTemplate>
 
-                            </VerticalStackLayout>
+                            </CollectionView>
 
                         </VerticalStackLayout>
                     </VerticalStackLayout>
 
                 </toolkit:Expander>
-                <Button Text="+ Add player" Command="{Binding AddPlayerCommand}" />
 
+                <Button Text="+ Add player" Command="{Binding AddPlayerCommand}" />
                 <Button Text="Show Stats" Command="{Binding ShowStatsCommand}" />
 
             </VerticalStackLayout>
 
             <!-- BOTTOM BUTTONS -->
-            <Grid Grid.Row="2"
-                  ColumnDefinitions="*,*"
-                  ColumnSpacing="10"
-                  Margin="0,12,0,0">
+            <Grid Grid.Row="2" ColumnDefinitions="*,*" ColumnSpacing="10" Margin="0,12,0,0">
 
                 <Button Grid.Column="0"
-        Text="End game"
-        BackgroundColor="Red"
-        TextColor="White"
-        Command="{Binding EndGameCommand}" />
+                        Text="End game"
+                        BackgroundColor="Red"
+                        TextColor="White"
+                        Command="{Binding EndGameCommand}"/>
 
                 <Button Grid.Column="1"
-                Text="Start game"
-                BackgroundColor="Green"
-                Command="{Binding StartGameCommand}" />
+                        Text="Start game"
+                        BackgroundColor="Green"
+                        Command="{Binding StartGameCommand}" />
 
             </Grid>
 
