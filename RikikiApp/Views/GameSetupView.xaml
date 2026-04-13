@@ -66,34 +66,47 @@
 
                                 <CollectionView.ItemTemplate>
                                     <DataTemplate>
-                                        <Grid ColumnDefinitions="50,*,50" Padding="8">
-                                            <Grid.GestureRecognizers>
-                                                <DropGestureRecognizer Drop="OnDrop" AllowDrop="True"/>
-                                            </Grid.GestureRecognizers>
+                                        <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="40,50,*,50" Padding="8">
+                                            <BoxView Grid.Row="0" Grid.ColumnSpan="4" HeightRequest="3" BackgroundColor="Blue" IsVisible="{Binding IsDropTarget}" />
+                                            <Grid Grid.Row="1" Grid.ColumnSpan="4" ColumnDefinitions="40,50,*,50">
+                                                <Grid.GestureRecognizers>
+                                                    <DropGestureRecognizer Drop="OnDrop" DragOver="OnDragOver" AllowDrop="True"/>
+                                                </Grid.GestureRecognizers>
 
-                                            <Border Grid.Column="0" BackgroundColor="#E8E8E8" Padding="6">
-                                                <Border.GestureRecognizers>
-                                                    <DragGestureRecognizer DragStarting="OnDragStarting"/>
-                                                </Border.GestureRecognizers>
-                                                <Border.StrokeShape>
-                                                    <RoundRectangle CornerRadius="10"/>
-                                                </Border.StrokeShape>
+                                                <!-- DRAG -->
+                                                <Label Grid.Column="0" Text="☰" FontSize="18" VerticalOptions="Center" HorizontalOptions="Center">
+                                                    <Label.GestureRecognizers>
+                                                        <DragGestureRecognizer DragStarting="OnDragStarting"/>
+                                                    </Label.GestureRecognizers>
+                                                </Label>
 
-                                                <Label Text="{Binding SeatOrder}" HorizontalOptions="Center"/>
-                                            </Border>
+                                                <!-- SEAT -->
+                                                <Border Grid.Column="1" BackgroundColor="#E8E8E8" Padding="6">
+                                                    <Border.StrokeShape>
+                                                        <RoundRectangle CornerRadius="10"/>
+                                                    </Border.StrokeShape>
+                                                    <Label Text="{Binding SeatOrder}" HorizontalOptions="Center"/>
+                                                </Border>
 
-                                            <Label Grid.Column="1"
-                                                   Text="{Binding GuestName}"
-                                                   VerticalOptions="Center"/>
+                                                <!-- NAME -->
+                                                <Label Grid.Column="2" Text="{Binding GuestName}" VerticalOptions="Center" LineBreakMode="TailTruncation"/>
 
-                                            <Button Grid.Column="2"
-                                                    Text="🗑"
-                                                    BackgroundColor="Transparent"
-                                                    Command="{Binding Source={x:Reference Root}, Path=BindingContext.DeletePlayerCommand}"
-                                                    CommandParameter="{Binding .}" />
+                                                <!-- DELETE -->
+                                                <Button Grid.Column="3" Text="🗑" BackgroundColor="Transparent" Command="{Binding Source={x:Reference Root}, Path=BindingContext.DeletePlayerCommand}" CommandParameter="{Binding .}" />
+                                            </Grid>
                                         </Grid>
                                     </DataTemplate>
                                 </CollectionView.ItemTemplate>
+
+                                <CollectionView.Footer>
+                                    <Grid HeightRequest="60">
+                                        <Grid.GestureRecognizers>
+                                            <DropGestureRecognizer Drop="OnDropToEnd" AllowDrop="True"/>
+                                        </Grid.GestureRecognizers>
+
+                                        <BoxView HeightRequest="3" BackgroundColor="Blue" VerticalOptions="Start" IsVisible="{Binding Source={x:Reference Root}, Path=BindingContext.IsDragging}" />
+                                    </Grid>
+                                </CollectionView.Footer>
 
                             </CollectionView>
 

@@ -3,7 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using RikikiApp.Models;
 using RikikiApp.Repositories;
 using RikikiApp.Services;
-using RikikiApp.ViewModels;
+using RikikiApp.ViewModels.UiWrappers;
 using RikikiApp.ViewModels.Popups;
 using RikikiApp.Views;
 using RikikiApp.Views.Popups;
@@ -22,7 +22,7 @@ public partial class GameSetupVM : ObservableObject, IInitializable
 
     private Game? _game;
 
-    public ObservableCollection<GamePlayer> Players { get; } = new();
+    public ObservableCollection<GamePlayerItemVM   > Players { get; } = new();
 
     [ObservableProperty]
     private string title;
@@ -32,6 +32,9 @@ public partial class GameSetupVM : ObservableObject, IInitializable
 
     [ObservableProperty]
     private bool isPlayersExpanded;
+
+    [ObservableProperty]
+    private bool isDragging;
 
     public bool IsEmpty => Players.Count == 0;
     public bool IsNotEmpty => !IsEmpty;
@@ -74,7 +77,7 @@ public partial class GameSetupVM : ObservableObject, IInitializable
         var players = await _gamePlayers.GetByGameIdAsync(_game.Id);
 
         foreach (var p in players.OrderBy(x => x.SeatOrder))
-            Players.Add(p);
+            Players.Add(new GamePlayerItemVM(p));
 
         PlayersTitle = $"Players ({Players.Count})";
         IsPlayersExpanded = Players.Count == 0;
@@ -92,25 +95,31 @@ public partial class GameSetupVM : ObservableObject, IInitializable
             IsPlayersExpanded = true;
     }
 
-    public void MovePlayer(GamePlayer from, GamePlayer to)
+    public void MovePlayerToIndex(GamePlayerItemVM player, int newIndex)
     {
-        var fromIndex = Players.IndexOf(from);
-        var toIndex = Players.IndexOf(to);
+        var oldIndex = Players.IndexOf(player);
 
-        if (fromIndex == toIndex || fromIndex < 0 || toIndex < 0)
+        if (oldIndex == -1)
             return;
 
-        Players.Move(fromIndex, toIndex);
+        if (newIndex > Players.Count)
+            newIndex = Players.Count;
+
+        if (oldIndex < newIndex)
+            newIndex--;
+
+        if (oldIndex == newIndex)
+            return;
+
+        Players.Move(oldIndex, newIndex);
 
         for (int i = 0; i < Players.Count; i++)
         {
             Players[i].SeatOrder = i + 1;
         }
-        OnPropertyChanged(nameof(Players));
 
         _orderChanged = true;
     }
-
     [RelayCommand]
     private async Task AddPlayer()
     {
@@ -147,7 +156,7 @@ public partial class GameSetupVM : ObservableObject, IInitializable
     }
 
     [RelayCommand]
-    private async Task DeletePlayer(GamePlayer player)
+    private async Task DeletePlayer(GamePlayerItemVM player)
     {
         if (_game == null)
             return;
@@ -189,7 +198,7 @@ public partial class GameSetupVM : ObservableObject, IInitializable
         {
             foreach (var p in Players)
             {
-                await _gamePlayers.UpdateAsync(p);
+                await _gamePlayers.UpdateAsync(p.Model);
             }
 
             _orderChanged = false;
@@ -228,7 +237,7 @@ public partial class GameSetupVM : ObservableObject, IInitializable
         {
             foreach (var p in Players)
             {
-                await _gamePlayers.UpdateAsync(p);
+                await _gamePlayers.UpdateAsync(p.Model);
             }
         }
 

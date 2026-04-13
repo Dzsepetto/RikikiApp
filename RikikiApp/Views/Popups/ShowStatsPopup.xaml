@@ -12,77 +12,40 @@
             <local:ScoreToColorConverter x:Key="ScoreToColorConverter" />
         </ResourceDictionary>
     </toolkit:Popup.Resources>
-
     <VerticalStackLayout Spacing="12" Padding="10">
-
-        <Label Text="Game stats"
-               FontAttributes="Bold"
-               FontSize="18" />
-
+        <Label Text="Game stats" FontAttributes="Bold" FontSize="18" />
         <CollectionView ItemsSource="{Binding Stats}">
-
             <CollectionView.Header>
                 <Grid ColumnDefinitions="*,Auto">
                     <Label Text="Player" FontAttributes="Bold" />
                     <Label Grid.Column="1" Text="Total" FontAttributes="Bold" />
                 </Grid>
             </CollectionView.Header>
-
             <CollectionView.ItemTemplate>
                 <DataTemplate>
                     <toolkit:Expander>
-
                         <toolkit:Expander.Header>
                             <Grid ColumnDefinitions="*,Auto" Padding="6">
-                                <Label Text="{Binding Name}"
-                                       FontAttributes="Bold" />
-
-                                <Label Grid.Column="1"
-                                       Text="{Binding TotalScore}"
-                                       FontAttributes="Bold"
-                                       HorizontalOptions="End" />
+                                <Label Text="{Binding Name}" FontAttributes="Bold" />
+                                <Label Grid.Column="1" Text="{Binding TotalScore}" FontAttributes="Bold" HorizontalOptions="End" />
                             </Grid>
                         </toolkit:Expander.Header>
-
                         <VerticalStackLayout Padding="6" Spacing="6">
-                            <Label Text="Round scores"
-                                   FontSize="12"
-                                   Opacity="0.7" />
-
-                            <FlexLayout
-                                BindableLayout.ItemsSource="{Binding RoundScores}"
-                                Direction="Row"
-                                Wrap="Wrap"
-                                AlignItems="Start"
-                                JustifyContent="Start">
-
+                            <Label Text="Round scores" FontSize="12" Opacity="0.7" />
+                            <FlexLayout BindableLayout.ItemsSource="{Binding RoundScores}" Direction="Row" Wrap="Wrap" AlignItems="Start" JustifyContent="Start">
                                 <BindableLayout.ItemTemplate>
                                     <DataTemplate>
-                                        <Border BackgroundColor="LightGray"
-                                                Padding="6,2"
-                                                StrokeShape="RoundRectangle 8"
-                                                Margin="3">
-
-                                            <Label
-                                                Text="{Binding ., TargetNullValue='-'}"
-                                                TextColor="{Binding ., Converter={StaticResource ScoreToColorConverter}}"
-                                                FontSize="12" />
-
+                                        <Border BackgroundColor="LightGray" Padding="6,2" StrokeShape="RoundRectangle 8" Margin="3">
+                                            <Label Text="{Binding ., TargetNullValue='-'}" TextColor="{Binding ., Converter={StaticResource ScoreToColorConverter}}" FontSize="12" />
                                         </Border>
                                     </DataTemplate>
                                 </BindableLayout.ItemTemplate>
                             </FlexLayout>
                         </VerticalStackLayout>
-
                     </toolkit:Expander>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
-
         </CollectionView>
-
-        <Button Text="Close"
-                Command="{Binding CloseCommand}"
-                HorizontalOptions="End" />
-
+        <Button Text="Close" Command="{Binding CloseCommand}" HorizontalOptions="End" />
     </VerticalStackLayout>
 </toolkit:Popup>
