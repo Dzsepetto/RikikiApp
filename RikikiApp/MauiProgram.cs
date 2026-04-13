@@ -36,6 +36,7 @@ namespace RikikiApp
             builder.Services.AddSingleton<IRoundRepository, SQLiteRoundRepository>();
             builder.Services.AddSingleton<ICallRepository, SQLiteCallRepository>();
             builder.Services.AddSingleton<IPlayerRepository, SQLitePlayerRepository>();
+            builder.Services.AddSingleton<IUserRepository, SQLiteUserRepository>();
 
             //services
             builder.Services.AddSingleton<RikikiGameEngine>();

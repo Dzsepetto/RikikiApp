@@ -21,10 +21,16 @@
                 </Frame>
 
                 <!-- Username -->
-                <Label Text="{Binding UserName}"
-                       FontSize="20"
-                       FontAttributes="Bold"
-                       HorizontalOptions="Center"/>
+                <Entry Text="{Binding EditableUserName}"
+       FontSize="20"
+       FontAttributes="Bold"
+       HorizontalTextAlignment="Center"
+       HorizontalOptions="Center"
+       WidthRequest="200" />
+
+                <Button Text="Save name"
+        Command="{Binding SaveNameCommand}"
+        HorizontalOptions="Center" />
 
                 <!-- Not logged in -->
                 <Label Text="{Binding NeedsToLoginTxt}"

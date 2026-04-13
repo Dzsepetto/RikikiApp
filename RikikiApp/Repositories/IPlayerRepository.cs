@@ -6,7 +6,8 @@ namespace RikikiApp.Repositories
     {
         Task<List<Player>> GetAllAsync();
         Task<Player?> GetByIdAsync(int id);
-        Task AddAsync(Player player);
+        Task<Player?> GetByUserIdAsync(int userId);
+        Task<int> AddAsync(Player player);
         Task UpdateAsync(Player player);
         Task DeleteAsync(int id);
     }

@@ -19,4 +19,5 @@ public partial class GamePlayer : ObservableObject
 
     [ObservableProperty]
     private string guestName;
+
 }

@@ -26,19 +26,18 @@ namespace RikikiApp.Repositories
             return await conn.Table<Player>()
                              .FirstOrDefaultAsync(p => p.Id == id);
         }
-
-        public async Task AddAsync(Player player)
+        public async Task<Player?> GetByUserIdAsync(int userId)
         {
             var conn = await _db.GetAsync();
 
-            var existing = await conn.Table<Player>()
-                .FirstOrDefaultAsync(p => p.Name == player.Name);
+            return await conn.Table<Player>()
+                .FirstOrDefaultAsync(p => p.UserId == userId);
+        }
 
-            if (existing == null)
-            {
-                await conn.InsertAsync(player);
-            }
-
+        public async Task<int> AddAsync(Player player)
+        {
+            var conn = await _db.GetAsync();
+            return await conn.InsertAsync(player);
         }
 
         public async Task UpdateAsync(Player player)

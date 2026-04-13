@@ -1,32 +1,37 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using RikikiApp.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace RikikiApp.ViewModels.UiWrappers
 {
     public partial class GamePlayerItemVM : ObservableObject
     {
+        private readonly int? _localPlayerId;
+
         public GamePlayer Model { get; }
 
-        public GamePlayerItemVM(GamePlayer model)
+        public GamePlayerItemVM(GamePlayer model, int? localPlayerId)
         {
             Model = model;
+            _localPlayerId = localPlayerId;
         }
+
         public int Id => Model.Id;
-
         public int GameId => Model.GameId;
-
         public int? PlayerId => Model.PlayerId;
+
+        public bool IsLocalPlayer => PlayerId.HasValue && _localPlayerId == PlayerId.Value;
+        public bool CanDelete => !IsLocalPlayer;
 
         public int SeatOrder
         {
             get => Model.SeatOrder;
             set
             {
-                Model.SeatOrder = value;
-                OnPropertyChanged();
+                if (Model.SeatOrder != value)
+                {
+                    Model.SeatOrder = value;
+                    OnPropertyChanged();
+                }
             }
         }
 
@@ -35,13 +40,15 @@ namespace RikikiApp.ViewModels.UiWrappers
             get => Model.GuestName;
             set
             {
-                Model.GuestName = value;
-                OnPropertyChanged();
+                if (Model.GuestName != value)
+                {
+                    Model.GuestName = value;
+                    OnPropertyChanged();
+                }
             }
         }
 
         [ObservableProperty]
         private bool isDropTarget;
-
     }
 }
