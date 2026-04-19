@@ -30,26 +30,26 @@ public partial class MainLayoutPage : ContentPage
 
         _initialized = true;
 
-        _nav.SetRoot<MainView>();
+         _nav.SetRoot<MainView, MainViewVM>();
     }
-    void GoHome(object sender, EventArgs e)
+    async void GoHome(object sender, EventArgs e)
     {
         _currentTab = TabType.Home;
-        _nav.SetRoot<MainView>();
+        await _nav.SetRoot<MainView, MainViewVM>();
         UpdateTabUI();
     }
 
     async void GoProfile(object sender, EventArgs e)
     {
         _currentTab = TabType.Profile;
-        await _nav.SetRoot<ProfileView, ProfileViewVM>();
+        await _nav.SetRoot<ProfileView, ProfileViewVM>(async vm => await vm.InitAsync());
         UpdateTabUI();
     }
 
-    void GoStats(object sender, EventArgs e)
+    async void GoStats(object sender, EventArgs e)
     {
         _currentTab = TabType.Stats;
-        _nav.SetRoot<StatsView>();
+        await _nav.SetRoot<StatsView, StatsViewVM>();
         UpdateTabUI();
     }
     void UpdateTabUI()

@@ -63,8 +63,10 @@ namespace RikikiApp
             builder.Services.AddTransient<ManagePlayersVM>();
 
             builder.Services.AddTransient<MainView>();
+            builder.Services.AddTransient<MainViewVM>();
 
             builder.Services.AddTransient<StatsView>();
+            builder.Services.AddTransient<StatsViewVM>();
 
             builder.Services.AddTransient<LoadingPopup>();
 

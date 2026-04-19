@@ -17,16 +17,6 @@ public class NavigationService
     private MainLayoutPage GetMainLayout()
         => (MainLayoutPage)Application.Current.MainPage;
 
-    public void SetRoot<TView>() where TView : View
-    {
-        var view = _services.GetRequiredService<TView>();
-
-        _stack.Clear();
-        _stack.Push(view);
-
-        GetMainLayout().SetContent(view);
-    }
-
     public async Task SetRoot<TView, TViewModel>(Func<TViewModel, Task>? initAsync = null)
         where TView : View
         where TViewModel : class
@@ -43,6 +33,26 @@ public class NavigationService
         _stack.Push(view);
 
         GetMainLayout().SetContent(view);
+    }
+    public async Task SetRootWithLoading<TView, TViewModel>(Func<TViewModel, Task>? initAsync = null)
+    where TView : View
+    where TViewModel : class
+    {
+        await RunWithLoading(async () =>
+        {
+            var view = _services.GetRequiredService<TView>();
+            var vm = _services.GetRequiredService<TViewModel>();
+
+            view.BindingContext = vm;
+
+            if (initAsync != null)
+                await initAsync(vm);
+
+            _stack.Clear();
+            _stack.Push(view);
+
+            GetMainLayout().SetContent(view);
+        });
     }
 
     public async Task PushWithLoading<TView, TViewModel>(Func<TViewModel, Task>? initAsync = null)

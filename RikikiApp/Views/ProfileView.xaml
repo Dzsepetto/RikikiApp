@@ -22,14 +22,16 @@
 
                 <!-- Username -->
                 <Entry Text="{Binding EditableUserName}"
+                       x:Name="UserNameEntry"
        FontSize="20"
        FontAttributes="Bold"
        HorizontalTextAlignment="Center"
        HorizontalOptions="Center"
-       WidthRequest="200" />
+       WidthRequest="200"
+       IsReadOnly="{Binding IsNameReadOnly}" />
 
-                <Button Text="Save name"
-        Command="{Binding SaveNameCommand}"
+                <Button Text="{Binding EditButtonText}"
+        Command="{Binding EditOrSavePlayerCommand}"
         HorizontalOptions="Center" />
 
                 <!-- Not logged in -->

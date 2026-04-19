@@ -1,6 +1,6 @@
 ﻿using RikikiApp.Data;
 using RikikiApp.Models;
-using System;
+using System.Diagnostics;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -50,6 +50,52 @@ namespace RikikiApp.Repositories
         {
             var db = await _localDb.GetAsync();
             return await db.DeleteAsync<Game>(id);
+        }
+
+        public async Task<List<Game>> GetByPlayerIdAsync(int playerId)
+        {
+            try
+            {
+                Debug.WriteLine($"SqliteGameRepository.GetByPlayerIdAsync START, playerId={playerId}");
+
+                var db = await _localDb.GetAsync();
+                Debug.WriteLine("Database connection acquired");
+
+                var gamePlayers = await db.Table<GamePlayer>()
+                    .Where(gp => gp.PlayerId == playerId)
+                    .ToListAsync();
+
+                Debug.WriteLine($"GamePlayers found: {gamePlayers.Count}");
+
+                foreach (var gp in gamePlayers)
+                {
+                    Debug.WriteLine($"GamePlayer -> Id: {gp.Id}, GameId: {gp.GameId}, PlayerId: {gp.PlayerId}");
+                }
+
+                var gameIds = gamePlayers
+                    .Select(gp => gp.GameId)
+                    .Distinct()
+                    .ToList();
+
+                Debug.WriteLine($"Distinct gameIds count: {gameIds.Count}");
+
+                var allGames = await db.Table<Game>().ToListAsync();
+                Debug.WriteLine($"All games in DB: {allGames.Count}");
+
+                var result = allGames
+                    .Where(g => gameIds.Contains(g.Id))
+                    .ToList();
+
+                Debug.WriteLine($"Filtered games count: {result.Count}");
+                Debug.WriteLine("SqliteGameRepository.GetByPlayerIdAsync END");
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"SqliteGameRepository.GetByPlayerIdAsync ERROR: {ex}");
+                throw;
+            }
         }
     }
 }
