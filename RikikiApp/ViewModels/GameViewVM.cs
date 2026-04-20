@@ -21,7 +21,6 @@ public partial class GameViewVM : ObservableObject, IInitializable
         _nav = nav;
     }
 
-    // 🔹 UI
     [ObservableProperty]
     private string gamesTitle = "Your games:";
 
