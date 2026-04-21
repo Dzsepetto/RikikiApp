@@ -1,5 +1,5 @@
-﻿using RikikiApp.Data;
-using RikikiApp.Models;
+﻿using RikikiApp.Infrastructure.Persistance;
+using RikikiApp.Features.Games.Domain.Entities;
 
 
 namespace RikikiApp.Repositories

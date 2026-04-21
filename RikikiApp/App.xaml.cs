@@ -1,9 +1,9 @@
 ﻿using Microsoft.Maui.ApplicationModel;
-using RikikiApp.Data;
-using RikikiApp.Models;
+using RikikiApp.Core.Session;
+using RikikiApp.Infrastructure.Persistance;
+
 using RikikiApp.Repositories;
-using RikikiApp.Services;
-using RikikiApp.Views;
+
 using System.Diagnostics;
 using System.Globalization;
 

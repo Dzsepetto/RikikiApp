@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:local="clr-namespace:RikikiApp.Converters"
+    x:Class="RikikiApp.Features.Games.Views.Popups.ShowStatsPopup"
+    CanBeDismissedByTappingOutsideOfPopup="True">
+
+    <toolkit:Popup.Resources>
+        <ResourceDictionary>
+            <local:ScoreToColorConverter x:Key="ScoreToColorConverter" />
+        </ResourceDictionary>
+    </toolkit:Popup.Resources>
+
+    <Border
+        BackgroundColor="White"
+        StrokeThickness="0"
+        StrokeShape="RoundRectangle 20"
+        Padding="18"
+        WidthRequest="340">
+
+        <VerticalStackLayout Spacing="14">
+
+            <!-- Title -->
+            <Label
+                Text="Game stats"
+                FontAttributes="Bold"
+                FontSize="22"
+                HorizontalOptions="Center" />
+
+            <!-- Subtitle / helper -->
+            <Label
+                Text="Tap a player to expand round-by-round scores"
+                FontSize="12"
+                TextColor="Gray"
+                HorizontalTextAlignment="Center" />
+
+            <!-- Column header -->
+            <Grid ColumnDefinitions="*,Auto" Padding="6,0">
+                <Label Text="Player"
+                       FontAttributes="Bold"
+                       FontSize="13"
+                       TextColor="Gray" />
+                <Label Grid.Column="1"
+                       Text="Total"
+                       FontAttributes="Bold"
+                       FontSize="13"
+                       TextColor="Gray" />
+            </Grid>
+
+            <!-- Scrollable list -->
+            <CollectionView
+                ItemsSource="{Binding Stats}"
+                HeightRequest="320"
+                SelectionMode="None">
+
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Border
+                            Margin="0,4"
+                            Padding="0"
+                            BackgroundColor="#F7F7F7"
+                            StrokeThickness="0"
+                            StrokeShape="RoundRectangle 14">
+
+                            <toolkit:Expander>
+                                <toolkit:Expander.Header>
+                                    <Grid ColumnDefinitions="*,Auto"
+                                          Padding="14,12">
+                                        <Label
+                                            Text="{Binding Name}"
+                                            FontAttributes="Bold"
+                                            FontSize="16"
+                                            VerticalOptions="Center" />
+
+                                        <Border
+                                            Grid.Column="1"
+                                            BackgroundColor="White"
+                                            StrokeThickness="0"
+                                            StrokeShape="RoundRectangle 10"
+                                            Padding="10,4"
+                                            HorizontalOptions="End"
+                                            VerticalOptions="Center">
+                                            <Label
+                                                Text="{Binding TotalScore}"
+                                                FontAttributes="Bold"
+                                                FontSize="14" />
+                                        </Border>
+                                    </Grid>
+                                </toolkit:Expander.Header>
+
+                                <VerticalStackLayout Padding="14,0,14,14" Spacing="10">
+
+                                    <BoxView HeightRequest="1"
+                                             Color="#E5E5E5" />
+
+                                    <Label
+                                        Text="Round scores"
+                                        FontSize="12"
+                                        TextColor="Gray" />
+
+                                    <FlexLayout
+                                        BindableLayout.ItemsSource="{Binding RoundScores}"
+                                        Direction="Row"
+                                        Wrap="Wrap"
+                                        AlignItems="Start"
+                                        JustifyContent="Start">
+
+                                        <BindableLayout.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border
+                                                    BackgroundColor="White"
+                                                    Padding="10,6"
+                                                    StrokeThickness="0"
+                                                    StrokeShape="RoundRectangle 12"
+                                                    Margin="4">
+
+                                                    <Label
+                                                        Text="{Binding ., TargetNullValue='-'}"
+                                                        TextColor="{Binding ., Converter={StaticResource ScoreToColorConverter}}"
+                                                        FontSize="12"
+                                                        HorizontalTextAlignment="Center"
+                                                        VerticalTextAlignment="Center"
+                                                        MinimumWidthRequest="28" />
+                                                </Border>
+                                            </DataTemplate>
+                                        </BindableLayout.ItemTemplate>
+                                    </FlexLayout>
+
+                                </VerticalStackLayout>
+                            </toolkit:Expander>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <!-- Close button -->
+            <Button
+                Text="Close"
+                Command="{Binding CloseCommand}"
+                CornerRadius="12"
+                HeightRequest="44" />
+
+        </VerticalStackLayout>
+    </Border>
+</toolkit:Popup>

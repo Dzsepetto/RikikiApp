@@ -1,15 +1,27 @@
 ﻿using CommunityToolkit.Maui;
 using Microcharts.Maui;
 using Microsoft.Extensions.Logging;
-using RikikiApp.Data;
+
+using RikikiApp.Infrastructure.Persistance;
 using RikikiApp.Repositories;
-using RikikiApp.Services;
-using RikikiApp.ViewModels;
-using RikikiApp.ViewModels.Components;
-using RikikiApp.ViewModels.Popups;
-using RikikiApp.Views;
-using RikikiApp.Views.Components;
-using RikikiApp.Views.Popups;
+
+using RikikiApp.Core.Session;
+using RikikiApp.Features.Games.Domain;
+
+using RikikiApp.Features.Main.Views;
+using RikikiApp.Features.Main.ViewModels;
+using RikikiApp.Features.Games.Views;
+using RikikiApp.Features.Games.ViewModels;
+using RikikiApp.Features.Games.ViewModels.Popups;
+using RikikiApp.Features.Games.Views.Popups;
+using RikikiApp.Features.Profile.Views;
+using RikikiApp.Features.Profile.ViewModels;
+using RikikiApp.Features.Profile.Views.Components;
+using RikikiApp.Features.Profile.ViewModels.Components;
+using RikikiApp.Features.Stats.Views;
+using RikikiApp.Features.Stats.ViewModels;
+
+using RikikiApp.Features.PopupsGeneral.Views;
 
 namespace RikikiApp
 {

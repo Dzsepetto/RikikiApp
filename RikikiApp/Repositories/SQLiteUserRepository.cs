@@ -1,5 +1,5 @@
-﻿using RikikiApp.Data;
-using RikikiApp.Models;
+﻿using RikikiApp.Core.Entities;
+using RikikiApp.Infrastructure.Persistance;
 
 namespace RikikiApp.Repositories
 {

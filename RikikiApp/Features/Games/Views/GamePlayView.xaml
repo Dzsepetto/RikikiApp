@@ -1,0 +1,142 @@
+<ContentView
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="RikikiApp.Features.Games.Views.GamePlayView">
+
+    <Grid Padding="20" RowDefinitions="Auto,*">
+
+        <!-- HEADER -->
+        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="15">
+
+            <Button Text="←"
+                    Command="{Binding BackCommand}" />
+
+            <Label Grid.Column="1"
+                   Text="{Binding RoundText}"
+                   FontSize="22"
+                   HorizontalTextAlignment="Center"/>
+        </Grid>
+
+        <ScrollView Grid.Row="1">
+
+            <VerticalStackLayout Spacing="16">
+
+                <!-- GAME -->
+                <CollectionView ItemsSource="{Binding Calls}"
+                IsVisible="{Binding IsGameVisible}">
+
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+
+                            <Grid ColumnDefinitions="*,Auto,Auto"
+                  Padding="10"
+                  ColumnSpacing="20">
+
+                                <!-- PLAYER NAME -->
+                                <Label Text="{Binding PlayerName}"
+                       VerticalOptions="Center"
+                       FontAttributes="Bold"
+                       FontSize="16"/>
+
+                                <!-- CALL -->
+                                <HorizontalStackLayout Grid.Column="1"
+                                       Spacing="6"
+                                       VerticalOptions="Center">
+
+                                    <Button Text="−"
+                            WidthRequest="40"
+                            HeightRequest="40"
+                            Command="{Binding DecreaseCallCommand}" />
+
+                                    <Label Text="{Binding Called}"
+                           WidthRequest="30"
+                           HorizontalTextAlignment="Center"
+                           VerticalTextAlignment="Center"
+                           FontSize="18"
+                           FontAttributes="Bold"/>
+
+                                    <Button Text="+"
+                            WidthRequest="40"
+                            HeightRequest="40"
+                            Command="{Binding IncreaseCallCommand}" />
+
+                                </HorizontalStackLayout>
+
+                                <!-- WON -->
+                                <HorizontalStackLayout Grid.Column="2"
+                                       Spacing="6"
+                                       VerticalOptions="Center"
+                                       IsVisible="{Binding IsWonVisible}">
+
+                                    <Button Text="−"
+                            WidthRequest="40"
+                            HeightRequest="40"
+                            Command="{Binding DecreaseWonCommand}" />
+
+                                    <Label Text="{Binding Won}"
+                           WidthRequest="30"
+                           HorizontalTextAlignment="Center"
+                           VerticalTextAlignment="Center"
+                           FontSize="18"
+                           FontAttributes="Bold"/>
+
+                                    <Button Text="+"
+                            WidthRequest="40"
+                            HeightRequest="40"
+                            Command="{Binding IncreaseWonCommand}" />
+
+                                </HorizontalStackLayout>
+
+                            </Grid>
+
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+
+                </CollectionView>
+
+                <!-- RESULTS -->
+                <CollectionView ItemsSource="{Binding Results}"
+                                IsVisible="{Binding IsResultVisible}">
+
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+
+                            <Grid ColumnDefinitions="*,60,60,80">
+
+                                <Label Text="{Binding PlayerName}" />
+                                <Label Grid.Column="1" Text="{Binding Called}" />
+                                <Label Grid.Column="2" Text="{Binding Won}" />
+                                <Label Grid.Column="3" Text="{Binding Score}" />
+
+                            </Grid>
+
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+
+                </CollectionView>
+
+                <!-- BUTTONS -->
+                <VerticalStackLayout Spacing="15">
+
+                    <Button Text="Fix Calls"
+                            Command="{Binding FixCallsCommand}"
+                            IsVisible="{Binding IsFixCallsVisible}" />
+
+                    <Button Text="End Round"
+                            Command="{Binding EndRoundCommand}"
+                            IsVisible="{Binding IsEndRoundVisible}" />
+
+                    <HorizontalStackLayout IsVisible="{Binding IsResultVisible}" HorizontalOptions="Center" Spacing="25" >
+                        <Button Text="Less" Command="{Binding LessCommand}" Background="Red" />
+                        <Button Text="Same" Command="{Binding SameCommand}" />
+                        <Button Text="More" Command="{Binding MoreCommand}" Background="Green"/>
+                    </HorizontalStackLayout>
+
+                </VerticalStackLayout>
+
+            </VerticalStackLayout>
+
+        </ScrollView>
+
+    </Grid>
+</ContentView>

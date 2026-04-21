@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:charts="clr-namespace:Microcharts.Maui;assembly=Microcharts.Maui"
+             x:Class="RikikiApp.Features.Stats.Views.StatsView">
+
+    <VerticalStackLayout Padding="20" Spacing="20">
+
+        <Label 
+            Text="Stats"
+            FontSize="20"
+            HorizontalOptions="Center" />
+
+        <charts:ChartView
+            HeightRequest="200"
+            Chart="{Binding Chart}" />
+
+    </VerticalStackLayout>
+</ContentView>

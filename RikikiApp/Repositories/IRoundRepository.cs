@@ -1,4 +1,4 @@
-﻿using RikikiApp.Models;
+﻿using RikikiApp.Features.Games.Domain.Entities;
 
 namespace RikikiApp.Repositories;
 

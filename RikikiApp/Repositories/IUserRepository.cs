@@ -1,4 +1,4 @@
-﻿using RikikiApp.Models;
+﻿using RikikiApp.Core.Entities;
 
 namespace RikikiApp.Repositories
 {

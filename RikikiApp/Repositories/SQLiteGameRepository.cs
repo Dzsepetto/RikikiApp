@@ -1,10 +1,6 @@
-﻿using RikikiApp.Data;
-using RikikiApp.Models;
-using System.Diagnostics;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
+using RikikiApp.Infrastructure.Persistance;
+using RikikiApp.Features.Games.Domain.Entities;
 
 namespace RikikiApp.Repositories
 {
