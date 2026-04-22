@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="RikikiApp.Features.Main.Views.MainView">
 
-    <Grid>
+    <Grid BackgroundColor="#007008">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
@@ -13,7 +13,7 @@
                              Padding="30"
                              VerticalOptions="Center"
                              Spacing="30">
-
+            <Label FontSize="34">Welcome to Rikiki Kings</Label>
             <Button Text="Games"
                     Command="{Binding OpenGamesViewCommand}"
                     HorizontalOptions="Fill"

@@ -143,39 +143,7 @@ public class NavigationService
 
         return default;
     }
-    public async Task<TResult?> ShowPopupWithLoadingAsync<TView, TViewModel, TResult>(
-    Func<TViewModel, Task>? initAsync = null)
-    where TView : Popup
-    where TViewModel : class
-    {
-        var popup = _services.GetRequiredService<TView>();
-        var vm = _services.GetRequiredService<TViewModel>();
-
-        popup.BindingContext = vm;
-
-        if (vm is IPopupAware popupVm)
-            popupVm.PopupInstance = popup;
-
-        await RunWithLoading(async () =>
-        {
-            if (initAsync != null)
-            {
-                await initAsync(vm);
-            }
-            else if (vm is IInitializable initVm)
-            {
-                await initVm.InitAsync();
-            }
-        });
-
-        var page = Application.Current!.MainPage!;
-        await page.ShowPopupAsync(popup);
-
-        if (vm is IPopupResults<TResult> resultVm)
-            return await resultVm.ResultTask;
-
-        return default;
-    }
+   
     public async Task RunWithLoading(Func<Task> action)
     {
         var popup = _services.GetRequiredService<LoadingPopup>();

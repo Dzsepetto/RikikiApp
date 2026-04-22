@@ -2,6 +2,7 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="RikikiApp.Features.Main.Views.MainLayoutPage"
+             xmlns:controls="clr-namespace:RikikiApp.Features.General.Views"
              Title="MainLayoutPage">
 
     <Grid RowDefinitions="*,Auto">
@@ -11,20 +12,24 @@
 
         <!-- CUSTOM TAB BAR -->
         <Grid Grid.Row="1"
-              BackgroundColor="LightGray"
-              HeightRequest="60"
+              BackgroundColor="#007008"
+              HeightRequest="100"
               ColumnDefinitions="*,*,*"
               Padding="10"
               ColumnSpacing="20">
 
             <!-- Profile -->
-            <Button x:Name="ProfileButton" Grid.Column="0" Text="Profile" Clicked="GoProfile"/>
+            <Button BackgroundColor="#ffffff" TextColor="#000000" x:Name="ProfileButton" Grid.Column="0" Text="Profile" Clicked="GoProfile"/>
             
             <!-- Home -->
-            <Button x:Name="HomeButton" Grid.Column="1" Text="Home" Clicked="GoHome"/>
-
+            <controls:FancyMenuButton
+                x:Name="HomeButton"
+                Grid.Column="1"
+                Title="HOME"
+                Icon="cards_icon.png"
+                Clicked="GoHome"/>
             <!-- Stats -->
-            <Button x:Name="StatsButton" Grid.Column="2" Text="Stats" Clicked="GoStats"/>
+            <Button BackgroundColor="#ffffff" TextColor="#000000" x:Name="StatsButton" Grid.Column="2" Text="Stats" Clicked="GoStats"/>
 
         </Grid>
 

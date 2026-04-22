@@ -290,7 +290,7 @@ public partial class GameSetupVM : ObservableObject, IInitializable
             return;
         await _engine.EndGame(_game.Id);
 
-        await _nav.ShowPopupWithLoadingAsync<ShowStatsPopup, ShowStatsPopupVM, object?>(
+        await _nav.ShowPopupAsync<ShowStatsPopup, ShowStatsPopupVM, object?>(
             vm => vm.InitAsync(_game.Id));
 
         await _nav.Pop();

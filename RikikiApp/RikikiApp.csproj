@@ -77,6 +77,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiImage Include="Resources\Images\MenuButton\cards_icon.png" />
 	  <MauiImage Include="Resources\Images\SVG\home_icon.svg" />
 	  <MauiImage Include="Resources\Images\SVG\new_icon.svg" />
 	  <MauiImage Include="Resources\Images\SVG\stats_icon.svg" />
@@ -94,6 +95,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiXaml Update="Features\General\Views\FancyMenuButton.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Features\Profile\Views\Components\ManagePlayersView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
