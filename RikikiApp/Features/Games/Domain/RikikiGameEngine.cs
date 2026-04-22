@@ -1,6 +1,7 @@
 ﻿using RikikiApp.Features.Games.Domain.Entities;
-using RikikiApp.Repositories;
 using RikikiApp.Features.Games.Domain.Scoring;
+using RikikiApp.Features.Games.Domain.Scoring.Service;
+using RikikiApp.Repositories.Interfaces;
 
 namespace RikikiApp.Features.Games.Domain;
 
@@ -10,17 +11,26 @@ public class RikikiGameEngine
     private readonly IGamePlayerRepository _players;
     private readonly IRoundRepository _rounds;
     private readonly ICallRepository _calls;
+    private readonly IScoringService _scoring;
+    private readonly IRoundScoreRepository _roundScore;
+    private readonly IGameResultRepository _gameResult;
 
     public RikikiGameEngine(
         IGameRepository games,
         IGamePlayerRepository players,
         IRoundRepository rounds,
-        ICallRepository calls)
+        ICallRepository calls,
+        IScoringService scoring,
+        IRoundScoreRepository roundScore,
+        IGameResultRepository result)
     {
         _gamesrepo = games;
         _players = players;
         _rounds = rounds;
         _calls = calls;
+        _scoring = scoring;
+        _roundScore = roundScore;
+        _gameResult = result;
     }
 
     public async Task StartGame(int gameId)
@@ -32,6 +42,9 @@ public class RikikiGameEngine
         if (game.Status != GameStatus.Setup)
             return;
 
+        if (game.Status == GameStatus.Finished)
+            return;
+
         var players = await _players.GetByGameIdAsync(gameId);
 
         if (players.Count < 2)
@@ -41,6 +54,67 @@ public class RikikiGameEngine
         await _gamesrepo.UpsertAsync(game);
 
         await CreateNextRound(gameId, 1);
+    }
+    public async Task EndGame(int gameId)
+    {
+        var game = await _gamesrepo.GetByIdAsync(gameId);
+        if (game == null)
+            return;
+
+        var rounds = await _rounds.GetByGameIdAsync(gameId);
+
+        if (rounds.Count == 0)
+            throw new Exception("Game has no rounds.");
+
+        var allRoundScores = new List<RoundScore>();
+
+        foreach (var round in rounds)
+        {
+            var scores = await _roundScore.GetByRoundIdAsync(round.Id);
+            allRoundScores.AddRange(scores);
+        }
+
+        if (allRoundScores.Count == 0)
+            throw new Exception("Game has no round scores.");
+
+        await _gameResult.DeleteByGameIdAsync(gameId);
+
+        var grouped = allRoundScores
+            .GroupBy(x => x.GamePlayerId)
+            .Select(g => new
+            {
+                GamePlayerId = g.Key,
+                FinalScore = g.Sum(x => x.Score)
+            })
+            .OrderByDescending(x => x.FinalScore)
+            .ToList();
+
+        int rank = 0;
+        int placement = 0;
+        int? lastScore = null;
+
+        foreach (var item in grouped)
+        {
+            rank++;
+
+            if (lastScore != item.FinalScore)
+            {
+                placement = rank;
+                lastScore = item.FinalScore;
+            }
+
+            await _gameResult.UpsertAsync(new GameResult
+            {
+                GameId = gameId,
+                GamePlayerId = item.GamePlayerId,
+                FinalScore = item.FinalScore,
+                Placement = placement,
+                IsWinner = placement == 1
+            });
+        }
+
+        game.Status = GameStatus.Finished;
+        await _gamesrepo.UpsertAsync(game);
     }
 
     public async Task<Round> CreateNextRound(int gameId, int handSize)
@@ -120,13 +194,33 @@ public class RikikiGameEngine
         if (round == null || round.State != RoundState.Playing)
             throw new Exception("Round not in playing state.");
 
+        var game = await _gamesrepo.GetByIdAsync(round.GameId);
+        if (game == null)
+            throw new Exception("Game not found.");
+
         foreach (var call in calls)
         {
             await _calls.UpdateAsync(call);
         }
 
-        round.State = RoundState.WaitingForNextRound;
+        await _roundScore.DeleteByRoundIdAsync(round.Id);
 
+        foreach (var call in calls)
+        {
+            if (!call.Called.HasValue || !call.Won.HasValue)
+                throw new Exception("Call not completed.");
+
+            var score = _scoring.CalculateScore(call, game.ScoringType);
+
+            await _roundScore.UpsertAsync(new RoundScore
+            {
+                RoundId = round.Id,
+                GamePlayerId = call.GamePlayerId,
+                Score = score
+            });
+        }
+
+        round.State = RoundState.WaitingForNextRound;
         await _rounds.UpdateAsync(round);
     }
     public async Task<Round?> FinishRoundAndCreateNext(int gameId, int nextHandSize)

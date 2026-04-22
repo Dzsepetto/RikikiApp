@@ -1,13 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using RikikiApp.Repositories;
 using CommunityToolkit.Maui.Views;
-
 using RikikiApp.Core.Popups;
 using RikikiApp.Features.Games.Domain.Entities;
 using RikikiApp.Features.Games.Domain.Scoring;
 
 using GameEntity = RikikiApp.Features.Games.Domain.Entities.Game;
+using RikikiApp.Repositories.Interfaces;
 
 namespace RikikiApp.Features.Games.ViewModels.Popups;
 

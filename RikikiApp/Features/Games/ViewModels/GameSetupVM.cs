@@ -1,16 +1,18 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using RikikiApp.Repositories;
-using RikikiApp.Features.Games.ViewModels.UiWrappers;
-using RikikiApp.Features.Games.ViewModels.Popups;
+﻿using System.Diagnostics;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.Diagnostics;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using RikikiApp.Core.Session;
 using RikikiApp.Core.Abstractions;
 using RikikiApp.Features.Games.Domain;
-using RikikiApp.Core.Session;
 using RikikiApp.Features.Games.Domain.Entities;
+using RikikiApp.Features.Games.Views;
 using RikikiApp.Features.Games.Views.Popups;
+using RikikiApp.Features.Games.ViewModels.UiWrappers;
+using RikikiApp.Features.Games.ViewModels.Popups;
+using RikikiApp.Repositories.Interfaces;
+
 
 namespace RikikiApp.Features.Games.ViewModels;
 
@@ -281,6 +283,18 @@ public partial class GameSetupVM : ObservableObject, IInitializable
             });
         }
     }
+    [RelayCommand]
+    private async Task EndGame()
+    {
+        if (_game == null)
+            return;
+        await _engine.EndGame(_game.Id);
+
+        await _nav.ShowPopupWithLoadingAsync<ShowStatsPopup, ShowStatsPopupVM, object?>(
+            vm => vm.InitAsync(_game.Id));
+
+        await _nav.Pop();
+    }
 
     [RelayCommand]
     private async Task DeleteGame()
@@ -309,9 +323,5 @@ public partial class GameSetupVM : ObservableObject, IInitializable
         await _nav.Pop();
     }
 
-    [RelayCommand]
-    private Task EndGame()
-    {
-        return Task.CompletedTask;
-    }
+
 }

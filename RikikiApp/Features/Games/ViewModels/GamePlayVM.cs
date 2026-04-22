@@ -1,11 +1,12 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using RikikiApp.Repositories;
-using System.Collections.ObjectModel;
 using RikikiApp.Core.Abstractions;
 using RikikiApp.Features.Games.Domain;
 using RikikiApp.Features.Games.ViewModels.DTOs;
 using RikikiApp.Features.Games.Domain.Entities;
+using RikikiApp.Repositories.Interfaces;
+using RikikiApp.Features.Games.Domain.Scoring.Service;
 
 namespace RikikiApp.Features.Games.ViewModels;
 
@@ -15,6 +16,7 @@ public partial class GamePlayVM : ObservableObject, IInitializable
     private readonly IGamePlayerRepository _players;
     private readonly IRoundRepository _rounds;
     private readonly ICallRepository _calls;
+    private readonly IScoringService _scoringService;
     private readonly RikikiGameEngine _engine;
     private readonly NavigationService _nav;
 
@@ -46,6 +48,7 @@ public partial class GamePlayVM : ObservableObject, IInitializable
         IGamePlayerRepository players,
         IRoundRepository rounds,
         ICallRepository calls,
+        IScoringService scoringService,
         RikikiGameEngine engine,
         NavigationService nav)
     {
@@ -53,6 +56,7 @@ public partial class GamePlayVM : ObservableObject, IInitializable
         _players = players;
         _rounds = rounds;
         _calls = calls;
+        _scoringService = scoringService;
         _engine = engine;
         _nav = nav;
     }
@@ -210,6 +214,10 @@ public partial class GamePlayVM : ObservableObject, IInitializable
         var players = await _players.GetByGameIdAsync(_round!.GameId);
         var dict = players.ToDictionary(p => p.Id);
 
+        var game = await _games.GetByIdAsync(_round.GameId);
+        if (game == null)
+            throw new Exception("Game not found");
+
         foreach (var c in calls)
         {
             if (!dict.TryGetValue(c.GamePlayerId, out var player))
@@ -220,7 +228,7 @@ public partial class GamePlayVM : ObservableObject, IInitializable
                 PlayerName = player.GuestName,
                 Called = c.Called ?? 0,
                 Won = c.Won ?? 0,
-                Score = _engine.CalculateScore(c)
+                Score = _scoringService.CalculateScore(c, game.ScoringType)
             });
         }
 

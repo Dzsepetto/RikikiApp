@@ -1,10 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using RikikiApp.Core.Session;
-using RikikiApp.Repositories;
-using RikikiApp.ViewModels.Components;
 using RikikiApp.Features.Profile.Views.Components;
+using RikikiApp.Features.Profile.ViewModels.Components;
 using System.Diagnostics;
+using RikikiApp.Repositories.Interfaces;
 
 namespace RikikiApp.Features.Profile.ViewModels;
 

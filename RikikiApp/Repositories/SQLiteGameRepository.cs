@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using RikikiApp.Infrastructure.Persistance;
 using RikikiApp.Features.Games.Domain.Entities;
+using RikikiApp.Repositories.Interfaces;
 
 namespace RikikiApp.Repositories
 {

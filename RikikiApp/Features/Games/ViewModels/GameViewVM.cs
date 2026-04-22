@@ -1,10 +1,12 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using RikikiApp.Core.Abstractions;
-using RikikiApp.Features.Games.Domain.Entities;
-using RikikiApp.Repositories;
+using RikikiApp.Features.Games.Views;
+using RikikiApp.Features.Games.Views.Popups;
 using RikikiApp.Features.Games.ViewModels.Popups;
-using System.Collections.ObjectModel;
+using RikikiApp.Features.Games.Domain.Entities;
+using RikikiApp.Repositories.Interfaces;
 
 namespace RikikiApp.Features.Games.ViewModels;
 

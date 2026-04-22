@@ -2,7 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using RikikiApp.Core.Abstractions;
 using RikikiApp.Features.Games.Domain.Entities;
-using RikikiApp.Repositories;
+using RikikiApp.Repositories.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

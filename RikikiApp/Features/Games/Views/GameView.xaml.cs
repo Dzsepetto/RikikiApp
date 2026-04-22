@@ -1,4 +1,4 @@
-using RikikiApp.ViewModels;
+using RikikiApp.Features.Games.ViewModels;
 using System.Diagnostics;
 
 namespace RikikiApp.Features.Games.Views;

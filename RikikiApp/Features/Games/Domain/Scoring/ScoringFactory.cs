@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace RikikiApp.Features.Games.Domain.Scoring
+﻿namespace RikikiApp.Features.Games.Domain.Scoring
 {
     public static class ScoringFactory
     {

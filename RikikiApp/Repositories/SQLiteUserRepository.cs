@@ -1,5 +1,6 @@
 ﻿using RikikiApp.Core.Entities;
 using RikikiApp.Infrastructure.Persistance;
+using RikikiApp.Repositories.Interfaces;
 
 namespace RikikiApp.Repositories
 {

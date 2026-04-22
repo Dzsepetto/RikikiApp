@@ -1,6 +1,6 @@
 ﻿using RikikiApp.Features.Games.Domain.Entities;
 
-namespace RikikiApp.Repositories;
+namespace RikikiApp.Repositories.Interfaces;
 
 public interface ICallRepository
 {

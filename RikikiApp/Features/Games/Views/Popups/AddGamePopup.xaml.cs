@@ -1,5 +1,5 @@
 using CommunityToolkit.Maui.Views;
-using RikikiApp.Repositories;
+using RikikiApp.Repositories.Interfaces;
 
 namespace RikikiApp.Features.Games.Views.Popups;
 

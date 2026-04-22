@@ -1,11 +1,14 @@
 ﻿using Microsoft.Maui.ApplicationModel;
 using RikikiApp.Core.Session;
+using RikikiApp.Core.Entities;
 using RikikiApp.Infrastructure.Persistance;
+using RikikiApp.Features.Main.Views;
+using RikikiApp.Features.Games.Domain.Entities;
 
-using RikikiApp.Repositories;
 
 using System.Diagnostics;
-using System.Globalization;
+using RikikiApp.Repositories.Interfaces;
+
 
 namespace RikikiApp { 
 

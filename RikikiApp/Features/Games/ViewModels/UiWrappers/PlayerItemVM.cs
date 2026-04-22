@@ -1,8 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using RikikiApp.Features.Games.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace RikikiApp.Features.Games.ViewModels.UiWrappers
 {

@@ -1,27 +1,25 @@
 ﻿using CommunityToolkit.Maui;
 using Microcharts.Maui;
 using Microsoft.Extensions.Logging;
-
-using RikikiApp.Infrastructure.Persistance;
-using RikikiApp.Repositories;
-
 using RikikiApp.Core.Session;
 using RikikiApp.Features.Games.Domain;
-
-using RikikiApp.Features.Main.Views;
-using RikikiApp.Features.Main.ViewModels;
-using RikikiApp.Features.Games.Views;
+using RikikiApp.Features.Games.Domain.Scoring.Service;
 using RikikiApp.Features.Games.ViewModels;
 using RikikiApp.Features.Games.ViewModels.Popups;
+using RikikiApp.Features.Games.Views;
 using RikikiApp.Features.Games.Views.Popups;
-using RikikiApp.Features.Profile.Views;
-using RikikiApp.Features.Profile.ViewModels;
-using RikikiApp.Features.Profile.Views.Components;
-using RikikiApp.Features.Profile.ViewModels.Components;
-using RikikiApp.Features.Stats.Views;
-using RikikiApp.Features.Stats.ViewModels;
-
+using RikikiApp.Features.Main.ViewModels;
+using RikikiApp.Features.Main.Views;
 using RikikiApp.Features.PopupsGeneral.Views;
+using RikikiApp.Features.Profile.ViewModels;
+using RikikiApp.Features.Profile.ViewModels.Components;
+using RikikiApp.Features.Profile.Views;
+using RikikiApp.Features.Profile.Views.Components;
+using RikikiApp.Features.Stats.ViewModels;
+using RikikiApp.Features.Stats.Views;
+using RikikiApp.Infrastructure.Persistance;
+using RikikiApp.Repositories;
+using RikikiApp.Repositories.Interfaces;
 
 namespace RikikiApp
 {
@@ -51,11 +49,14 @@ namespace RikikiApp
             builder.Services.AddSingleton<ICallRepository, SQLiteCallRepository>();
             builder.Services.AddSingleton<IPlayerRepository, SQLitePlayerRepository>();
             builder.Services.AddSingleton<IUserRepository, SQLiteUserRepository>();
+            builder.Services.AddSingleton<IRoundScoreRepository, SQLiteRoundScoreRepository>();
+            builder.Services.AddSingleton<IGameResultRepository, SQLiteGameResultRepository>();
 
             //services
             builder.Services.AddSingleton<RikikiGameEngine>();
             builder.Services.AddSingleton<NavigationService>();
             builder.Services.AddSingleton<UserSessionService>();
+            builder.Services.AddSingleton<IScoringService, ScoringService>();
 
             //page
             builder.Services.AddSingleton<MainLayoutPage>();

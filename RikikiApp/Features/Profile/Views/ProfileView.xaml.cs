@@ -1,5 +1,5 @@
 using System.ComponentModel;
-using RikikiApp.ViewModels;
+using RikikiApp.Features.Profile.ViewModels;
 
 namespace RikikiApp.Features.Profile.Views;
 

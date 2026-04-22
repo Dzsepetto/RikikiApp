@@ -1,6 +1,6 @@
 ﻿using RikikiApp.Core.Entities;
 
-namespace RikikiApp.Repositories
+namespace RikikiApp.Repositories.Interfaces
 {
     public interface IUserRepository
     {

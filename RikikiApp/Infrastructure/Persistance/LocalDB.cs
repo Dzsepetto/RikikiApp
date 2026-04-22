@@ -26,6 +26,8 @@ public class LocalDB
         await _db.CreateTableAsync<GamePlayer>();
         await _db.CreateTableAsync<Round>();
         await _db.CreateTableAsync<Call>();
+        await _db.CreateTableAsync<RoundScore>();
+        await _db.CreateTableAsync<GameResult>();
 
         return _db;
     }

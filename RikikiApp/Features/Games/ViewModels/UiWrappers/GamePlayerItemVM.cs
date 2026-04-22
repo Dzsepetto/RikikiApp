@@ -1,7 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using RikikiApp.Features.Games.Domain.Entities;
 
-
 namespace RikikiApp.Features.Games.ViewModels.UiWrappers
 {
     public partial class GamePlayerItemVM : ObservableObject

@@ -1,5 +1,6 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using SQLite;
+﻿using SQLite;
+using CommunityToolkit.Mvvm.ComponentModel;
+
 
 namespace RikikiApp.Features.Games.Domain.Entities;
 
