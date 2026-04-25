@@ -5,7 +5,7 @@
              xmlns:controls="clr-namespace:RikikiApp.Features.General.Views"
              Title="MainLayoutPage">
 
-    <Grid RowDefinitions="*,Auto" BackgroundColor="#007008">
+    <Grid RowDefinitions="*,Auto" BackgroundColor="{StaticResource PrimaryGreen}">
 
         <!-- CONTENT -->
         <ContentPresenter x:Name="PageContent" Grid.Row="0"/>

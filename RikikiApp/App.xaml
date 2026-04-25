@@ -5,6 +5,12 @@
              x:Class="RikikiApp.App">
     <Application.Resources>
         <ResourceDictionary>
+            <Color x:Key="PrimaryGreen">#007008</Color>
+            <Color x:Key="AccentGreen">#00A010</Color>
+            <Color x:Key="CardBg">#FFFFFF</Color>
+            <Color x:Key="DeleteColor">#B00020</Color>
+
+            
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
                 <ResourceDictionary Source="Resources/Styles/Styles.xaml" />

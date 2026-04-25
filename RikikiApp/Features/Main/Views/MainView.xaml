@@ -13,17 +13,16 @@
         <VerticalStackLayout Grid.Row="0"
                              Padding="30"
                              VerticalOptions="Center"
-                             Spacing="30">
-            <Label FontSize="34">Welcome to Rikiki Kings</Label>
+                             Spacing="10">
 
             <controls:FancyImageButton
     Source="btn_games_main.png"
     Command="{Binding OpenGamesViewCommand}"
     HeightRequest="200"/>
 
-            <Button Text="DB test"
+            <controls:FancyImageButton Source="btn_info_main.png"
                     Command="{Binding DbTestCommand}"
-                    HeightRequest="100"/>
+                    HeightRequest="200"/>
         </VerticalStackLayout>
     </Grid>
 

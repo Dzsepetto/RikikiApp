@@ -10,7 +10,6 @@ public partial class FancyImageButton : ContentView
 	}
     bool _pressed;
 
-    // 🔹 IMAGE SOURCE
     public static readonly BindableProperty SourceProperty =
         BindableProperty.Create(nameof(Source), typeof(ImageSource), typeof(FancyImageButton));
 
@@ -20,7 +19,6 @@ public partial class FancyImageButton : ContentView
         set => SetValue(SourceProperty, value);
     }
 
-    // 🔹 ASPECT
     public static readonly BindableProperty AspectProperty =
         BindableProperty.Create(nameof(Aspect), typeof(Aspect), typeof(FancyImageButton), Aspect.AspectFill);
 
@@ -30,7 +28,6 @@ public partial class FancyImageButton : ContentView
         set => SetValue(AspectProperty, value);
     }
 
-    // 🔹 COMMAND
     public static readonly BindableProperty CommandProperty =
         BindableProperty.Create(nameof(Command), typeof(ICommand), typeof(FancyImageButton));
 
@@ -40,7 +37,6 @@ public partial class FancyImageButton : ContentView
         set => SetValue(CommandProperty, value);
     }
 
-    // 🔹 PARAM
     public static readonly BindableProperty CommandParameterProperty =
         BindableProperty.Create(nameof(CommandParameter), typeof(object), typeof(FancyImageButton));
 
@@ -50,7 +46,6 @@ public partial class FancyImageButton : ContentView
         set => SetValue(CommandParameterProperty, value);
     }
 
-    // 🔥 PRESS ANIMATION
     private async void OnPressed(object sender, PointerEventArgs e)
     {
         if (_pressed) return;

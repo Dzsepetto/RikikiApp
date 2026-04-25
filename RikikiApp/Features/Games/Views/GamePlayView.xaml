@@ -3,17 +3,24 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     x:Class="RikikiApp.Features.Games.Views.GamePlayView">
 
-    <Grid Padding="20" RowDefinitions="Auto,*">
+    <Grid Padding="16"
+          RowDefinitions="Auto,*"
+          BackgroundColor="{StaticResource PrimaryGreen}">
 
         <!-- HEADER -->
-        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="15">
+        <Grid ColumnDefinitions="Auto,*" Margin="0,0,0,10">
 
             <Button Text="←"
-                    Command="{Binding BackCommand}" />
+                    Command="{Binding BackCommand}"
+                    BackgroundColor="{StaticResource AccentGreen}"
+                    TextColor="White"
+                    FontSize="20"/>
 
             <Label Grid.Column="1"
                    Text="{Binding RoundText}"
                    FontSize="22"
+                   FontAttributes="Bold"
+                   TextColor="White"
                    HorizontalTextAlignment="Center"/>
         </Grid>
 
@@ -21,115 +28,225 @@
 
             <VerticalStackLayout Spacing="16">
 
-                <!-- GAME -->
-                <CollectionView ItemsSource="{Binding Calls}"
-                IsVisible="{Binding IsGameVisible}">
+                <!-- GAME CARD -->
+                <Border BackgroundColor="{StaticResource CardBg}"
+                        StrokeShape="RoundRectangle 16"
+                        Padding="14"
+                        IsVisible="{Binding IsGameVisible}"
+                        Shadow="0,4,10,#00000033">
 
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate>
+                    <CollectionView ItemsSource="{Binding Calls}"
+                                    SelectionMode="None">
 
-                            <Grid ColumnDefinitions="*,Auto,Auto"
-                  Padding="10"
-                  ColumnSpacing="20">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
 
-                                <!-- PLAYER NAME -->
-                                <Label Text="{Binding PlayerName}"
-                       VerticalOptions="Center"
-                       FontAttributes="Bold"
-                       FontSize="16"/>
+                                <Grid ColumnDefinitions="*,Auto,Auto"
+                                      Padding="8"
+                                      ColumnSpacing="12">
 
-                                <!-- CALL -->
-                                <HorizontalStackLayout Grid.Column="1"
-                                       Spacing="6"
-                                       VerticalOptions="Center">
+                                    <!-- NAME -->
+                                    <Label Text="{Binding PlayerName}"
+                                           VerticalOptions="Center"
+                                           FontAttributes="Bold"
+                                           FontSize="16"
+                                           TextColor="#222"/>
 
-                                    <Button Text="−"
-                            WidthRequest="40"
-                            HeightRequest="40"
-                            Command="{Binding DecreaseCallCommand}" />
+                                    <!-- CALL -->
+                                    <HorizontalStackLayout Grid.Column="1"
+                                                           Spacing="6"
+                                                           VerticalOptions="Center">
 
-                                    <Label Text="{Binding Called}"
-                           WidthRequest="30"
-                           HorizontalTextAlignment="Center"
-                           VerticalTextAlignment="Center"
-                           FontSize="18"
-                           FontAttributes="Bold"/>
+                                        <Border BackgroundColor="#EEE"
+                                                StrokeShape="RoundRectangle 10"
+                                                Padding="6">
+                                            <Label Text="−">
+                                                <Label.GestureRecognizers>
+                                                    <TapGestureRecognizer Command="{Binding DecreaseCallCommand}"/>
+                                                </Label.GestureRecognizers>
+                                            </Label>
+                                        </Border>
 
-                                    <Button Text="+"
-                            WidthRequest="40"
-                            HeightRequest="40"
-                            Command="{Binding IncreaseCallCommand}" />
+                                        <Label Text="{Binding Called}"
+                                               WidthRequest="30"
+                                               HorizontalTextAlignment="Center"
+                                               VerticalTextAlignment="Center"
+                                               FontSize="18"
+                                               FontAttributes="Bold"/>
 
-                                </HorizontalStackLayout>
+                                        <Border BackgroundColor="{StaticResource AccentGreen}"
+                                                StrokeShape="RoundRectangle 10"
+                                                Padding="6">
+                                            <Label Text="+"
+                                                   TextColor="White">
+                                                <Label.GestureRecognizers>
+                                                    <TapGestureRecognizer Command="{Binding IncreaseCallCommand}"/>
+                                                </Label.GestureRecognizers>
+                                            </Label>
+                                        </Border>
 
-                                <!-- WON -->
-                                <HorizontalStackLayout Grid.Column="2"
-                                       Spacing="6"
-                                       VerticalOptions="Center"
-                                       IsVisible="{Binding IsWonVisible}">
+                                    </HorizontalStackLayout>
 
-                                    <Button Text="−"
-                            WidthRequest="40"
-                            HeightRequest="40"
-                            Command="{Binding DecreaseWonCommand}" />
+                                    <!-- WON -->
+                                    <HorizontalStackLayout Grid.Column="2"
+                                                           Spacing="6"
+                                                           VerticalOptions="Center"
+                                                           IsVisible="{Binding IsWonVisible}">
 
-                                    <Label Text="{Binding Won}"
-                           WidthRequest="30"
-                           HorizontalTextAlignment="Center"
-                           VerticalTextAlignment="Center"
-                           FontSize="18"
-                           FontAttributes="Bold"/>
+                                        <Border BackgroundColor="#EEE"
+                                                StrokeShape="RoundRectangle 10"
+                                                Padding="6">
+                                            <Label Text="−">
+                                                <Label.GestureRecognizers>
+                                                    <TapGestureRecognizer Command="{Binding DecreaseWonCommand}"/>
+                                                </Label.GestureRecognizers>
+                                            </Label>
+                                        </Border>
 
-                                    <Button Text="+"
-                            WidthRequest="40"
-                            HeightRequest="40"
-                            Command="{Binding IncreaseWonCommand}" />
+                                        <Label Text="{Binding Won}"
+                                               WidthRequest="30"
+                                               HorizontalTextAlignment="Center"
+                                               VerticalTextAlignment="Center"
+                                               FontSize="18"
+                                               FontAttributes="Bold"/>
 
-                                </HorizontalStackLayout>
+                                        <Border BackgroundColor="{StaticResource AccentGreen}"
+                                                StrokeShape="RoundRectangle 10"
+                                                Padding="6">
+                                            <Label Text="+"
+                                                   TextColor="White">
+                                                <Label.GestureRecognizers>
+                                                    <TapGestureRecognizer Command="{Binding IncreaseWonCommand}"/>
+                                                </Label.GestureRecognizers>
+                                            </Label>
+                                        </Border>
 
-                            </Grid>
+                                    </HorizontalStackLayout>
 
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
+                                </Grid>
 
-                </CollectionView>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
 
-                <!-- RESULTS -->
-                <CollectionView ItemsSource="{Binding Results}"
-                                IsVisible="{Binding IsResultVisible}">
+                    </CollectionView>
+                </Border>
 
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate>
+                <!-- RESULTS CARD (KÖZÉPEN!) -->
+                <Border BackgroundColor="{StaticResource CardBg}"
+                        StrokeShape="RoundRectangle 16"
+                        Padding="16"
+                        IsVisible="{Binding IsResultVisible}"
+                        HorizontalOptions="Center"
+                        WidthRequest="300"
+                        Shadow="0,4,10,#00000033">
 
-                            <Grid ColumnDefinitions="*,60,60,80">
+                    <CollectionView ItemsSource="{Binding Results}"
+                                    SelectionMode="None">
 
-                                <Label Text="{Binding PlayerName}" />
-                                <Label Grid.Column="1" Text="{Binding Called}" />
-                                <Label Grid.Column="2" Text="{Binding Won}" />
-                                <Label Grid.Column="3" Text="{Binding Score}" />
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
 
-                            </Grid>
+                                <Grid ColumnDefinitions="*,50,50,60"
+                                      Padding="6">
 
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
+                                    <Label Text="{Binding PlayerName}"
+                                           HorizontalTextAlignment="Start"/>
 
-                </CollectionView>
+                                    <Label Grid.Column="1"
+                                           Text="{Binding Called}"
+                                           HorizontalTextAlignment="Center"/>
 
-                <!-- BUTTONS -->
-                <VerticalStackLayout Spacing="15">
+                                    <Label Grid.Column="2"
+                                           Text="{Binding Won}"
+                                           HorizontalTextAlignment="Center"/>
 
-                    <Button Text="Fix Calls"
-                            Command="{Binding FixCallsCommand}"
-                            IsVisible="{Binding IsFixCallsVisible}" />
+                                    <Label Grid.Column="3"
+                                           Text="{Binding Score}"
+                                           HorizontalTextAlignment="Center"
+                                           FontAttributes="Bold"/>
 
-                    <Button Text="End Round"
-                            Command="{Binding EndRoundCommand}"
-                            IsVisible="{Binding IsEndRoundVisible}" />
+                                </Grid>
 
-                    <HorizontalStackLayout IsVisible="{Binding IsResultVisible}" HorizontalOptions="Center" Spacing="25" >
-                        <Button Text="Less" Command="{Binding LessCommand}" Background="Red" />
-                        <Button Text="Same" Command="{Binding SameCommand}" />
-                        <Button Text="More" Command="{Binding MoreCommand}" Background="Green"/>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+
+                    </CollectionView>
+
+                </Border>
+
+                <!-- ACTIONS -->
+                <VerticalStackLayout Spacing="12">
+
+                    <Border BackgroundColor="{StaticResource AccentGreen}"
+                            StrokeShape="RoundRectangle 12"
+                            Padding="14"
+                            IsVisible="{Binding IsFixCallsVisible}">
+                        <Label Text="Fix Calls"
+                               TextColor="White"
+                               HorizontalOptions="Center">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding FixCallsCommand}"/>
+                            </Label.GestureRecognizers>
+                        </Label>
+                    </Border>
+
+                    <Border BackgroundColor="#444"
+                            StrokeShape="RoundRectangle 12"
+                            Padding="14"
+                            IsVisible="{Binding IsEndRoundVisible}">
+                        <Label Text="End Round"
+                               TextColor="White"
+                               HorizontalOptions="Center">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding EndRoundCommand}"/>
+                            </Label.GestureRecognizers>
+                        </Label>
+                    </Border>
+
+                    <!-- ROUND RESULT ACTIONS -->
+                    <HorizontalStackLayout IsVisible="{Binding IsResultVisible}"
+                                           HorizontalOptions="Center"
+                                           Spacing="16">
+
+                        <Border BackgroundColor="#B00020"
+                                StrokeShape="RoundRectangle 12"
+                                Padding="12"
+                                WidthRequest="80">
+                            <Label Text="Less"
+                                   TextColor="White"
+                                   HorizontalOptions="Center">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding LessCommand}"/>
+                                </Label.GestureRecognizers>
+                            </Label>
+                        </Border>
+
+                        <Border BackgroundColor="#666"
+                                StrokeShape="RoundRectangle 12"
+                                Padding="12"
+                                WidthRequest="80">
+                            <Label Text="Same"
+                                   TextColor="White"
+                                   HorizontalOptions="Center">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SameCommand}"/>
+                                </Label.GestureRecognizers>
+                            </Label>
+                        </Border>
+
+                        <Border BackgroundColor="{StaticResource AccentGreen}"
+                                StrokeShape="RoundRectangle 12"
+                                Padding="12"
+                                WidthRequest="80">
+                            <Label Text="More"
+                                   TextColor="White"
+                                   HorizontalOptions="Center">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding MoreCommand}"/>
+                                </Label.GestureRecognizers>
+                            </Label>
+                        </Border>
+
                     </HorizontalStackLayout>
 
                 </VerticalStackLayout>
