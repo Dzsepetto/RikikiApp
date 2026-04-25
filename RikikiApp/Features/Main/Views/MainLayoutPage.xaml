@@ -5,34 +5,43 @@
              xmlns:controls="clr-namespace:RikikiApp.Features.General.Views"
              Title="MainLayoutPage">
 
-    <Grid RowDefinitions="*,Auto">
+    <Grid RowDefinitions="*,Auto" BackgroundColor="#007008">
 
         <!-- CONTENT -->
         <ContentPresenter x:Name="PageContent" Grid.Row="0"/>
 
         <!-- CUSTOM TAB BAR -->
         <Grid Grid.Row="1"
-              BackgroundColor="#007008"
-              HeightRequest="100"
-              ColumnDefinitions="*,*,*"
-              Padding="10"
-              ColumnSpacing="20">
+      HeightRequest="100"
+      ColumnDefinitions="*,*,*"
+      ColumnSpacing="10">
 
-            <!-- Profile -->
-            <Button BackgroundColor="#ffffff" TextColor="#000000" x:Name="ProfileButton" Grid.Column="0" Text="Profile" Clicked="GoProfile"/>
-            
-            <!-- Home -->
+            <Image
+        Source="pokerboard.png"
+        Aspect="Fill"
+        Grid.ColumnSpan="3"
+        ZIndex="0"/>
+
+            <!-- PROFILE -->
             <controls:FancyMenuButton
-                x:Name="HomeButton"
-                Grid.Column="1"
-                Title="HOME"
-                Icon="cards_icon.png"
-                Clicked="GoHome"/>
-            <!-- Stats -->
-            <Button BackgroundColor="#ffffff" TextColor="#000000" x:Name="StatsButton" Grid.Column="2" Text="Stats" Clicked="GoStats"/>
+    x:Name="ProfileButton"
+    Grid.Column="0"
+    Icon="btn_profile.png"
+    Command="{Binding GoProfileCommand}" />
+
+            <controls:FancyMenuButton
+    x:Name="HomeButton"
+    Grid.Column="1"
+    Icon="btn_home.png"
+    Command="{Binding GoHomeCommand}" />
+
+            <controls:FancyMenuButton
+    x:Name="StatsButton"
+    Grid.Column="2"
+    Icon="btn_stats.png"
+    Command="{Binding GoStatsCommand}" />
 
         </Grid>
 
     </Grid>
-
 </ContentPage>

@@ -1,29 +1,26 @@
 using RikikiApp.Features.Main.ViewModels;
-using RikikiApp.Features.Profile.Views;
-using RikikiApp.Features.Profile.ViewModels;
-using RikikiApp.Features.Stats.Views;
-using RikikiApp.Features.Stats.ViewModels;
-using System.Data;
 
 namespace RikikiApp.Features.Main.Views;
 
 public partial class MainLayoutPage : ContentPage
 {
-    private TabType _currentTab = TabType.Home;
-
     private readonly NavigationService _nav;
     private bool _initialized;
+
     public MainLayoutPage(NavigationService nav)
     {
         InitializeComponent();
-
         _nav = nav;
-
-        UpdateTabUI();
     }
-    public void SetContent(View view)
+
+    protected override void OnBindingContextChanged()
     {
-        PageContent.Content = view;
+        base.OnBindingContextChanged();
+
+        if (BindingContext is MainLayoutVM vm)
+        {
+            vm.OnTabChanged = async (tab) => await UpdateTabUI(tab);
+        }
     }
     protected override void OnAppearing()
     {
@@ -34,56 +31,41 @@ public partial class MainLayoutPage : ContentPage
 
         _initialized = true;
 
-         _nav.SetRoot<MainView, MainViewVM>();
-    }
-    async void GoHome(object sender, EventArgs e)
-    {
-        _currentTab = TabType.Home;
-        await _nav.SetRoot<MainView, MainViewVM>();
-        UpdateTabUI();
+        _nav.SetRoot<MainView, MainViewVM>();
+
+        if (BindingContext is MainLayoutVM vm)
+            _ = UpdateTabUI(vm.CurrentTab);
     }
 
-    async void GoProfile(object sender, EventArgs e)
+    public void SetContent(View view)
     {
-        _currentTab = TabType.Profile;
-        await _nav.SetRoot<ProfileView, ProfileViewVM>(async vm => await vm.InitAsync());
-        UpdateTabUI();
+        PageContent.Content = view;
     }
 
-    async void GoStats(object sender, EventArgs e)
+    async Task SetSelected(View view, bool selected)
     {
-        _currentTab = TabType.Stats;
-        await _nav.SetRoot<StatsView, StatsViewVM>();
-        UpdateTabUI();
-    }
-    void UpdateTabUI()
-    {
-        // reset
-        HomeButton.TranslationY = 0;
-        ProfileButton.TranslationY = 0;
-        StatsButton.TranslationY = 0;
-
-        // aktív feljebb
-        switch (_currentTab)
+        if (selected)
         {
-            case TabType.Home:
-                HomeButton.TranslationY = -10;
-                break;
-
-            case TabType.Profile:
-                ProfileButton.TranslationY = -10;
-                break;
-
-            case TabType.Stats:
-                StatsButton.TranslationY = -10;
-                break;
+            await Task.WhenAll(
+                view.TranslateTo(0, -12, 120, Easing.CubicOut),
+                view.ScaleTo(1.1, 120, Easing.CubicOut)
+            );
+        }
+        else
+        {
+            await Task.WhenAll(
+                view.TranslateTo(0, 0, 120, Easing.CubicOut),
+                view.ScaleTo(1.0, 120, Easing.CubicOut)
+            );
         }
     }
-    private enum TabType
+
+    async Task UpdateTabUI(MainLayoutVM.TabType tab)
     {
-        Home,
-        Profile,
-        Stats
+        await Task.WhenAll(
+            SetSelected(HomeButton, tab == MainLayoutVM.TabType.Home),
+            SetSelected(ProfileButton, tab == MainLayoutVM.TabType.Profile),
+            SetSelected(StatsButton, tab == MainLayoutVM.TabType.Stats)
+        );
     }
 }
-

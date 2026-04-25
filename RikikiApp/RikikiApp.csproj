@@ -71,12 +71,18 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <None Remove="Resources\Images\MenuButton\btn_home.png" />
+	  <None Remove="Resources\Images\MenuButton\btn_profile.png" />
+	  <None Remove="Resources\Images\MenuButton\btn_stats.png" />
 	  <None Remove="Resources\Images\SVG\home_icon.svg" />
 	  <None Remove="Resources\Images\SVG\new_icon.svg" />
 	  <None Remove="Resources\Images\SVG\user_icon.svg" />
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiImage Include="Resources\Images\MenuButton\btn_home.png" />
+	  <MauiImage Include="Resources\Images\MenuButton\btn_profile.png" />
+	  <MauiImage Include="Resources\Images\MenuButton\btn_stats.png" />
 	  <MauiImage Include="Resources\Images\MenuButton\cards_icon.png" />
 	  <MauiImage Include="Resources\Images\SVG\home_icon.svg" />
 	  <MauiImage Include="Resources\Images\SVG\new_icon.svg" />
@@ -95,6 +101,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiXaml Update="Features\General\Views\FancyImageButton.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Features\General\Views\FancyMenuButton.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

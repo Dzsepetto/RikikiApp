@@ -47,14 +47,21 @@ public partial class FancyMenuButton : ContentView
         set => SetValue(CommandParameterProperty, value);
     }
 
-    private async void OnTapped(object? sender, TappedEventArgs e)
+    bool _isPressed;
+
+    private async void OnPressed(object sender, PointerEventArgs e)
     {
-        await this.ScaleTo(0.96, 70);
-        await this.ScaleTo(1.0, 70);
+        if (_isPressed) return;
+        _isPressed = true;
 
-        if (Command?.CanExecute(CommandParameter) == true)
-            Command.Execute(CommandParameter);
+        await this.ScaleTo(0.9, 80, Easing.CubicOut);
+    }
 
-        Clicked?.Invoke(this, EventArgs.Empty);
+    private async void OnReleased(object sender, PointerEventArgs e)
+    {
+        if (!_isPressed) return;
+
+        await this.ScaleTo(1.0, 80, Easing.CubicOut);
+        _isPressed = false;
     }
 }

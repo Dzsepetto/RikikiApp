@@ -236,7 +236,19 @@ public partial class GamePlayVM : ObservableObject, IInitializable
     }
 
     [RelayCommand]
-    private async Task Less() => await CreateNextRound(_round!.HandSize - 1);
+    private async Task Less()
+    {
+        if (_round!.HandSize <= 1)
+        {
+            await Application.Current.MainPage.DisplayAlert(
+                "Hiba",
+                "A hand size nem lehet 1-nél kevesebb.",
+                "OK");
+            return;
+        }
+
+        await CreateNextRound(_round.HandSize - 1);
+    }
 
     [RelayCommand]
     private async Task Same() => await CreateNextRound(_round!.HandSize);

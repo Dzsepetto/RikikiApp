@@ -1,13 +1,12 @@
 ﻿using Microsoft.Maui.ApplicationModel;
-using RikikiApp.Core.Session;
 using RikikiApp.Core.Entities;
-using RikikiApp.Infrastructure.Persistance;
-using RikikiApp.Features.Main.Views;
+using RikikiApp.Core.Session;
 using RikikiApp.Features.Games.Domain.Entities;
-
-
-using System.Diagnostics;
+using RikikiApp.Features.Main.ViewModels;
+using RikikiApp.Features.Main.Views;
+using RikikiApp.Infrastructure.Persistance;
 using RikikiApp.Repositories.Interfaces;
+using System.Diagnostics;
 
 
 namespace RikikiApp { 
@@ -38,30 +37,30 @@ public partial class App : Application
 
     }
 
-    protected override Window CreateWindow(IActivationState? activationState)
-    {
-        var mainPage = Handler.MauiContext.Services.GetRequiredService<MainLayoutPage>();
-
-        var window = new Window(mainPage);
-
-        MainThread.BeginInvokeOnMainThread(async () =>
+        protected override Window CreateWindow(IActivationState? activationState)
         {
-            try
-            {
-                await _localDb.InitAsync();
-                Debug.WriteLine("✅ DB init OK");
+            var mainPage = Handler.MauiContext.Services.GetRequiredService<MainLayoutPage>();
 
-                await EnsureLocalUserAndPlayerAsync();
-                Debug.WriteLine("✅ Local user + player ensured");
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine("❌ DB init ERROR:\n" + ex);
-            }
-        });
+            mainPage.BindingContext =
+                Handler.MauiContext.Services.GetRequiredService<MainLayoutVM>();
 
-        return window;
-    }
+            var window = new Window(mainPage);
+
+            MainThread.BeginInvokeOnMainThread(async () =>
+            {
+                try
+                {
+                    await _localDb.InitAsync();
+                    await EnsureLocalUserAndPlayerAsync();
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine("❌ DB init ERROR:\n" + ex);
+                }
+            });
+
+            return window;
+        }
         private async Task EnsureLocalUserAndPlayerAsync()
         {
             var localUser = await _user.GetLocalUserAsync();

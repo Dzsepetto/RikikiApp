@@ -60,6 +60,7 @@ namespace RikikiApp
 
             //page
             builder.Services.AddSingleton<MainLayoutPage>();
+            builder.Services.AddSingleton<MainLayoutVM>();
 
             // views
             builder.Services.AddTransient<GameViewVM>();
