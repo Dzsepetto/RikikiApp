@@ -9,7 +9,7 @@
             <Color x:Key="AccentGreen">#00A010</Color>
             <Color x:Key="CardBg">#FFFFFF</Color>
             <Color x:Key="DeleteColor">#B00020</Color>
-
+            <conv:InverseBoolConverter x:Key="InverseBoolConverter" />
             
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
@@ -17,7 +17,7 @@
                
             </ResourceDictionary.MergedDictionaries>
             
-            <conv:InverseBoolConverter x:Key="InverseBoolConverter" />
+
         </ResourceDictionary>
     </Application.Resources>
 </Application>

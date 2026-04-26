@@ -8,7 +8,7 @@ using RikikiApp.Features.PopupsGeneral.Views;
 public class NavigationService
 {
     private readonly IServiceProvider _services;
-    private readonly Stack<View> _stack = new();
+    private readonly Stack<(View view, object vm)> _stack = new();
 
     public NavigationService(IServiceProvider services)
     {
@@ -37,7 +37,7 @@ public class NavigationService
         }
 
         _stack.Clear();
-        _stack.Push(view);
+        _stack.Push((view, vm));
 
         GetMainLayout().SetContent(view);
     }
@@ -62,7 +62,7 @@ public class NavigationService
             }
 
             _stack.Clear();
-            _stack.Push(view);
+            _stack.Push((view, vm));
 
             GetMainLayout().SetContent(view);
         });
@@ -88,29 +88,28 @@ public class NavigationService
         view.BindingContext = vm;
 
         if (initAsync != null)
-        {
             await initAsync(vm);
-        }
         else if (vm is IInitializable initVm)
-        {
             await initVm.InitAsync();
-        }
 
-        _stack.Push(view);
+        _stack.Push((view, vm));
+
         GetMainLayout().SetContent(view);
     }
 
-    public Task Pop()
+    public async Task Pop()
     {
         if (_stack.Count <= 1)
-            return Task.CompletedTask;
+            return;
 
         _stack.Pop();
 
-        var view = _stack.Peek();
-        GetMainLayout().SetContent(view);
+        var (view, vm) = _stack.Peek();
 
-        return Task.CompletedTask;
+        if (vm is IInitializable initVm)
+            await initVm.InitAsync();
+
+        GetMainLayout().SetContent(view);
     }
 
     public async Task<TResult?> ShowPopupAsync<TView, TViewModel, TResult>(

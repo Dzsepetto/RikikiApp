@@ -211,35 +211,23 @@
                 </VerticalStackLayout>
 
                 <!-- BOTTOM -->
-                <Grid Grid.Row="2" ColumnDefinitions="*,*" ColumnSpacing="10" Margin="0,16,0,0">
-
-                    <Border Grid.Column="0"
+            <Grid Grid.Row="2" ColumnDefinitions="*,*" ColumnSpacing="10" Margin="0,16,0,0">
+                <Button
+                    Grid.Column="0"
+                        Text="End game"
+                        Command="{Binding EndGameCommand}"
                         BackgroundColor="{StaticResource DeleteColor}"
-                        StrokeShape="RoundRectangle 12"
-                        Padding="14">
-                        <Label Text="End game"
-                           TextColor="White"
-                           HorizontalOptions="Center">
-                            <Label.GestureRecognizers>
-                                <TapGestureRecognizer Command="{Binding EndGameCommand}"/>
-                            </Label.GestureRecognizers>
-                        </Label>
-                    </Border>
-
-                    <Border Grid.Column="1"
+                        TextColor="White"
+                        CornerRadius="12"/>
+                <Button
+                    Grid.Column="1"
+                        Text="Start game"
+                        Command="{Binding StartGameCommand}"
                         BackgroundColor="{StaticResource AccentGreen}"
-                        StrokeShape="RoundRectangle 12"
-                        Padding="14">
-                        <Label Text="Start game"
-                           TextColor="White"
-                           HorizontalOptions="Center">
-                            <Label.GestureRecognizers>
-                                <TapGestureRecognizer Command="{Binding StartGameCommand}"/>
-                            </Label.GestureRecognizers>
-                        </Label>
-                    </Border>
+                        TextColor="White"
+                        CornerRadius="12"/>
 
-                </Grid>
+            </Grid>
 
             </Grid>
         </ScrollView>

@@ -24,6 +24,7 @@ public partial class GameSetupVM : ObservableObject, IInitializable
     private readonly RikikiGameEngine _engine;
     private readonly NavigationService _nav;
     private readonly UserSessionService _session;
+    public HashSet<int> ExcludedPlayerIds { get; set; } = new();
 
     private bool _orderChanged = false;
 
@@ -133,10 +134,22 @@ public partial class GameSetupVM : ObservableObject, IInitializable
             localPlayerId = localPlayer?.Id;
         }
 
-        var players = await _gamePlayers.GetByGameIdAsync(_game.Id);
+        var allPlayers = await _players.GetAllAsync();
+        var playerDict = allPlayers.ToDictionary(p => p.Id, p => p.Name);
 
-        foreach (var p in players.OrderBy(x => x.SeatOrder))
-            Players.Add(new GamePlayerItemVM(p, localPlayerId));
+        var gamePlayers = await _gamePlayers.GetByGameIdAsync(_game.Id);
+
+        foreach (var p in gamePlayers.OrderBy(x => x.SeatOrder))
+        {
+            string? playerName = null;
+
+            if (p.PlayerId.HasValue && playerDict.TryGetValue(p.PlayerId.Value, out var name))
+            {
+                playerName = name;
+            }
+
+            Players.Add(new GamePlayerItemVM(p, localPlayerId, playerName));
+        }
 
         PlayersTitle = $"Players ({Players.Count})";
         IsPlayersExpanded = Players.Count == 0;
@@ -186,8 +199,26 @@ public partial class GameSetupVM : ObservableObject, IInitializable
         if (_game == null)
             return;
 
+        var existingGamePlayers = await _gamePlayers.GetByGameIdAsync(_game.Id);
+
+        var excludedIds = existingGamePlayers
+            .Where(p => p.PlayerId != null)
+            .Select(p => p.PlayerId!.Value)
+            .ToHashSet();
+
+        var excludedNames = existingGamePlayers
+            .Select(p => p.GuestName)
+            .Where(n => !string.IsNullOrWhiteSpace(n))
+            .Select(n => n.Trim().ToLower())
+            .ToHashSet();
+
         var names = await _nav.ShowPopupAsync<AddPlayerPopup, AddPlayerPopupVM, List<string>>(
-            async vm => await vm.InitAsync());
+            async vm =>
+            {
+                vm.ExcludedPlayerIds = excludedIds;
+                vm.ExcludedNames = excludedNames;
+                await vm.InitAsync();
+            });
 
         if (names == null || !names.Any())
             return;
@@ -258,6 +289,8 @@ public partial class GameSetupVM : ObservableObject, IInitializable
     [RelayCommand]
     private async Task StartGame()
     {
+        Debug.WriteLine("Game started");
+
         if (_game == null)
             return;
 
@@ -271,16 +304,30 @@ public partial class GameSetupVM : ObservableObject, IInitializable
             _orderChanged = false;
         }
 
-        await _games.UpsertAsync(_game);
-        await _engine.StartGame(_game.Id);
-
-        if (_game.Status != GameStatus.Setup)
+        try
         {
-            await _nav.PushWithLoading<GamePlayView, GamePlayVM>(async vm =>
+            var updatedGame = await _engine.StartGame(_game.Id);
+
+            if (updatedGame == null)
+                return;
+
+            _game = updatedGame;
+
+            if (_game.Status == GameStatus.InProgress)
             {
-                vm.GameId = _game.Id.ToString();
-                await vm.InitAsync();
-            });
+                await _nav.PushWithLoading<GamePlayView, GamePlayVM>(async vm =>
+                {
+                    vm.GameId = _game.Id.ToString();
+                    await vm.InitAsync();
+                });
+            }
+        }
+        catch (Exception ex)
+        {
+            await Application.Current.MainPage.DisplayAlertAsync(
+                "Error",
+                ex.Message,
+                "OK");
         }
     }
     [RelayCommand]
@@ -304,6 +351,16 @@ public partial class GameSetupVM : ObservableObject, IInitializable
             Debug.WriteLine("no game found");
             return;
         }
+
+        bool confirm = await Application.Current.MainPage.DisplayAlertAsync(
+            "Delete",
+            "Do you want to delete the given game? ",
+            "Yes",
+            "No"
+        );
+
+        if (!confirm)
+            return;
 
         await _games.DeleteAsync(_game.Id);
         await _nav.Pop();

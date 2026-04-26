@@ -12,9 +12,4 @@ public partial class AddPlayerPopup : Popup
         InitializeComponent();
 
     }
-    void TestClick(object sender, EventArgs e)
-    {
-        Debug.WriteLine("BUTTON CLICKED");
-    }
-
 }

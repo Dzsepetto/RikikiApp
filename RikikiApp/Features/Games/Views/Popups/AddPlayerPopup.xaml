@@ -2,92 +2,155 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:mct="clr-namespace:CommunityToolkit.Maui.Views;assembly=CommunityToolkit.Maui"
-    x:Class="RikikiApp.Features.Games.Views.Popups.AddPlayerPopup">
+    x:Class="RikikiApp.Features.Games.Views.Popups.AddPlayerPopup"
+    BackgroundColor="{StaticResource AccentGreen}">
 
-    <Grid VerticalOptions="Center" HorizontalOptions="Center"
-          WidthRequest="320">
+    <Grid BackgroundColor="Transparent"
+          Padding="16"
+          WidthRequest="340">
 
-        <VerticalStackLayout Padding="10" Spacing="12">
-            <HorizontalStackLayout HorizontalOptions="Center" Spacing="10">
+        <VerticalStackLayout Spacing="16">
 
-                <Label Text="Select" VerticalOptions="Center"/>
+            <!-- HEADER -->
+            <Grid ColumnDefinitions="*,Auto" VerticalOptions="Center">
 
-                <Switch IsToggled="{Binding IsAddMode}" />
+                <Label Text="{Binding ModeText}"
+                       FontAttributes="Bold"
+                       FontSize="20"
+                       TextColor="White"
+                       VerticalOptions="Center"/>
 
-                <Label Text="Add new" VerticalOptions="Center"/>
+                <HorizontalStackLayout Grid.Column="1" Spacing="6">
+                    <Label Text="Select" TextColor="White" VerticalOptions="Center"/>
+                    <Switch IsToggled="{Binding IsAddMode}" />
+                    <Label Text="Add" TextColor="White" VerticalOptions="Center"/>
+                </HorizontalStackLayout>
 
-            </HorizontalStackLayout>
-            <Label Text="Select or add player"
-                   FontAttributes="Bold"
-                   FontSize="20"
-                   HorizontalOptions="Center"/>
-            <Entry Placeholder="Search players"
-       Text="{Binding SearchText}"
-       IsVisible="{Binding IsAddMode, Converter={StaticResource InverseBoolConverter}}" />
-            <!-- LISTA -->
-            <CollectionView 
-    ItemsSource="{Binding Players}"
-    HeightRequest="180"
-    IsVisible="{Binding IsAddMode, Converter={StaticResource InverseBoolConverter}}">
-                <CollectionView.ItemsLayout>
-                    <LinearItemsLayout Orientation="Vertical" ItemSpacing="10" />
-                </CollectionView.ItemsLayout>
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <Border 
-        BackgroundColor="#1E1E1E"
-        Stroke="#3A3A3A"
-        StrokeThickness="1"
-        StrokeShape="RoundRectangle 12"
-        Padding="0"
-        Margin="0,0,0,10">
+            </Grid>
 
-                            <Grid ColumnDefinitions="Auto,*"
-              ColumnSpacing="10"
-              VerticalOptions="Center">
+            <!-- CARD -->
+            <Border BackgroundColor="{StaticResource CardBg}"
+                    StrokeThickness="0"
+                    StrokeShape="RoundRectangle 16"
+                    Padding="14"
+                    Shadow="0,4,10,#00000033">
 
-                                <Grid.GestureRecognizers>
-                                    <TapGestureRecognizer
-                    Command="{Binding Source={RelativeSource AncestorType={x:Type mct:Popup}}, Path=BindingContext.TogglePlayerCommand}"
-                    CommandParameter="{Binding .}" />
-                                </Grid.GestureRecognizers>
+                <VerticalStackLayout Spacing="12">
 
-                                <CheckBox 
-                Grid.Column="0"
-                IsChecked="{Binding IsSelected}"
-                VerticalOptions="Center"/>
+                    <!-- SEARCH -->
+                    <Entry Placeholder="Search players"
+                           Text="{Binding SearchText}"
+                           IsVisible="{Binding IsAddMode, Converter={StaticResource InverseBoolConverter}}" />
 
-                                <Label 
-                Grid.Column="1"
-                Text="{Binding Name}"
-                TextColor="White"
-                VerticalOptions="Center"
-                FontSize="16" HorizontalOptions="Center"/>
+                    <!-- LIST -->
+                    <CollectionView 
+                        ItemsSource="{Binding Players}"
+                        HeightRequest="220"
+                        SelectionMode="None"
+                        IsVisible="{Binding IsAddMode, Converter={StaticResource InverseBoolConverter}}">
 
-                            </Grid>
-                        </Border>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
+                        <CollectionView.ItemsLayout>
+                            <LinearItemsLayout Orientation="Vertical" ItemSpacing="8"/>
+                        </CollectionView.ItemsLayout>
 
-            </CollectionView>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
 
-            <!-- ÚJ -->
-            <Entry 
-    Placeholder="New player name"
-    Text="{Binding NewPlayerName}"
-    IsVisible="{Binding IsAddMode}" />
+                                <Border BackgroundColor="#F2F2F2"
+                                        StrokeShape="RoundRectangle 12"
+                                        Padding="10">
 
-            <HorizontalStackLayout Spacing="12"
-                                   HorizontalOptions="Center">
+                                    <!-- DISABLED -->
+                                    <Border.Triggers>
+                                        <DataTrigger TargetType="Border"
+                                                     Binding="{Binding IsDisabled}"
+                                                     Value="True">
+                                            <Setter Property="Opacity" Value="0.4"/>
+                                        </DataTrigger>
+                                    </Border.Triggers>
 
-                <Button Text="Cancel"
-                        Command="{Binding CancelCommand}" />
+                                    <Grid ColumnDefinitions="Auto,*,Auto"
+                                          ColumnSpacing="10">
 
-                <Button Text="Add"
-                Clicked="TestClick"
-                Command="{Binding AddCommand}" />
+                                        <!-- CLICK -->
+                                        <Grid.GestureRecognizers>
+                                            <TapGestureRecognizer
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type mct:Popup}}, Path=BindingContext.TogglePlayerCommand}"
+                                                CommandParameter="{Binding .}" />
+                                        </Grid.GestureRecognizers>
 
-            </HorizontalStackLayout>
+                                        <!-- CHECK -->
+                                        <CheckBox
+                                            Grid.Column="0"
+                                            IsChecked="{Binding IsSelected}"
+                                            VerticalOptions="Center"
+                                            IsEnabled="{Binding IsDisabled, Converter={StaticResource InverseBoolConverter}}" />
+
+                                        <!-- NAME -->
+                                        <Label
+                                            Grid.Column="1"
+                                            Text="{Binding Name}"
+                                            VerticalOptions="Center"
+                                            FontSize="16"
+                                            TextColor="#222"/>
+
+                                        <!-- ✔ -->
+                                        <Label
+                                            Grid.Column="2"
+                                            Text="✔"
+                                            FontSize="14"
+                                            TextColor="{StaticResource AccentGreen}"
+                                            VerticalOptions="Center"
+                                            IsVisible="{Binding IsDisabled}" />
+
+                                    </Grid>
+
+                                </Border>
+
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+
+                    </CollectionView>
+
+                    <!-- ADD NEW -->
+                    <Entry
+                        Placeholder="New player name"
+                        Text="{Binding NewPlayerName}"
+                        IsVisible="{Binding IsAddMode}" />
+
+                </VerticalStackLayout>
+
+            </Border>
+
+            <!-- ACTIONS -->
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+
+                <Border BackgroundColor="{StaticResource DeleteColor}"
+                        StrokeShape="RoundRectangle 12"
+                        Padding="12">
+                    <Label Text="Cancel"
+                           TextColor="White"
+                           HorizontalOptions="Center">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding CancelCommand}"/>
+                        </Label.GestureRecognizers>
+                    </Label>
+                </Border>
+
+                <Border BackgroundColor="{StaticResource PrimaryGreen}"
+                        StrokeShape="RoundRectangle 12"
+                        Padding="12"
+                        Grid.Column="1">
+                    <Label Text="Add"
+                           TextColor="White"
+                           HorizontalOptions="Center">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding AddCommand}"/>
+                        </Label.GestureRecognizers>
+                    </Label>
+                </Border>
+
+            </Grid>
 
         </VerticalStackLayout>
 

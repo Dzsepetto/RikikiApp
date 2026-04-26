@@ -13,9 +13,12 @@ namespace RikikiApp.Features.Games.ViewModels.UiWrappers
         [ObservableProperty]
         private bool isSelected;
 
-        public PlayerItemVM(Player player)
+        [ObservableProperty]
+        private bool isDisabled;
+
+        public PlayerItemVM(Player model)
         {
-            Model = player;
+            Model = model;
         }
     }
 }

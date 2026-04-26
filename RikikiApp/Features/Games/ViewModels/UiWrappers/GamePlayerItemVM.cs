@@ -9,10 +9,13 @@ namespace RikikiApp.Features.Games.ViewModels.UiWrappers
 
         public GamePlayer Model { get; }
 
-        public GamePlayerItemVM(GamePlayer model, int? localPlayerId)
+        private readonly string? _playerName;
+
+        public GamePlayerItemVM(GamePlayer model, int? localPlayerId, string? playerName)
         {
             Model = model;
             _localPlayerId = localPlayerId;
+            _playerName = playerName;
         }
 
         public int Id => Model.Id;
@@ -44,9 +47,14 @@ namespace RikikiApp.Features.Games.ViewModels.UiWrappers
                 {
                     Model.GuestName = value;
                     OnPropertyChanged();
+                    OnPropertyChanged(nameof(DisplayName));
                 }
             }
         }
+        public string DisplayName =>
+            PlayerId != null
+                ? _playerName ?? GuestName
+                : GuestName;
 
         [ObservableProperty]
         private bool isDropTarget;

@@ -17,6 +17,7 @@ public partial class GamePlayVM : ObservableObject, IInitializable
     private readonly IRoundRepository _rounds;
     private readonly ICallRepository _calls;
     private readonly IScoringService _scoringService;
+    private readonly IRoundScoreRepository _roundScore;
     private readonly RikikiGameEngine _engine;
     private readonly NavigationService _nav;
 
@@ -49,6 +50,7 @@ public partial class GamePlayVM : ObservableObject, IInitializable
         IRoundRepository rounds,
         ICallRepository calls,
         IScoringService scoringService,
+        IRoundScoreRepository roundScore,
         RikikiGameEngine engine,
         NavigationService nav)
     {
@@ -57,6 +59,7 @@ public partial class GamePlayVM : ObservableObject, IInitializable
         _rounds = rounds;
         _calls = calls;
         _scoringService = scoringService;
+        _roundScore = roundScore;
         _engine = engine;
         _nav = nav;
     }
@@ -84,8 +87,7 @@ public partial class GamePlayVM : ObservableObject, IInitializable
 
         if (_round.State == RoundState.WaitingForNextRound)
         {
-            var calls = await _calls.GetByRoundIdAsync(_round.Id);
-            await LoadResults(calls.ToList());
+            await LoadResults();
         }
 
         UpdateUI();
@@ -202,33 +204,28 @@ public partial class GamePlayVM : ObservableObject, IInitializable
 
         _round.State = RoundState.WaitingForNextRound;
 
-        await LoadResults(calls);
+        await LoadResults();
 
         UpdateUI();
     }
 
-    private async Task LoadResults(List<Call> calls)
+    private async Task LoadResults()
     {
         Results.Clear();
 
-        var players = await _players.GetByGameIdAsync(_round!.GameId);
+        var scores = await _roundScore.GetByRoundIdAsync(_round!.Id);
+        var players = await _players.GetByGameIdAsync(_round.GameId);
         var dict = players.ToDictionary(p => p.Id);
 
-        var game = await _games.GetByIdAsync(_round.GameId);
-        if (game == null)
-            throw new Exception("Game not found");
-
-        foreach (var c in calls)
+        foreach (var s in scores)
         {
-            if (!dict.TryGetValue(c.GamePlayerId, out var player))
+            if (!dict.TryGetValue(s.GamePlayerId, out var player))
                 continue;
 
             Results.Add(new ScoreView
             {
                 PlayerName = player.GuestName,
-                Called = c.Called ?? 0,
-                Won = c.Won ?? 0,
-                Score = _scoringService.CalculateScore(c, game.ScoringType)
+                Score = s.Score
             });
         }
 

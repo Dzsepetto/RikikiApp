@@ -1,22 +1,26 @@
-﻿using System.Collections.ObjectModel;
-using CommunityToolkit.Maui.Views;
+﻿using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using RikikiApp.Core.Popups;
 using RikikiApp.Core.Abstractions;
+using RikikiApp.Core.Popups;
+using RikikiApp.Core.Session;
 using RikikiApp.Features.Games.Domain.Entities;
 using RikikiApp.Features.Games.ViewModels.UiWrappers;
 using RikikiApp.Repositories.Interfaces;
+using System.Collections.ObjectModel;
 
 namespace RikikiApp.Features.Games.ViewModels.Popups;
 
 public partial class AddPlayerPopupVM : ObservableObject, IInitializable, IPopupResults<List<string>>, IPopupAware
 {
     private readonly IPlayerRepository _players;
+    private readonly UserSessionService _session;
 
     private readonly TaskCompletionSource<List<string>?> _tcs = new();
     public Task<List<string>?> ResultTask => _tcs.Task;
     public ObservableCollection<PlayerItemVM> Players { get; } = new();
+    public HashSet<int> ExcludedPlayerIds { get; set; } = new();
+    public HashSet<string> ExcludedNames { get; set; } = new();
 
     [ObservableProperty]
     private string newPlayerName;
@@ -32,9 +36,12 @@ public partial class AddPlayerPopupVM : ObservableObject, IInitializable, IPopup
     private List<PlayerItemVM> _allPlayers = new();
 
 
-    public AddPlayerPopupVM(IPlayerRepository players)
+    public AddPlayerPopupVM(
+        IPlayerRepository players,
+        UserSessionService session)
     {
         _players = players;
+        _session = session;
     }
 
     public async Task InitAsync()
@@ -50,9 +57,22 @@ public partial class AddPlayerPopupVM : ObservableObject, IInitializable, IPopup
         Players.Clear();
 
         var list = await _players.GetAllAsync();
+        var currentUserId = _session.CurrentUser?.Id;
 
         _allPlayers = list
-            .Select(p => new PlayerItemVM(p))
+            .Where(p => p.UserId != currentUserId)
+            .Select(p =>
+            {
+                var vm = new PlayerItemVM(p);
+
+                var isById = ExcludedPlayerIds.Contains(p.Id);
+                var isByName = ExcludedNames.Contains(p.Name.Trim().ToLower());
+
+                if (isById || isByName)
+                    vm.IsDisabled = true;
+
+                return vm;
+            })
             .ToList();
 
         ApplyFilter();
@@ -70,25 +90,31 @@ public partial class AddPlayerPopupVM : ObservableObject, IInitializable, IPopup
             Players.Add(p);
     }
 
-    // SELECT EXISTING
+
     [RelayCommand]
     private async Task SelectPlayer(Player player)
     {
-        if(!_tcs.Task.IsCompleted)
+        if (ExcludedPlayerIds.Contains(player.Id))
+            return;
+
+        if (!_tcs.Task.IsCompleted)
             _tcs.SetResult(new List<string> { player.Name });
+
         await Close();
     }
 
     [RelayCommand]
     private void TogglePlayer(PlayerItemVM player)
     {
+        if (player.IsDisabled)
+            return;
+
         player.IsSelected = !player.IsSelected;
     }
     partial void OnIsAddModeChanged(bool value)
     {
         OnPropertyChanged(nameof(ModeText));
     }
-    // ADD NEW
     [RelayCommand]
     private async Task Add()
     {
@@ -114,8 +140,6 @@ public partial class AddPlayerPopupVM : ObservableObject, IInitializable, IPopup
             await Close();
             return;
         }
-
-        // 👉 SELECT MODE
         var selected = Players
             .Where(p => p.IsSelected)
             .Select(p => p.Name)
@@ -129,8 +153,6 @@ public partial class AddPlayerPopupVM : ObservableObject, IInitializable, IPopup
 
         await Close();
     }
-
-    // CANCEL
     [RelayCommand]
     private async Task Cancel()
     {
@@ -138,8 +160,6 @@ public partial class AddPlayerPopupVM : ObservableObject, IInitializable, IPopup
             _tcs.SetResult(null);
         await Close();
     }
-
-    // popup referencia
     public Popup? PopupInstance { get; set; }
 
     private async Task Close()

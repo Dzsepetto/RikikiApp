@@ -52,22 +52,21 @@
 
                 <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10">
 
-                    <Border Grid.Column="0"
+                <Border Grid.Column="0"
                         BackgroundColor="{Binding IsSetupSelected, Converter={StaticResource BoolToColor}}"
-                        StrokeThickness="0"
-                        Padding="10"
-                        StrokeShape="RoundRectangle 12">
+                        StrokeShape="RoundRectangle 12"
+                        Padding="10">
 
-                        <Label Text="Setup"
+                    <Label Text="Setup"
                            HorizontalOptions="Center"
                            TextColor="White">
-                            <Label.GestureRecognizers>
-                                <TapGestureRecognizer Command="{Binding ToggleSetupCommand}"/>
-                            </Label.GestureRecognizers>
-                        </Label>
-                    </Border>
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding ToggleSetupCommand}"/>
+                        </Label.GestureRecognizers>
+                    </Label>
+                </Border>
 
-                    <Border Grid.Column="1"
+                <Border Grid.Column="1"
                         BackgroundColor="{Binding IsInProgressSelected, Converter={StaticResource BoolToColor}}"
                         StrokeShape="RoundRectangle 12"
                         Padding="10">

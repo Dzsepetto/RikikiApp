@@ -1,29 +1,30 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <mct:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:mct="clr-namespace:CommunityToolkit.Maui.Views;assembly=CommunityToolkit.Maui"
-             x:Class="RikikiApp.Features.Games.Views.Popups.AddGamePopup"
-             >
+           xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+           xmlns:mct="clr-namespace:CommunityToolkit.Maui.Views;assembly=CommunityToolkit.Maui"
+           x:Class="RikikiApp.Features.Games.Views.Popups.AddGamePopup"
+           BackgroundColor="{StaticResource AccentGreen}">
+    
     <Grid VerticalOptions="Center" HorizontalOptions="Center" WidthRequest="320" MaximumWidthRequest="400" Margin="0">
 
         <VerticalStackLayout Spacing="16" Padding="20">
 
-            <Label Text="Add Game" FontAttributes="Bold" FontSize="22" HorizontalOptions="Center"/>
+            <Label Text="Add Game" FontAttributes="Bold" FontSize="22" HorizontalOptions="Center" TextColor="white"/>
 
-            <Entry  Text="{Binding GameName}" Placeholder="Game name" FontSize="16" HeightRequest="45"/>
+            <Entry  Text="{Binding GameName}" Placeholder="Game name" FontSize="16" HeightRequest="45" TextColor="White"/>
 
 
-            <Label Text="Scoring version" FontAttributes="Bold" />
-            <Picker ItemsSource="{Binding ScoringTypes}" SelectedItem="{Binding SelectedScoringType}" />
+            <Label Text="Scoring version" FontAttributes="Bold" TextColor="White" />
+            <Picker ItemsSource="{Binding ScoringTypes}" SelectedItem="{Binding SelectedScoringType}" TextColor="White"/>
 
             <HorizontalStackLayout Spacing="12" HorizontalOptions="Center">
 
 
 
                 <Button Text="Cancel"
-        Command="{Binding CancelCommand}" />
+        Command="{Binding CancelCommand}" BackgroundColor="{StaticResource DeleteColor}"/>
                 <Button Text="Save"
-        Command="{Binding SaveCommand}" />
+        Command="{Binding SaveCommand}" BackgroundColor="{StaticResource PrimaryGreen}"/>
 
             </HorizontalStackLayout>
 

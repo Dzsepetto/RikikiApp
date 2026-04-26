@@ -33,17 +33,14 @@ public class RikikiGameEngine
         _gameResult = result;
     }
 
-    public async Task StartGame(int gameId)
+    public async Task<Game?> StartGame(int gameId)
     {
         var game = await _gamesrepo.GetByIdAsync(gameId);
         if (game == null)
-            return;
-
-        if (game.Status != GameStatus.Setup)
-            return;
+            return null;
 
         if (game.Status == GameStatus.Finished)
-            return;
+            return game;
 
         var players = await _players.GetByGameIdAsync(gameId);
 
@@ -54,6 +51,8 @@ public class RikikiGameEngine
         await _gamesrepo.UpsertAsync(game);
 
         await CreateNextRound(gameId, 1);
+
+        return game;
     }
     public async Task EndGame(int gameId)
     {

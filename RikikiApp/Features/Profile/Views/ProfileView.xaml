@@ -19,7 +19,7 @@
                     <Image Source="{Binding ProfileImage}"
                            Aspect="AspectFill"/>
                 </Frame>
-
+                <Grid ColumnDefinitions="*,70" HorizontalOptions="Center" VerticalOptions="Center" ColumnSpacing="20">
                 <!-- Username -->
                 <Entry Text="{Binding EditableUserName}"
                        x:Name="UserNameEntry"
@@ -28,11 +28,13 @@
        HorizontalTextAlignment="Center"
        HorizontalOptions="Center"
        WidthRequest="200"
-       IsReadOnly="{Binding IsNameReadOnly}" />
+       IsReadOnly="{Binding IsNameReadOnly}" 
+                       Grid.Column="0"/>
 
                 <Button Text="{Binding EditButtonText}"
         Command="{Binding EditOrSavePlayerCommand}"
-        HorizontalOptions="Center" />
+        HorizontalOptions="Center" Grid.Column="1" BackgroundColor="{StaticResource AccentGreen}"/>
+                </Grid>
 
                 <!-- Not logged in -->
                 <Label Text="{Binding NeedsToLoginTxt}"
@@ -77,7 +79,8 @@
                 <Button Text="Players"
                         Grid.Row="0"
                         Grid.Column="0"
-                        Command="{Binding MoveToPlayersCommand}"/>
+                        Command="{Binding MoveToPlayersCommand}"
+                        BackgroundColor="{StaticResource AccentGreen}"/>
 
                 <Button Text="Stats"
                         Grid.Row="0"

@@ -13,8 +13,7 @@ public partial class ShowStatsPopupVM : ObservableObject, IPopupAware
 {
     private readonly IGamePlayerRepository _playersRepo;
     private readonly IRoundRepository _roundsRepo;
-    private readonly ICallRepository _callsRepo;
-    private readonly RikikiGameEngine _engine;
+    private readonly IRoundScoreRepository _roundScoreRepo;
 
     private int _gameId;
 
@@ -26,12 +25,12 @@ public partial class ShowStatsPopupVM : ObservableObject, IPopupAware
         IGamePlayerRepository playersRepo,
         IRoundRepository roundsRepo,
         ICallRepository callsRepo,
+        IRoundScoreRepository roundScoreRepo,
         RikikiGameEngine engine)
     {
         _playersRepo = playersRepo;
         _roundsRepo = roundsRepo;
-        _callsRepo = callsRepo;
-        _engine = engine;
+        _roundScoreRepo = roundScoreRepo;
     }
 
     public async Task InitAsync(int gameId)
@@ -54,12 +53,12 @@ public partial class ShowStatsPopupVM : ObservableObject, IPopupAware
                 .OrderBy(r => r.RoundIndex)
                 .ToList();
 
-            var allCalls = new List<Call>();
+            var allScores = new List<RoundScore>();
 
             foreach (var round in orderedRounds)
             {
-                var roundCalls = await _callsRepo.GetByRoundIdAsync(round.Id);
-                allCalls.AddRange(roundCalls);
+                var scores = await _roundScoreRepo.GetByRoundIdAsync(round.Id);
+                allScores.AddRange(scores);
             }
 
             foreach (var player in players.OrderBy(p => p.SeatOrder))
@@ -69,20 +68,18 @@ public partial class ShowStatsPopupVM : ObservableObject, IPopupAware
 
                 foreach (var round in orderedRounds)
                 {
-                    var call = allCalls.FirstOrDefault(c =>
-                        c.RoundId == round.Id &&
-                        c.GamePlayerId == player.Id);
+                    var score = allScores.FirstOrDefault(s =>
+                        s.RoundId == round.Id &&
+                        s.GamePlayerId == player.Id);
 
-                    if (call == null || !call.Called.HasValue || !call.Won.HasValue)
+                    if (score == null)
                     {
                         scoreValues.Add(null);
                         continue;
                     }
 
-                    var score = _engine.CalculateScore(call);
-
-                    scoreValues.Add(score);
-                    numericScores.Add(score);
+                    scoreValues.Add(score.Score);
+                    numericScores.Add(score.Score);
                 }
 
                 Stats.Add(new PlayerStat
@@ -98,7 +95,6 @@ public partial class ShowStatsPopupVM : ObservableObject, IPopupAware
             await Application.Current.MainPage.DisplayAlertAsync("Error", ex.Message, "OK");
         }
     }
-
     [RelayCommand]
     private async Task Close()
     {
