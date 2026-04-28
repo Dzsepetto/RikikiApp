@@ -8,8 +8,13 @@
             HorizontalOptions="Center" 
             VerticalOptions="Center"
             Spacing="10">
+            <!-- <ActivityIndicator IsRunning="True" />  -->
 
-            <ActivityIndicator IsRunning="True" />
+            
+            <Image x:Name="PokerChipImage"
+               Source="chips_loading.png"
+               WidthRequest="72"
+               HeightRequest="72" />
             <Label Text="Loading..." TextColor="Black" />
         </VerticalStackLayout>
     </Grid>

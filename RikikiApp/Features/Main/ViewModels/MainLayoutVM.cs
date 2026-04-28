@@ -28,7 +28,7 @@ namespace RikikiApp.Features.Main.ViewModels
         {
             CurrentTab = TabType.Home;
             OnTabChanged?.Invoke(CurrentTab);
-            await _nav.SetRoot<MainView, MainViewVM>();
+            await _nav.SetRootWithLoading<MainView, MainViewVM>();
         }
 
         [RelayCommand]
@@ -36,7 +36,7 @@ namespace RikikiApp.Features.Main.ViewModels
         {
             CurrentTab = TabType.Profile;
             OnTabChanged?.Invoke(CurrentTab);
-            await _nav.SetRoot<ProfileView, ProfileViewVM>(async vm => await vm.InitAsync());
+            await _nav.SetRootWithLoading<ProfileView, ProfileViewVM>(async vm => await vm.InitAsync());
         }
 
         [RelayCommand]
@@ -44,7 +44,7 @@ namespace RikikiApp.Features.Main.ViewModels
         {
             CurrentTab = TabType.Stats;
             OnTabChanged?.Invoke(CurrentTab);
-            await _nav.SetRoot<StatsView, StatsViewVM>();
+            await _nav.SetRootWithLoading<StatsView, StatsViewVM>();
         }
 
         public enum TabType

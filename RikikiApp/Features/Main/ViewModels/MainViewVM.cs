@@ -24,7 +24,11 @@ namespace RikikiApp.Features.Main.ViewModels
         {
             await _nav.PushWithLoading<GameView, GameViewVM>(vm => vm.InitAsync());
         }
-
+        [RelayCommand]
+        private async Task OpenInfoView()
+        {
+            await _nav.PushWithLoading<GameView, GameViewVM>(vm => vm.InitAsync());
+        }
         [RelayCommand]
         private async Task DbTest()
         {

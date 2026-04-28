@@ -71,6 +71,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <None Remove="Resources\Images\Loading\chips_loading.png" />
 	  <None Remove="Resources\Images\MenuButton\btn_home.png" />
 	  <None Remove="Resources\Images\MenuButton\btn_profile.png" />
 	  <None Remove="Resources\Images\MenuButton\btn_stats.png" />
@@ -80,6 +81,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiImage Include="Resources\Images\Loading\chips_loading.png" />
 	  <MauiImage Include="Resources\Images\MenuButton\btn_home.png" />
 	  <MauiImage Include="Resources\Images\MenuButton\btn_profile.png" />
 	  <MauiImage Include="Resources\Images\MenuButton\btn_stats.png" />

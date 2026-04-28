@@ -26,7 +26,7 @@ public partial class MainLayoutPage : ContentPage
     {
         base.OnAppearing();
 
-        if (_initialized)
+        if (_initialized) 
             return;
 
         _initialized = true;
