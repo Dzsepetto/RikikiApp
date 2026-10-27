@@ -10,7 +10,6 @@ using RikikiApp.Features.Games.Views;
 using RikikiApp.Features.Games.Views.Popups;
 using RikikiApp.Features.Main.ViewModels;
 using RikikiApp.Features.Main.Views;
-using RikikiApp.Features.PopupsGeneral.Views;
 using RikikiApp.Features.Profile.ViewModels;
 using RikikiApp.Features.Profile.ViewModels.Components;
 using RikikiApp.Features.Profile.Views;
@@ -83,8 +82,6 @@ namespace RikikiApp
 
             builder.Services.AddTransient<StatsView>();
             builder.Services.AddTransient<StatsViewVM>();
-
-            builder.Services.AddTransient<LoadingPopup>();
 
             //popus
             builder.Services.AddTransient<AddGamePopup>();

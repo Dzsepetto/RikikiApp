@@ -78,6 +78,7 @@
 	  <None Remove="Resources\Images\SVG\home_icon.svg" />
 	  <None Remove="Resources\Images\SVG\new_icon.svg" />
 	  <None Remove="Resources\Images\SVG\user_icon.svg" />
+	  <None Remove="Resources\Images\user\prof_card_bg.png" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -90,6 +91,7 @@
 	  <MauiImage Include="Resources\Images\SVG\new_icon.svg" />
 	  <MauiImage Include="Resources\Images\SVG\stats_icon.svg" />
 	  <MauiImage Include="Resources\Images\SVG\user_icon.svg" />
+	  <MauiImage Include="Resources\Images\user\prof_card_bg.png" />
 	  <MauiImage Include="Resources\Images\user\temp_user_pic.png" />
 	</ItemGroup>
 
@@ -107,6 +109,9 @@
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Features\General\Views\FancyMenuButton.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Features\Main\Views\InfoView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Features\Profile\Views\Components\ManagePlayersView.xaml">
@@ -128,9 +133,6 @@
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Features\Games\Views\Popups\AddPlayerPopup.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Features\PopupsGeneral\Views\LoadingPopup.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Features\Games\Views\Popups\ShowStatsPopup.xaml">
@@ -157,19 +159,12 @@
 	  <Compile Update="Features\Main\Views\MainView.xaml.cs">
 	    <DependentUpon>MainView.xaml</DependentUpon>
 	  </Compile>
-	  <Compile Update="Features\PopupsGeneral\Views\LoadingPopup.xaml.cs">
-	    <DependentUpon>LoadingPopup.xaml</DependentUpon>
-	  </Compile>
 	  <Compile Update="Features\Profile\Views\ProfileView.xaml.cs">
 	    <DependentUpon>ProfileView.xaml</DependentUpon>
 	  </Compile>
 	  <Compile Update="Features\Stats\Views\StatsView.xaml.cs">
 	    <DependentUpon>StatsView.xaml</DependentUpon>
 	  </Compile>
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Features\PopupsGeneral\ViewModels\" />
 	</ItemGroup>
 
 </Project>

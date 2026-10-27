@@ -3,100 +3,189 @@
              x:Class="RikikiApp.Features.Profile.Views.ProfileView">
 
     <ScrollView>
-        <VerticalStackLayout Spacing="25" Padding="20">
+        <VerticalStackLayout Spacing="20"
+                             Padding="16,20">
 
-            <!-- PROFILE HEADER -->
-            <VerticalStackLayout HorizontalOptions="Center" Spacing="10">
+            <!-- PROFILE CARD -->
+            <Grid HeightRequest="195"
+                  HorizontalOptions="Fill">
 
-                <!-- Profile Image -->
-                <Frame HeightRequest="100"
-                       WidthRequest="100"
-                       CornerRadius="50"
-                       Padding="0"
-                       HasShadow="False"
-                       BackgroundColor="#ddd">
+                <!-- Photoshop card background -->
+                <Image Source="prof_card_bg.png"
+                       Aspect="AspectFit"
+                       HorizontalOptions="Fill"
+                       VerticalOptions="Fill"
+                       InputTransparent="True"/>
 
-                    <Image Source="{Binding ProfileImage}"
-                           Aspect="AspectFill"/>
-                </Frame>
-                <Grid ColumnDefinitions="*,70" HorizontalOptions="Center" VerticalOptions="Center" ColumnSpacing="20">
-                <!-- Username -->
-                <Entry Text="{Binding EditableUserName}"
-                       x:Name="UserNameEntry"
-       FontSize="20"
-       FontAttributes="Bold"
-       HorizontalTextAlignment="Center"
-       HorizontalOptions="Center"
-       WidthRequest="200"
-       IsReadOnly="{Binding IsNameReadOnly}" 
-                       Grid.Column="0"/>
+                <!-- Card content -->
+                <Grid ColumnDefinitions="*,Auto"
+                      RowDefinitions="Auto,Auto,Auto"
+                      Padding="35,18,35,20">
 
-                <Button Text="{Binding EditButtonText}"
-        Command="{Binding EditOrSavePlayerCommand}"
-        HorizontalOptions="Center" Grid.Column="1" BackgroundColor="{StaticResource AccentGreen}"/>
+                    <!-- Profile image -->
+                    <Frame Grid.Row="0"
+                           Grid.ColumnSpan="2"
+                           HeightRequest="65"
+                           WidthRequest="65"
+                           CornerRadius="33"
+                           Padding="0"
+                           HasShadow="False"
+                           BackgroundColor="#ddd"
+                           HorizontalOptions="Center">
+
+                        <Image Source="{Binding ProfileImage}"
+                               Aspect="AspectFill"/>
+                    </Frame>
+
+                    <!-- Username -->
+                    <Entry Grid.Row="1"
+                           Grid.Column="0"
+                           Grid.ColumnSpan="2"
+                           x:Name="UserNameEntry"
+                           Text="{Binding EditableUserName}"
+                           FontSize="21"
+                           FontAttributes="Bold"
+                           TextColor="#171717"
+                           BackgroundColor="Transparent"
+                           HorizontalTextAlignment="Center"
+                           HorizontalOptions="Center"
+                           WidthRequest="190"
+                           IsReadOnly="{Binding IsNameReadOnly}"
+                           Margin="0,0,0,0"/>
+
+                    <!-- Edit / Save button -->
+                    <Button Grid.Row="0"
+                            Grid.Column="1"
+                            Text="{Binding EditButtonText}"
+                            Command="{Binding EditOrSavePlayerCommand}"
+                            BackgroundColor="#222222"
+                            TextColor="White"
+                            FontSize="12"
+                            CornerRadius="20"
+                            WidthRequest="55"
+                            HeightRequest="40"
+                            HorizontalOptions="End"
+                            VerticalOptions="Start"/>
+
+                    <!-- Login message -->
+                    <Label Grid.Row="2"
+                           Grid.ColumnSpan="2"
+                           Text="{Binding NeedsToLoginTxt}"
+                           TextColor="#D71935"
+                           FontSize="11"
+                           HorizontalTextAlignment="Center"
+                           HorizontalOptions="Center"/>
+
                 </Grid>
-
-                <!-- Not logged in -->
-                <Label Text="{Binding NeedsToLoginTxt}"
-                       TextColor="Red"
-                       FontSize="12"
-                       HorizontalOptions="Center"/>
-            </VerticalStackLayout>
-
+            </Grid>
 
             <!-- STATS -->
-            <Border BackgroundColor="#f5f5f5"
-        StrokeShape="RoundRectangle 15"
-        Padding="15">
-                <Grid ColumnDefinitions="*,*,*"
-                 
-                  >
+            <Border BackgroundColor="#FFF9ED"
+                    Stroke="#D8CDBB"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 15"
+                    Padding="15">
 
-                    <VerticalStackLayout HorizontalOptions="Center">
-                        <Label Text="{Binding Wins}" FontSize="18" FontAttributes="Bold"/>
-                        <Label Text="Wins" FontSize="12"/>
+                <Grid ColumnDefinitions="*,*,*">
+
+                    <!-- WINS -->
+                    <VerticalStackLayout Grid.Column="0"
+                                         HorizontalOptions="Center"
+                                         Spacing="4">
+
+                        <Label Text="🏆"
+                               FontSize="26"
+                               HorizontalTextAlignment="Center"/>
+
+                        <Label Text="{Binding Wins}"
+                               FontSize="20"
+                               FontAttributes="Bold"
+                               TextColor="Black"
+                               HorizontalTextAlignment="Center"/>
+
+                        <Label Text="Wins"
+                               FontSize="12"
+                               TextColor="#444444"
+                               HorizontalTextAlignment="Center"/>
+
                     </VerticalStackLayout>
 
-                    <VerticalStackLayout Grid.Column="1" HorizontalOptions="Center">
-                        <Label Text="{Binding Losses}" FontSize="18" FontAttributes="Bold"/>
-                        <Label Text="Losses" FontSize="12"/>
+                    <!-- LOSSES -->
+                    <VerticalStackLayout Grid.Column="1"
+                                         HorizontalOptions="Center"
+                                         Spacing="4">
+
+                        <Label Text="✕"
+                               FontSize="30"
+                               FontAttributes="Bold"
+                               TextColor="#D71935"
+                               HorizontalTextAlignment="Center"/>
+
+                        <Label Text="{Binding Losses}"
+                               FontSize="20"
+                               FontAttributes="Bold"
+                               TextColor="Black"
+                               HorizontalTextAlignment="Center"/>
+
+                        <Label Text="Losses"
+                               FontSize="12"
+                               TextColor="#444444"
+                               HorizontalTextAlignment="Center"/>
+
                     </VerticalStackLayout>
 
-                    <VerticalStackLayout Grid.Column="2" HorizontalOptions="Center">
-                        <Label Text="{Binding TotalGames}" FontSize="18" FontAttributes="Bold"/>
-                        <Label Text="Games" FontSize="12"/>
+                    <!-- GAMES -->
+                    <VerticalStackLayout Grid.Column="2"
+                                         HorizontalOptions="Center"
+                                         Spacing="4">
+
+                        <Label Text="🃏"
+                               FontSize="26"
+                               HorizontalTextAlignment="Center"/>
+
+                        <Label Text="{Binding TotalGames}"
+                               FontSize="20"
+                               FontAttributes="Bold"
+                               TextColor="Black"
+                               HorizontalTextAlignment="Center"/>
+
+                        <Label Text="Games"
+                               FontSize="12"
+                               TextColor="#444444"
+                               HorizontalTextAlignment="Center"/>
+
                     </VerticalStackLayout>
+
                 </Grid>
             </Border>
 
-
             <!-- ACTION BUTTONS -->
-            <Grid ColumnDefinitions="*,*"
-                  RowDefinitions="auto,auto"
-                  ColumnSpacing="15"
-                  RowSpacing="15">
+            <VerticalStackLayout Spacing="12">
 
-                <Button Text="Players"
-                        Grid.Row="0"
-                        Grid.Column="0"
+                <Button Text="♟   Players"
                         Command="{Binding MoveToPlayersCommand}"
-                        BackgroundColor="{StaticResource AccentGreen}"/>
+                        BackgroundColor="{StaticResource AccentGreen}"
+                        TextColor="White"
+                        CornerRadius="12"
+                        HeightRequest="52"/>
 
-                <Button Text="Stats"
-                        Grid.Row="0"
-                        Grid.Column="1" IsEnabled="False"/>
+                <Button Text="⚙   Settings"
+                        BackgroundColor="#FFF9ED"
+                        TextColor="#202020"
+                        CornerRadius="12"
+                        HeightRequest="52"
+                        IsEnabled="False"/>
 
-                <Button Text="Settings"
-                        Grid.Row="1"
-                        Grid.Column="0" IsEnabled="False"/>
+                <Button Text="⇥   Login / Logout"
+                        Command="{Binding LoginCommand}"
+                        BackgroundColor="#FFF9ED"
+                        TextColor="#202020"
+                        CornerRadius="12"
+                        HeightRequest="52"
+                        IsEnabled="False"/>
 
-                <Button Text="Login / Logout"
-                        Grid.Row="1"
-                        Grid.Column="1"
-                        Command="{Binding LoginCommand}" IsEnabled="False"/>
-            </Grid>
+            </VerticalStackLayout>
 
         </VerticalStackLayout>
     </ScrollView>
-
 </ContentView>
