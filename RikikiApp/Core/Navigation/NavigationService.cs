@@ -3,7 +3,6 @@ using CommunityToolkit.Maui.Views;
 using RikikiApp.Core.Abstractions;
 using RikikiApp.Core.Popups;
 using RikikiApp.Features.Main.Views;
-using RikikiApp.Features.PopupsGeneral.Views;
 
 public class NavigationService
 {
@@ -16,7 +15,12 @@ public class NavigationService
     }
 
     private MainLayoutPage GetMainLayout()
-        => (MainLayoutPage)Application.Current.MainPage;
+    {
+        return Application.Current?
+            .Windows.FirstOrDefault()?.Page as MainLayoutPage
+            ?? throw new InvalidOperationException(
+                "MainLayoutPage not found.");
+    }
 
     public async Task SetRoot<TView, TViewModel>(Func<TViewModel, Task>? initAsync = null)
         where TView : View
@@ -142,25 +146,22 @@ public class NavigationService
 
         return default;
     }
-   
+
     public async Task RunWithLoading(Func<Task> action)
     {
-        var popup = _services.GetRequiredService<LoadingPopup>();
-        var page = Application.Current.MainPage!;
-
-        popup.CanBeDismissedByTappingOutsideOfPopup = false;
-
-        _ = page.ShowPopupAsync(popup);
-
-        await Task.Delay(50);
+        var layout = GetMainLayout();
 
         try
         {
+            layout.SetLoading(true);
+
+            await Task.Yield();
+
             await action();
         }
         finally
         {
-            await popup.CloseAsync();
+            layout.SetLoading(false);
         }
     }
 }

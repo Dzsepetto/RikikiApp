@@ -1,45 +1,91 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="RikikiApp.Features.Main.Views.MainLayoutPage"
              xmlns:controls="clr-namespace:RikikiApp.Features.General.Views"
+             x:Class="RikikiApp.Features.Main.Views.MainLayoutPage"
              Title="MainLayoutPage">
 
-    <Grid RowDefinitions="*,Auto" BackgroundColor="{StaticResource PrimaryGreen}">
+    <Grid RowDefinitions="*,Auto"
+          BackgroundColor="{StaticResource PrimaryGreen}">
+
+        <!-- BACKGROUND -->
+        <Image
+            Grid.RowSpan="2"
+            Source="hatter.png"
+            Aspect="AspectFill"
+            InputTransparent="True"
+            ZIndex="-1" />
 
         <!-- CONTENT -->
-        <ContentPresenter x:Name="PageContent" Grid.Row="0"/>
+        <ContentPresenter
+            x:Name="PageContent"
+            Grid.Row="0" />
 
         <!-- CUSTOM TAB BAR -->
         <Grid Grid.Row="1"
-      HeightRequest="100"
-      ColumnDefinitions="*,*,*"
-      ColumnSpacing="10">
+              HeightRequest="100"
+              ColumnDefinitions="*,*,*"
+              ColumnSpacing="10">
 
             <Image
-        Source="pokerboard.png"
-        Aspect="Fill"
-        Grid.ColumnSpan="3"
-        ZIndex="0"/>
+                Source="pokerboard.png"
+                Aspect="Fill"
+                Grid.ColumnSpan="3"
+                ZIndex="0" />
 
             <!-- PROFILE -->
             <controls:FancyMenuButton
-    x:Name="ProfileButton"
-    Grid.Column="0"
-    Icon="btn_profile.png"
-    Command="{Binding GoProfileCommand}" />
+                x:Name="ProfileButton"
+                Grid.Column="0"
+                Icon="btn_profile.png"
+                Command="{Binding GoProfileCommand}" />
 
+            <!-- HOME -->
             <controls:FancyMenuButton
-    x:Name="HomeButton"
-    Grid.Column="1"
-    Icon="btn_home.png"
-    Command="{Binding GoHomeCommand}" />
+                x:Name="HomeButton"
+                Grid.Column="1"
+                Icon="btn_home.png"
+                Command="{Binding GoHomeCommand}" />
 
+            <!-- STATS -->
             <controls:FancyMenuButton
-    x:Name="StatsButton"
-    Grid.Column="2"
-    Icon="btn_stats.png"
-    Command="{Binding GoStatsCommand}" />
+                x:Name="StatsButton"
+                Grid.Column="2"
+                Icon="btn_stats.png"
+                Command="{Binding GoStatsCommand}" />
+
+        </Grid>
+
+        <!-- LOADING OVERLAY -->
+        <Grid
+            x:Name="LoadingOverlay"
+            Grid.RowSpan="2"
+            IsVisible="False"
+            BackgroundColor="#B0000000"
+            InputTransparent="False"
+            ZIndex="100">
+
+            <VerticalStackLayout
+                HorizontalOptions="Center"
+                VerticalOptions="Center"
+                Spacing="14">
+
+                <!-- Rotating poker chip -->
+                <Image
+                    x:Name="PokerChipImage"
+                    Source="chips_loading.png"
+                    WidthRequest="85"
+                    HeightRequest="85"
+                    HorizontalOptions="Center" />
+
+                <Label
+                    Text="Loading..."
+                    TextColor="White"
+                    FontSize="16"
+                    FontAttributes="Bold"
+                    HorizontalTextAlignment="Center" />
+
+            </VerticalStackLayout>
 
         </Grid>
 
