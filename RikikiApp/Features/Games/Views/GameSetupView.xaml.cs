@@ -1,82 +1,109 @@
-using RikikiApp.Features.Games.Domain.Entities;
-using RikikiApp.Features.Games.ViewModels.UiWrappers;
 using RikikiApp.Features.Games.ViewModels;
+using RikikiApp.Features.Games.ViewModels.UiWrappers;
 using System.Diagnostics;
 
 namespace RikikiApp.Features.Games.Views;
 
-
 public partial class GameSetupView : ContentView
 {
     private GamePlayerItemVM? _draggedItem;
+    private GamePlayerItemVM? _currentDropTarget;
 
-    private void OnDragStarting(object sender,DragStartingEventArgs e)
+    public GameSetupView(GameSetupVM vm)
+    {
+        try
+        {
+            InitializeComponent();
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"XAML CRASH: {ex}");
+            throw;
+        }
+    }
+
+    // DRAG START
+    private void OnDragStarting(
+        object sender,
+        DragStartingEventArgs e)
     {
         var element = sender as BindableObject;
 
         _draggedItem =
             element?.BindingContext as GamePlayerItemVM;
 
-        if (BindingContext is GameSetupVM vm)
-            vm.IsDragging = _draggedItem != null;
+        if (BindingContext is not GameSetupVM vm)
+            return;
+
+        ClearDropTargets(vm);
+
+        vm.IsDragging = _draggedItem != null;
 
         if (_draggedItem != null)
             e.Data.Properties["item"] = _draggedItem;
     }
 
-    private void OnDragOver(object sender, DragEventArgs e)
+    // DRAG OVER
+    private void OnDragOver(
+        object sender,
+        DragEventArgs e)
     {
+        if (_draggedItem == null)
+            return;
+
         var view = sender as View;
-        var target = (view as BindableObject)?.BindingContext as GamePlayerItemVM;
+
+        var target =
+            view?.BindingContext as GamePlayerItemVM;
 
         if (target == null)
             return;
 
-        var vm = BindingContext as GameSetupVM;
-        if (vm == null)
+        if (BindingContext is not GameSetupVM vm)
             return;
 
-        foreach (var p in vm.Players)
-            p.IsDropTarget = false;
+        // Ha ugyanaz a célpont, nincs szükség UI-frissítésre.
+        if (_currentDropTarget == target)
+            return;
+
+        ClearDropTargets(vm);
 
         target.IsDropTarget = true;
-    }
-    private void OnDropToEnd(object sender, DropEventArgs e)
-    {
-        var vm = BindingContext as GameSetupVM;
-
-        if (_draggedItem == null || vm == null)
-            return;
-
-        vm.MovePlayerToIndex(_draggedItem, vm.Players.Count);
-
-        foreach (var p in vm.Players)
-            p.IsDropTarget = false;
-
-        _draggedItem = null;
+        _currentDropTarget = target;
     }
 
-    private void OnDrop(object sender, DropEventArgs e)
+    // DROP ON PLAYER
+    private void OnDrop(
+        object sender,
+        DropEventArgs e)
     {
         var view = sender as View;
 
-        var target = view?.BindingContext as GamePlayerItemVM;
+        var target =
+            view?.BindingContext as GamePlayerItemVM;
+
         var vm = BindingContext as GameSetupVM;
 
-        if (_draggedItem == null ||
-            target == null ||
-            view == null ||
-            vm == null)
+        if (vm == null)
             return;
 
         try
         {
+            if (_draggedItem == null ||
+                target == null ||
+                view == null)
+                return;
+
+            if (_draggedItem == target)
+                return;
+
             var position = e.GetPosition(view);
 
             if (position == null)
                 return;
 
-            bool isTopHalf = position.Value.Y < view.Height / 2;
+            bool isTopHalf =
+                position.Value.Y < view.Height / 2;
 
             int targetIndex = vm.Players.IndexOf(target);
 
@@ -87,27 +114,73 @@ public partial class GameSetupView : ContentView
                 ? targetIndex
                 : targetIndex + 1;
 
-            vm.MovePlayerToIndex(_draggedItem, insertIndex);
+            vm.MovePlayerToIndex(
+                _draggedItem,
+                insertIndex);
         }
         finally
         {
-            foreach (var p in vm.Players)
-                p.IsDropTarget = false;
-
-            vm.IsDragging = false;
-            _draggedItem = null;
+            ResetDragState(vm);
         }
     }
-    public GameSetupView(GameSetupVM vm)
+
+    // DROP AT END
+    private void OnDropToEnd(
+        object sender,
+        DropEventArgs e)
     {
+        var vm = BindingContext as GameSetupVM;
+
+        if (vm == null)
+            return;
+
         try
         {
-            InitializeComponent();
+            if (_draggedItem == null)
+                return;
+
+            vm.MovePlayerToIndex(
+                _draggedItem,
+                vm.Players.Count);
         }
-        catch (Exception ex)
+        finally
         {
-            Debug.WriteLine($" XAML CRASH: {ex}");
-            throw;
+            ResetDragState(vm);
         }
+    }
+
+    // DRAG COMPLETED OR CANCELLED
+    private void OnDragCompleted(
+        object sender,
+        DropCompletedEventArgs e)
+    {
+        if (BindingContext is GameSetupVM vm)
+            ResetDragState(vm);
+    }
+
+    // CLEAR DROP INDICATORS
+    private void ClearDropTargets(GameSetupVM vm)
+    {
+        if (_currentDropTarget != null)
+        {
+            _currentDropTarget.IsDropTarget = false;
+            _currentDropTarget = null;
+        }
+
+        // Az előző állapotok biztos törlése.
+        foreach (var player in vm.Players)
+        {
+            if (player.IsDropTarget)
+                player.IsDropTarget = false;
+        }
+    }
+
+    // RESET DRAG STATE
+    private void ResetDragState(GameSetupVM vm)
+    {
+        ClearDropTargets(vm);
+
+        vm.IsDragging = false;
+        _draggedItem = null;
     }
 }

@@ -93,7 +93,7 @@ public partial class AddGamePopupVM : ObservableObject, IPopupResults<GameEntity
 
         await Close();
     }
-
+     
     private async Task Close()
     {
         if (PopupInstance != null)

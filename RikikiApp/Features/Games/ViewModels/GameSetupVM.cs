@@ -152,7 +152,7 @@ public partial class GameSetupVM : ObservableObject, IInitializable
         }
 
         PlayersTitle = $"Players ({Players.Count})";
-        IsPlayersExpanded = Players.Count == 0;
+        IsPlayersExpanded = false;
 
         OnPropertyChanged(nameof(IsEmpty));
         OnPropertyChanged(nameof(IsNotEmpty));
@@ -235,7 +235,7 @@ public partial class GameSetupVM : ObservableObject, IInitializable
                 vm.ExcludedPlayerIds = excludedIds;
                 vm.ExcludedNames = excludedNames;
                 await vm.InitAsync();
-            });
+            },showLoading: true);
 
         if (names == null || !names.Any())
             return;
@@ -299,8 +299,7 @@ public partial class GameSetupVM : ObservableObject, IInitializable
         if (_game == null)
             return;
 
-        await _nav.ShowPopupAsync<ShowStatsPopup, ShowStatsPopupVM, object?>(
-            vm => vm.InitAsync(_game.Id));
+        await _nav.ShowPopupAsync<ShowStatsPopup, ShowStatsPopupVM, object?>(vm => vm.InitAsync(_game.Id),showLoading: true);
     }
 
     [RelayCommand]

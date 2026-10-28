@@ -6,102 +6,231 @@
     xmlns:local="clr-namespace:RikikiApp.Converters"
     x:Class="RikikiApp.Features.Games.Views.Popups.ShowStatsPopup"
     CanBeDismissedByTappingOutsideOfPopup="True"
-    BackgroundColor="{StaticResource AccentGreen}">
+    BackgroundColor="#073E29">
 
     <toolkit:Popup.Resources>
         <ResourceDictionary>
-            <local:ScoreToColorConverter x:Key="ScoreToColorConverter" />
+            <local:ScoreToColorConverter
+                x:Key="ScoreToColorConverter" />
         </ResourceDictionary>
     </toolkit:Popup.Resources>
 
-    <Border
-        BackgroundColor="transparent"
-        StrokeThickness="0"
-        StrokeShape="RoundRectangle 20"
-        Padding="18"
-        WidthRequest="340">
+    <!-- MAIN POPUP CONTAINER -->
 
-        <VerticalStackLayout Spacing="14">
+        <Grid
+            RowDefinitions="Auto,Auto,Auto,*,Auto"
+            RowSpacing="14">
 
-            <!-- Title -->
-            <Label
-                Text="Game stats"
-                FontAttributes="Bold"
-                FontSize="22"
-                HorizontalOptions="Center" />
+            <!-- HEADER -->
+            <VerticalStackLayout
+                Grid.Row="0"
+                Spacing="7">
 
-            <!-- Subtitle / helper -->
-            <Label
-                Text="Tap a player to expand round-by-round scores"
-                FontSize="12"
-                TextColor="Black"
-                HorizontalTextAlignment="Center" />
+                <HorizontalStackLayout
+                    HorizontalOptions="Center"
+                    Spacing="10">
 
-            <!-- Column header -->
-            <Grid ColumnDefinitions="*,Auto" Padding="6,0">
-                <Label Text="Player"
-                       FontAttributes="Bold"
-                       FontSize="13"
-                       TextColor="Black" />
-                <Label Grid.Column="1"
-                       Text="Total"
-                       FontAttributes="Bold"
-                       FontSize="13"
-                       TextColor="Black" />
+                    <Label
+                        Text="♠"
+                        FontSize="27"
+                        TextColor="#F0C36E"
+                        VerticalOptions="Center" />
+
+                    <Label
+                        Text="Game Statistics"
+                        FontSize="22"
+                        FontAttributes="Bold"
+                        TextColor="White"
+                        VerticalOptions="Center" />
+
+                </HorizontalStackLayout>
+
+                <Label
+                    Text="Tap a player to view round-by-round scores"
+                    FontSize="12"
+                    TextColor="#D1E6D8"
+                    HorizontalTextAlignment="Center"
+                    LineBreakMode="WordWrap" />
+
+            </VerticalStackLayout>
+
+            <!-- DECORATIVE DIVIDER -->
+            <BoxView
+                Grid.Row="1"
+                HeightRequest="1"
+                Color="#487D61"
+                HorizontalOptions="Fill" />
+
+            <!-- COLUMN HEADERS -->
+            <Grid
+                Grid.Row="2"
+                ColumnDefinitions="*,Auto"
+                Padding="8,0">
+
+                <Label
+                    Grid.Column="0"
+                    Text="PLAYER"
+                    FontSize="11"
+                    FontAttributes="Bold"
+                    CharacterSpacing="1"
+                    TextColor="#C5DEC8"
+                    VerticalOptions="Center" />
+
+                <Label
+                    Grid.Column="1"
+                    Text="TOTAL SCORE"
+                    FontSize="11"
+                    FontAttributes="Bold"
+                    CharacterSpacing="1"
+                    TextColor="#C5DEC8"
+                    VerticalOptions="Center" />
+
             </Grid>
 
-            <!-- Scrollable list -->
+            <!-- PLAYERS STATISTICS -->
             <CollectionView
+                Grid.Row="3"
                 ItemsSource="{Binding Stats}"
-                HeightRequest="320"
+                HeightRequest="310"
                 SelectionMode="None">
+
+                <CollectionView.EmptyView>
+                    <VerticalStackLayout
+                        Padding="12,30"
+                        Spacing="8"
+                        HorizontalOptions="Center">
+
+                        <Label
+                            Text="♣"
+                            FontSize="35"
+                            TextColor="#92B5A0"
+                            HorizontalTextAlignment="Center" />
+
+                        <Label
+                            Text="No statistics yet"
+                            FontSize="15"
+                            FontAttributes="Bold"
+                            TextColor="White"
+                            HorizontalTextAlignment="Center" />
+
+                        <Label
+                            Text="Play some rounds to see scores."
+                            FontSize="12"
+                            TextColor="#C5DEC8"
+                            HorizontalTextAlignment="Center" />
+
+                    </VerticalStackLayout>
+                </CollectionView.EmptyView>
 
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
+
+                        <!-- PLAYER CARD -->
                         <Border
-                            Margin="0,4"
+                            BackgroundColor="#FFF9ED"
+                            Stroke="#D8CDBB"
+                            StrokeThickness="1"
+                            StrokeShape="RoundRectangle 14"
                             Padding="0"
-                            BackgroundColor="#F7F7F7"
-                            StrokeThickness="0"
-                            StrokeShape="RoundRectangle 14">
+                            Margin="0,0,0,10">
 
                             <toolkit:Expander>
-                                <toolkit:Expander.Header>
-                                    <Grid ColumnDefinitions="*,Auto"
-                                          Padding="14,12">
-                                        <Label
-                                            Text="{Binding Name}"
-                                            FontAttributes="Bold"
-                                            FontSize="16"
-                                            VerticalOptions="Center" />
 
+                                <!-- PLAYER HEADER -->
+                                <toolkit:Expander.Header>
+
+                                    <Grid
+                                        ColumnDefinitions="36,*,Auto,20"
+                                        ColumnSpacing="9"
+                                        Padding="11,12">
+
+                                        <!-- CARD SYMBOL -->
                                         <Border
-                                            Grid.Column="1"
-                                            BackgroundColor="White"
+                                            Grid.Column="0"
+                                            BackgroundColor="#E6F0E5"
                                             StrokeThickness="0"
-                                            StrokeShape="RoundRectangle 10"
-                                            Padding="10,4"
-                                            HorizontalOptions="End"
+                                            StrokeShape="RoundRectangle 9"
+                                            WidthRequest="36"
+                                            HeightRequest="36">
+
+                                            <Label
+                                                Text="♠"
+                                                FontSize="22"
+                                                TextColor="#13773D"
+                                                HorizontalTextAlignment="Center"
+                                                VerticalTextAlignment="Center" />
+
+                                        </Border>
+
+                                        <!-- PLAYER NAME -->
+                                        <Label
+                                            Grid.Column="1"
+                                            Text="{Binding Name}"
+                                            FontSize="15"
+                                            FontAttributes="Bold"
+                                            TextColor="#202020"
+                                            VerticalOptions="Center"
+                                            LineBreakMode="TailTruncation" />
+
+                                        <!-- TOTAL SCORE -->
+                                        <Border
+                                            Grid.Column="2"
+                                            BackgroundColor="#E5F1E6"
+                                            StrokeThickness="0"
+                                            StrokeShape="RoundRectangle 9"
+                                            Padding="10,6"
                                             VerticalOptions="Center">
+
                                             <Label
                                                 Text="{Binding TotalScore}"
+                                                FontSize="15"
                                                 FontAttributes="Bold"
-                                                FontSize="14" />
+                                                TextColor="#13773D"
+                                                HorizontalTextAlignment="Center" />
+
                                         </Border>
+
+                                        <!-- EXPAND ICON -->
+                                        <Label
+                                            Grid.Column="3"
+                                            Text="⌄"
+                                            FontSize="22"
+                                            TextColor="#667568"
+                                            VerticalOptions="Center"
+                                            HorizontalTextAlignment="Center" />
+
                                     </Grid>
+
                                 </toolkit:Expander.Header>
 
-                                <VerticalStackLayout Padding="14,0,14,14" Spacing="10">
+                                <!-- EXPANDED ROUND SCORES -->
+                                <VerticalStackLayout
+                                    Padding="12,0,12,14"
+                                    Spacing="11">
 
-                                    <BoxView HeightRequest="1"
-                                             Color="#E5E5E5" />
+                                    <BoxView
+                                        HeightRequest="1"
+                                        Color="#E0D6C4" />
 
-                                    <Label
-                                        Text="Round scores"
-                                        FontSize="12"
-                                        TextColor="Black" 
-                                       />
+                                    <HorizontalStackLayout Spacing="7">
 
+                                        <Label
+                                            Text="♦"
+                                            FontSize="15"
+                                            TextColor="#B82730"
+                                            VerticalOptions="Center" />
+
+                                        <Label
+                                            Text="ROUND SCORES"
+                                            FontSize="11"
+                                            FontAttributes="Bold"
+                                            CharacterSpacing="1"
+                                            TextColor="#777777"
+                                            VerticalOptions="Center" />
+
+                                    </HorizontalStackLayout>
+
+                                    <!-- SCORE CHIPS -->
                                     <FlexLayout
                                         BindableLayout.ItemsSource="{Binding RoundScores}"
                                         Direction="Row"
@@ -111,40 +240,55 @@
 
                                         <BindableLayout.ItemTemplate>
                                             <DataTemplate>
+
                                                 <Border
                                                     BackgroundColor="White"
-                                                    Padding="10,6"
-                                                    StrokeThickness="0"
-                                                    StrokeShape="RoundRectangle 12"
-                                                    Margin="4">
+                                                    Stroke="#E6DCCB"
+                                                    StrokeThickness="1"
+                                                    StrokeShape="RoundRectangle 9"
+                                                    Padding="10,7"
+                                                    Margin="0,0,7,7">
 
                                                     <Label
                                                         Text="{Binding ., TargetNullValue='-'}"
                                                         TextColor="{Binding ., Converter={StaticResource ScoreToColorConverter}}"
-                                                        FontSize="12"
+                                                        FontSize="13"
+                                                        FontAttributes="Bold"
+                                                        MinimumWidthRequest="25"
                                                         HorizontalTextAlignment="Center"
-                                                        VerticalTextAlignment="Center"
-                                                        MinimumWidthRequest="28" />
+                                                        VerticalTextAlignment="Center" />
+
                                                 </Border>
+
                                             </DataTemplate>
                                         </BindableLayout.ItemTemplate>
+
                                     </FlexLayout>
 
                                 </VerticalStackLayout>
+
                             </toolkit:Expander>
+
                         </Border>
+
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
+
             </CollectionView>
 
-            <!-- Close button -->
+            <!-- CLOSE BUTTON -->
             <Button
+                Grid.Row="4"
                 Text="Close"
                 Command="{Binding CloseCommand}"
+                BackgroundColor="#82303C"
+                TextColor="White"
+                FontSize="15"
+                FontAttributes="Bold"
                 CornerRadius="12"
-                HeightRequest="44"
-                BackgroundColor="{StaticResource DeleteColor}"/>
+                HeightRequest="48"
+                HorizontalOptions="Fill" />
 
-        </VerticalStackLayout>
-    </Border>
+        </Grid>
+
 </toolkit:Popup>

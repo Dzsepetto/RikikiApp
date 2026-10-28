@@ -169,32 +169,83 @@ public class NavigationService
 
     // NORMAL POPUPS
     public async Task<TResult?> ShowPopupAsync<TView, TViewModel, TResult>(
-        Func<TViewModel, Task>? initAsync = null)
-        where TView : Popup
-        where TViewModel : class
+      Func<TViewModel, Task>? initAsync = null,
+      bool showLoading = false)
+      where TView : Popup
+      where TViewModel : class
     {
-        var popup = _services.GetRequiredService<TView>();
-        var vm = _services.GetRequiredService<TViewModel>();
+        var layout = GetMainLayout();
+        var stopwatch = System.Diagnostics.Stopwatch.StartNew();
 
-        popup.BindingContext = vm;
+        bool loadingVisible = false;
 
-        if (vm is IPopupAware popupVm)
-            popupVm.PopupInstance = popup;
+        void HideLoading()
+        {
+            if (!loadingVisible)
+                return;
 
-        await InitializeAsync(vm, initAsync);
+            loadingVisible = false;
+            layout.SetLoading(false);
+        }
 
-        var page = GetMainLayout();
+        void OnPopupOpened(object? sender, EventArgs e)
+        {
+            System.Diagnostics.Debug.WriteLine(
+                $"[Popup] Opened: {stopwatch.ElapsedMilliseconds} ms");
 
-        var resultTask = (vm as IPopupResults<TResult>)?.ResultTask;
+            HideLoading();
+        }
 
-        popup.CanBeDismissedByTappingOutsideOfPopup = false;
+        TView? popup = null;
 
-        await page.ShowPopupAsync(popup);
+        try
+        {
+            if (showLoading)
+            {
+                layout.SetLoading(true);
+                loadingVisible = true;
 
-        if (resultTask?.IsCompletedSuccessfully == true)
-            return await resultTask;
+                await Task.Yield();
+            }
 
-        return default;
+            popup = _services.GetRequiredService<TView>();
+
+            var vm = _services.GetRequiredService<TViewModel>();
+
+            popup.BindingContext = vm;
+
+            if (vm is IPopupAware popupVm)
+                popupVm.PopupInstance = popup;
+
+            await InitializeAsync(vm, initAsync);
+
+            System.Diagnostics.Debug.WriteLine(
+                $"[Popup] Initialized: {stopwatch.ElapsedMilliseconds} ms");
+
+            popup.CanBeDismissedByTappingOutsideOfPopup = false;
+
+            popup.Opened += OnPopupOpened;
+
+            var resultTask =
+                (vm as IPopupResults<TResult>)?.ResultTask;
+
+            await layout.ShowPopupAsync(popup);
+
+            System.Diagnostics.Debug.WriteLine(
+                $"[Popup] Closed: {stopwatch.ElapsedMilliseconds} ms");
+
+            if (resultTask?.IsCompletedSuccessfully == true)
+                return await resultTask;
+
+            return default;
+        }
+        finally
+        {
+            if (popup != null)
+                popup.Opened -= OnPopupOpened;
+
+            HideLoading();
+        }
     }
 
     // LOADING OVERLAY

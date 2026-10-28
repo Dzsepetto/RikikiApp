@@ -1,234 +1,387 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-             x:Class="RikikiApp.Features.Games.Views.GameSetupView"
-             x:Name="Root">
+<ContentView
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    x:Class="RikikiApp.Features.Games.Views.GameSetupView"
+    x:Name="Root">
 
-    <ScrollView>
-            <Grid Padding="16" RowDefinitions="Auto,*,Auto"
-              BackgroundColor="{StaticResource PrimaryGreen}">
+    <Grid
+        Padding="18,16,18,12"
+        RowDefinitions="Auto,*,Auto"
+        RowSpacing="14"
+        BackgroundColor="Transparent">
 
-                <!-- HEADER -->
-                <Grid ColumnDefinitions="Auto,*,Auto" Margin="0,0,0,10">
+        <!-- HEADER -->
+        <Grid Grid.Row="0"
+              ColumnDefinitions="44,*,44"
+              ColumnSpacing="10">
 
-                    <Button Text="←"
-                        Command="{Binding BackCommand}"
-                        BackgroundColor="{StaticResource AccentGreen}"
-                        TextColor="White"
-                        FontSize="20"/>
+            <Button
+                Grid.Column="0"
+                Text="←"
+                Command="{Binding BackCommand}"
+                BackgroundColor="{StaticResource AccentGreen}"
+                TextColor="White"
+                FontSize="22"
+                CornerRadius="13"
+                WidthRequest="44"
+                HeightRequest="44"
+                Padding="0" />
 
-                    <Label Text="{Binding Title}"
-                       Grid.Column="1"
-                       HorizontalOptions="Center"
-                       VerticalOptions="Center"
-                       FontSize="20"
-                       FontAttributes="Bold"
-                       TextColor="White"/>
+            <VerticalStackLayout
+                Grid.Column="1"
+                VerticalOptions="Center"
+                HorizontalOptions="Center"
+                Spacing="2">
 
-                    <Button Text="🗑"
-                        Grid.Column="2"
-                        Command="{Binding DeleteGameCommand}"
-                        BackgroundColor="{StaticResource DeleteColor}"
-                        TextColor="White"/>
-                </Grid>
+                <Label
+                    Text="{Binding Title}"
+                    FontSize="21"
+                    FontAttributes="Bold"
+                    TextColor="White"
+                    HorizontalTextAlignment="Center"
+                    LineBreakMode="TailTruncation"
+                    MaxLines="1" />
 
-                <!-- CONTENT -->
-                <VerticalStackLayout Grid.Row="1" Spacing="16">
+                <Label
+                    Text="GAME SETUP"
+                    FontSize="10"
+                    TextColor="#C7E4D2"
+                    CharacterSpacing="1.6"
+                    HorizontalTextAlignment="Center" />
 
-                    <!-- PLAYERS CARD -->
-                    <Border BackgroundColor="{StaticResource CardBg}"
-                        StrokeThickness="0"
-                        StrokeShape="RoundRectangle 16"
-                        Padding="14"
-                        Shadow="0,4,10,#00000033">
+            </VerticalStackLayout>
 
-                        <toolkit:Expander IsExpanded="{Binding IsPlayersExpanded}" x:Name="PlayersExpander">
+            <Button
+                Grid.Column="2"
+                Text="✕"
+                Command="{Binding DeleteGameCommand}"
+                BackgroundColor="#82303C"
+                TextColor="White"
+                FontSize="20"
+                CornerRadius="13"
+                WidthRequest="44"
+                HeightRequest="44"
+                Padding="0" />
 
-                            <!-- HEADER -->
-                            <toolkit:Expander.Header>
-                                <Grid ColumnDefinitions="*,Auto">
-                                    <Label Text="{Binding PlayersTitle}"
-                                       FontAttributes="Bold"
-                                       FontSize="16"
-                                       TextColor="#222"/>
+        </Grid>
 
-                                    <Label Grid.Column="1" Text="▼">
-                                        <Label.Triggers>
-                                            <DataTrigger TargetType="Label"
-                                                     Binding="{Binding Source={x:Reference PlayersExpander}, Path=IsExpanded}"
-                                                     Value="True">
-                                                <Setter Property="Rotation" Value="180"/>
-                                            </DataTrigger>
-                                        </Label.Triggers>
-                                    </Label>
-                                </Grid>
-                            </toolkit:Expander.Header>
+        <!-- CENTER CONTENT -->
+        <Grid Grid.Row="1"
+              RowDefinitions="Auto,Auto"
+              RowSpacing="14"
+              VerticalOptions="Start">
 
-                            <!-- LIST -->
-                            <VerticalStackLayout Spacing="10">
+            <!-- PLAYERS PANEL -->
+            <Border
+                    Grid.Row="0"
+                    BackgroundColor="#FFF9ED"
+                    Stroke="#D8CDBB"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 18"
+                    Padding="14"
+                    VerticalOptions="Start">
 
-                                <!-- EMPTY -->
-                                <VerticalStackLayout IsVisible="{Binding IsEmpty}" Spacing="4" Padding="10">
-                                    <Label Text="No players yet"
-                                       FontAttributes="Bold"
-                                       HorizontalOptions="Center"/>
-                                    <Label Text="Add players to start"
-                                       FontSize="12"
-                                       HorizontalOptions="Center"
-                                       Opacity="0.6"/>
-                                </VerticalStackLayout>
+                <toolkit:Expander
+                    x:Name="PlayersExpander"
+                    IsExpanded="{Binding IsPlayersExpanded}">
 
-                                <!-- PLAYERS -->
-                                <CollectionView x:Name="PlayersList"
-                                            ItemsSource="{Binding Players}"
-                                            IsVisible="{Binding IsNotEmpty}"
-                                            SelectionMode="None"
-                                            Margin="0,6">
+                    <toolkit:Expander.Header>
+                        <Grid ColumnDefinitions="*,Auto"
+                              Padding="3,6">
 
-                                    <CollectionView.ItemTemplate>
-                                        <DataTemplate>
+                            <HorizontalStackLayout
+                                Grid.Column="0"
+                                Spacing="10"
+                                VerticalOptions="Center">
 
-                                            <Grid RowDefinitions="Auto,Auto"
-                                              ColumnDefinitions="40,50,*,40"
-                                              Padding="8">
+                                <Label
+                                    Text="♣"
+                                    FontSize="24"
+                                    TextColor="#08743B"
+                                    VerticalOptions="Center" />
 
-                                                <!-- DROP INDICATOR -->
-                                                <BoxView Grid.Row="0"
-                                                     Grid.ColumnSpan="4"
-                                                     HeightRequest="3"
-                                                     BackgroundColor="{StaticResource AccentGreen}"
-                                                     IsVisible="{Binding IsDropTarget}" />
+                                <Label
+                                    Text="{Binding PlayersTitle}"
+                                    FontSize="18"
+                                    FontAttributes="Bold"
+                                    TextColor="#202020"
+                                    VerticalOptions="Center" />
 
-                                                <Grid Grid.Row="1"
-                                                  Grid.ColumnSpan="4"
-                                                  ColumnDefinitions="40,50,*,40">
+                            </HorizontalStackLayout>
 
-                                                    <Grid.GestureRecognizers>
-                                                        <DropGestureRecognizer Drop="OnDrop"
-                                                                           DragOver="OnDragOver"
-                                                                           AllowDrop="True"/>
-                                                    </Grid.GestureRecognizers>
+                            <Label
+                                Grid.Column="1"
+                                Text="⌄"
+                                FontSize="24"
+                                TextColor="#59675C"
+                                VerticalOptions="Center">
 
-                                                    <!-- DRAG -->
-                                                    <Label Grid.Column="0"
-                                                       Text="☰"
-                                                       FontSize="18"
-                                                       VerticalOptions="Center"
-                                                       HorizontalOptions="Center">
-                                                        <Label.GestureRecognizers>
-                                                            <DragGestureRecognizer DragStarting="OnDragStarting"/>
-                                                        </Label.GestureRecognizers>
-                                                    </Label>
+                                <Label.Triggers>
+                                    <DataTrigger
+                                        TargetType="Label"
+                                        Binding="{Binding Source={x:Reference PlayersExpander},
+                                                          Path=IsExpanded}"
+                                        Value="True">
+                                        <Setter Property="Rotation"
+                                                Value="180" />
+                                    </DataTrigger>
+                                </Label.Triggers>
 
-                                                    <!-- SEAT -->
-                                                    <Border Grid.Column="1"
-                                                        BackgroundColor="#F2F2F2"
-                                                        Padding="6"
-                                                        StrokeShape="RoundRectangle 10">
-                                                        <Label Text="{Binding SeatOrder}"
-                                                           HorizontalOptions="Center"/>
-                                                    </Border>
+                            </Label>
 
-                                                    <!-- NAME -->
-                                                    <Label Grid.Column="2"
-                                                       Text="{Binding GuestName}"
-                                                       VerticalOptions="Center"
-                                                       LineBreakMode="TailTruncation"
-                                                       TextColor="#222"/>
+                        </Grid>
+                    </toolkit:Expander.Header>
 
-                                                    <!-- DELETE -->
-                                                    <Label Grid.Column="3"
-                                                       Text="🗑"
-                                                       HorizontalOptions="Center"
-                                                       VerticalOptions="Center">
-                                                        <Label.GestureRecognizers>
-                                                            <TapGestureRecognizer
-                                                            Command="{Binding Source={x:Reference Root}, Path=BindingContext.DeletePlayerCommand}"
-                                                            CommandParameter="{Binding .}"/>
-                                                        </Label.GestureRecognizers>
-                                                    </Label>
+                    <Grid RowDefinitions="Auto,*,Auto"
+                          RowSpacing="7">
 
-                                                </Grid>
+                        <!-- EMPTY STATE -->
+                        <VerticalStackLayout
+                            Grid.Row="0"
+                            IsVisible="{Binding IsEmpty}"
+                            Padding="12,22"
+                            Spacing="6">
+
+                            <Label
+                                Text="♠"
+                                FontSize="32"
+                                TextColor="#91AD96"
+                                HorizontalTextAlignment="Center" />
+
+                            <Label
+                                Text="No players yet"
+                                FontSize="16"
+                                FontAttributes="Bold"
+                                TextColor="#202020"
+                                HorizontalTextAlignment="Center" />
+
+                            <Label
+                                Text="Add players to start your game"
+                                FontSize="12"
+                                TextColor="#777777"
+                                HorizontalTextAlignment="Center" />
+
+                        </VerticalStackLayout>
+
+                        <!-- DRAGGABLE PLAYER LIST -->
+                        <CollectionView
+                            x:Name="PlayersList"
+                            Grid.Row="1"
+                            ItemsSource="{Binding Players}"
+                            IsVisible="{Binding IsNotEmpty}"
+                            SelectionMode="None"
+                            VerticalOptions="Fill"
+                            Margin="0,8,0,0">
+
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+
+                                    <Grid
+                                        RowDefinitions="Auto,Auto"
+                                        Margin="0,0,0,9">
+
+                                        <!-- DROP INDICATOR -->
+                                        <BoxView
+                                            Grid.Row="0"
+                                            HeightRequest="3"
+                                            BackgroundColor="#169449"
+                                            IsVisible="{Binding IsDropTarget}"
+                                            HorizontalOptions="Fill" />
+
+                                        <!-- PLAYER CARD -->
+                                        <Border
+                                            Grid.Row="1"
+                                            BackgroundColor="White"
+                                            Stroke="#E5DCCF"
+                                            StrokeThickness="1"
+                                            StrokeShape="RoundRectangle 12"
+                                            Padding="9,10">
+
+                                            <Grid
+                                                ColumnDefinitions="32,34,*,40"
+                                                ColumnSpacing="8"
+                                                MinimumHeightRequest="38">
+
+                                                <Grid.GestureRecognizers>
+                                                    <DropGestureRecognizer
+                                                        Drop="OnDrop"
+                                                        DragOver="OnDragOver"
+                                                        AllowDrop="True" />
+                                                </Grid.GestureRecognizers>
+
+                                                <!-- DRAG HANDLE -->
+                                                <Label
+                                                    Grid.Column="0"
+                                                    Text="☰"
+                                                    FontSize="19"
+                                                    TextColor="#8D998F"
+                                                    VerticalOptions="Center"
+                                                    HorizontalTextAlignment="Center">
+
+                                                    <Label.GestureRecognizers>
+                                                        <DragGestureRecognizer
+                                                            DragStarting="OnDragStarting"
+                                                            DropCompleted="OnDragCompleted" />
+                                                    </Label.GestureRecognizers>
+
+                                                </Label>
+
+                                                <!-- SEAT NUMBER -->
+                                                <Border
+                                                    Grid.Column="1"
+                                                    BackgroundColor="#E7F0E4"
+                                                    StrokeThickness="0"
+                                                    StrokeShape="RoundRectangle 9"
+                                                    WidthRequest="34"
+                                                    HeightRequest="34">
+
+                                                    <Label
+                                                        Text="{Binding SeatOrder}"
+                                                        TextColor="#08743B"
+                                                        FontSize="14"
+                                                        FontAttributes="Bold"
+                                                        HorizontalTextAlignment="Center"
+                                                        VerticalTextAlignment="Center" />
+
+                                                </Border>
+
+                                                <!-- PLAYER NAME -->
+                                                <Label
+                                                    Grid.Column="2"
+                                                    Text="{Binding GuestName}"
+                                                    FontSize="16"
+                                                    FontAttributes="Bold"
+                                                    TextColor="#202020"
+                                                    VerticalOptions="Center"
+                                                    LineBreakMode="TailTruncation" />
+
+                                                <!-- DELETE PLAYER -->
+                                                <Button
+                                                    Grid.Column="3"
+                                                    Text="✕"
+                                                    FontSize="17"
+                                                    TextColor="#B82730"
+                                                    BackgroundColor="#FBE8E8"
+                                                    CornerRadius="10"
+                                                    WidthRequest="40"
+                                                    HeightRequest="40"
+                                                    Padding="0"
+                                                    Command="{Binding Source={x:Reference Root},
+                                                                      Path=BindingContext.DeletePlayerCommand}"
+                                                    CommandParameter="{Binding .}" />
+
                                             </Grid>
 
-                                        </DataTemplate>
-                                    </CollectionView.ItemTemplate>
+                                        </Border>
 
-                                    <!-- DROP TO END -->
-                                    <CollectionView.Footer>
-                                        <Grid HeightRequest="40">
-                                            <Grid.GestureRecognizers>
-                                                <DropGestureRecognizer Drop="OnDropToEnd" AllowDrop="True"/>
-                                            </Grid.GestureRecognizers>
+                                    </Grid>
 
-                                            <BoxView HeightRequest="3"
-                                                 BackgroundColor="{StaticResource AccentGreen}"
-                                                 VerticalOptions="Start"
-                                                 IsVisible="{Binding Source={x:Reference Root}, Path=BindingContext.IsDragging}" />
-                                        </Grid>
-                                    </CollectionView.Footer>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
 
-                                </CollectionView>
+                            <!-- DROP TO END -->
+                            <CollectionView.Footer>
+                                <Grid HeightRequest="35">
 
-                            </VerticalStackLayout>
+                                    <Grid.GestureRecognizers>
+                                        <DropGestureRecognizer
+                                            Drop="OnDropToEnd"
+                                            AllowDrop="True" />
+                                    </Grid.GestureRecognizers>
 
-                        </toolkit:Expander>
+                                    <BoxView
+                                        HeightRequest="3"
+                                        BackgroundColor="#169449"
+                                        VerticalOptions="Start"
+                                        IsVisible="{Binding Source={x:Reference Root},
+                                                            Path=BindingContext.IsDragging}" />
 
-                    </Border>
+                                </Grid>
+                            </CollectionView.Footer>
 
-                    <!-- ACTION BUTTONS -->
-                    <Grid RowDefinitions="*,*" RowSpacing="10">
+                        </CollectionView>
 
-                        <Border BackgroundColor="{StaticResource AccentGreen}"
-                            StrokeShape="RoundRectangle 12"
-                            Padding="12"
-                            Grid.Row="0">
-                            <Label Text="+ Add player"
-                               TextColor="White"
-                               HorizontalOptions="Center">
-                                <Label.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding AddPlayerCommand}"/>
-                                </Label.GestureRecognizers>
-                            </Label>
-                        </Border>
-
-                        <Border BackgroundColor="#444"
-                            StrokeShape="RoundRectangle 12"
-                            Padding="12"
-                            Grid.Row="1">
-                            <Label Text="Stats"
-                               TextColor="White"
-                               HorizontalOptions="Center">
-                                <Label.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding ShowStatsCommand}"/>
-                                </Label.GestureRecognizers>
-                            </Label>
-                        </Border>
+                        <!-- HINT -->
+                        <Label
+                            Grid.Row="2"
+                            Text="☰  Drag players to change their order"
+                            TextColor="#7A857D"
+                            FontSize="11"
+                            HorizontalTextAlignment="Center"
+                            IsVisible="{Binding IsNotEmpty}"
+                            Margin="0,5,0,0" />
 
                     </Grid>
 
-                </VerticalStackLayout>
+                </toolkit:Expander>
 
-                <!-- BOTTOM -->
-            <Grid Grid.Row="2" ColumnDefinitions="*,*" ColumnSpacing="10" Margin="0,16,0,0">
+            </Border>
+
+            <!-- SECONDARY ACTIONS -->
+            <VerticalStackLayout
+    Grid.Row="1"
+    Spacing="10"
+    HorizontalOptions="Fill">
+
+                <!-- ADD PLAYER -->
                 <Button
-                    Grid.Column="0"
-                        Text="End game"
-                        Command="{Binding EndGameCommand}"
-                        BackgroundColor="{StaticResource DeleteColor}"
-                        TextColor="White"
-                        CornerRadius="12"/>
+        Text="+  Add Player"
+        Command="{Binding AddPlayerCommand}"
+        BackgroundColor="{StaticResource AccentGreen}"
+        TextColor="White"
+        FontSize="14"
+        FontAttributes="Bold"
+        CornerRadius="12"
+        HeightRequest="50"
+        HorizontalOptions="Fill" />
+
+                <!-- STATS -->
                 <Button
-                    Grid.Column="1"
-                        Text="Start game"
-                        Command="{Binding StartGameCommand}"
-                        BackgroundColor="{StaticResource AccentGreen}"
-                        TextColor="White"
-                        CornerRadius="12"/>
+        Text="♠  Stats"
+        Command="{Binding ShowStatsCommand}"
+        BackgroundColor="#FFF9ED"
+        TextColor="#202020"
+        FontSize="14"
+        FontAttributes="Bold"
+        CornerRadius="12"
+        HeightRequest="50"
+        HorizontalOptions="Fill" />
 
-            </Grid>
+            </VerticalStackLayout>
 
-            </Grid>
-        </ScrollView>
-    </ContentView>
+        </Grid>
+
+        <!-- PRIMARY ACTIONS -->
+        <Grid
+            Grid.Row="2"
+            ColumnDefinitions="*,*"
+            ColumnSpacing="10">
+
+            <Button
+                Grid.Column="0"
+                Text="End Game"
+                Command="{Binding EndGameCommand}"
+                BackgroundColor="#82303C"
+                TextColor="White"
+                FontSize="14"
+                FontAttributes="Bold"
+                CornerRadius="12"
+                HeightRequest="52" />
+
+            <Button
+                Grid.Column="1"
+                Text="Start Game"
+                Command="{Binding StartGameCommand}"
+                BackgroundColor="{StaticResource AccentGreen}"
+                TextColor="White"
+                FontSize="14"
+                FontAttributes="Bold"
+                CornerRadius="12"
+                HeightRequest="52" />
+
+        </Grid>
+
+    </Grid>
+</ContentView>
