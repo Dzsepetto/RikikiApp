@@ -8,14 +8,20 @@ namespace RikikiApp.Features.Games.Views;
 
 public partial class GameSetupView : ContentView
 {
-    private GamePlayerItemVM _draggedItem;
+    private GamePlayerItemVM? _draggedItem;
 
-    private void OnDragStarting(object sender, DragStartingEventArgs e)
+    private void OnDragStarting(object sender,DragStartingEventArgs e)
     {
-        var element = (BindableObject)sender;
-        _draggedItem = element.BindingContext as GamePlayerItemVM;
+        var element = sender as BindableObject;
 
-        e.Data.Properties.Add("item", _draggedItem);
+        _draggedItem =
+            element?.BindingContext as GamePlayerItemVM;
+
+        if (BindingContext is GameSetupVM vm)
+            vm.IsDragging = _draggedItem != null;
+
+        if (_draggedItem != null)
+            e.Data.Properties["item"] = _draggedItem;
     }
 
     private void OnDragOver(object sender, DragEventArgs e)
@@ -53,38 +59,44 @@ public partial class GameSetupView : ContentView
     private void OnDrop(object sender, DropEventArgs e)
     {
         var view = sender as View;
-        var target = (view as BindableObject)?.BindingContext as GamePlayerItemVM;
 
-        if (_draggedItem == null || target == null || view == null)
-            return;
-
+        var target = view?.BindingContext as GamePlayerItemVM;
         var vm = BindingContext as GameSetupVM;
-        if (vm == null)
+
+        if (_draggedItem == null ||
+            target == null ||
+            view == null ||
+            vm == null)
             return;
 
-        var position = e.GetPosition(view);
+        try
+        {
+            var position = e.GetPosition(view);
 
-        if (position == null)
-            return;
+            if (position == null)
+                return;
 
-        bool isTopHalf = position.Value.Y < view.Height / 2;
+            bool isTopHalf = position.Value.Y < view.Height / 2;
 
-        int fromIndex = vm.Players.IndexOf(_draggedItem);
-        int toIndex = vm.Players.IndexOf(target);
+            int targetIndex = vm.Players.IndexOf(target);
 
-        if (fromIndex < toIndex)
-            toIndex--;
+            if (targetIndex < 0)
+                return;
 
-        if (!isTopHalf)
-            toIndex++;
+            int insertIndex = isTopHalf
+                ? targetIndex
+                : targetIndex + 1;
 
-        vm.MovePlayerToIndex(_draggedItem, toIndex);
+            vm.MovePlayerToIndex(_draggedItem, insertIndex);
+        }
+        finally
+        {
+            foreach (var p in vm.Players)
+                p.IsDropTarget = false;
 
-        foreach (var p in vm.Players)
-            p.IsDropTarget = false;
-
-        vm.IsDragging = false;
-        _draggedItem = null;
+            vm.IsDragging = false;
+            _draggedItem = null;
+        }
     }
     public GameSetupView(GameSetupVM vm)
     {

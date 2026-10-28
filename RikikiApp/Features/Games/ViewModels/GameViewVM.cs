@@ -10,7 +10,7 @@ using RikikiApp.Repositories.Interfaces;
 
 namespace RikikiApp.Features.Games.ViewModels;
 
-public partial class GameViewVM : ObservableObject, IInitializable
+public partial class GameViewVM : ObservableObject, IInitializable, IRefreshable
 {
     private readonly IGameRepository _games;
     private readonly NavigationService _nav;
@@ -48,6 +48,11 @@ public partial class GameViewVM : ObservableObject, IInitializable
     public async Task InitAsync()
     {
         await ReloadGamesAsync();
+    }
+    // 🔹 REFRESH
+    public Task RefreshAsync()
+    {
+        return ReloadGamesAsync();
     }
 
     // 🔹 LOAD
@@ -108,18 +113,17 @@ public partial class GameViewVM : ObservableObject, IInitializable
     [RelayCommand]
     private async Task NewGame()
     {
-        var game = await _nav.ShowPopupAsync<AddGamePopup, AddGamePopupVM, Game>();
+        var game = await _nav.ShowPopupAsync<AddGamePopup,AddGamePopupVM,Game>();
 
-        if (game is null)
+        if (game == null)
             return;
 
-        await ReloadGamesAsync();
-
-        await _nav.PushWithLoading<GameSetupView, GameSetupVM>(async vm =>
-        {
-            vm.GameId = game.Id.ToString();
-            await vm.InitAsync();
-        });
+        await _nav.PushWithLoading<GameSetupView, GameSetupVM>(
+            async vm =>
+            {
+                vm.GameId = game.Id.ToString();
+                await vm.InitAsync();
+            });
     }
 
     [RelayCommand]
@@ -132,7 +136,7 @@ public partial class GameViewVM : ObservableObject, IInitializable
         });
     }
     [RelayCommand]
-    private async void Back()
+    private async Task Back()
     {
         await _nav.Pop();
     }

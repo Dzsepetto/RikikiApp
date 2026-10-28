@@ -1,163 +1,291 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:converters="clr-namespace:RikikiApp.Converters"
-             x:Class="RikikiApp.Features.Games.Views.GameView"
-             x:Name="Root">
+<ContentView
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:converters="clr-namespace:RikikiApp.Converters"
+    x:Class="RikikiApp.Features.Games.Views.GameView"
+    x:Name="Root">
 
     <ContentView.Resources>
-        <converters:BoolToColorConverter x:Key="BoolToColor" />
+        <ResourceDictionary>
+            <converters:BoolToColorConverter
+                x:Key="BoolToColor" />
+
+            <converters:GameStatusIconConverter
+                x:Key="GameStatusIcon" />
+
+            <converters:GameStatusColorConverter
+                x:Key="GameStatusColor" />
+        </ResourceDictionary>
     </ContentView.Resources>
 
-        <Grid Padding="16" RowDefinitions="Auto,*">
+    <Grid
+        Padding="18,16,18,8"
+        RowDefinitions="Auto,Auto,*"
+        RowSpacing="18"
+        BackgroundColor="Transparent">
 
-            <!-- HEADER -->
-            <Grid ColumnDefinitions="Auto,*,Auto"
-              VerticalOptions="Center"
-              Margin="0,0,0,10">
+        <!-- HEADER -->
+        <Grid
+            Grid.Row="0"
+            ColumnDefinitions="44,*,44"
+            ColumnSpacing="12">
 
-                <Button Text="←"
-                    Grid.Column="0"
-                    Command="{Binding BackCommand}"
-                    BackgroundColor="{StaticResource AccentGreen}"
-                    TextColor="White"
-                    FontSize="20"
-                    CornerRadius="20"/>
-                
-                <Label Text="Games"
-                   Grid.Column="1"
-                   HorizontalOptions="Center"
-                   VerticalOptions="Center"
-                   FontSize="22"
-                   FontAttributes="Bold"
-                   TextColor="White" />
+            <!-- BACK -->
+            <Button
+                Grid.Column="0"
+                Text="←"
+                Command="{Binding BackCommand}"
+                BackgroundColor="{StaticResource AccentGreen}"
+                TextColor="White"
+                FontSize="22"
+                FontAttributes="Bold"
+                CornerRadius="13"
+                WidthRequest="44"
+                HeightRequest="44"
+                Padding="0" />
 
-                <Button Text="+"
-                    Grid.Column="2"
-                    Command="{Binding NewGameCommand}"
-                    BackgroundColor="{StaticResource AccentGreen}"
-                    TextColor="White"
-                    CornerRadius="20"
-                    WidthRequest="40"
-                    HeightRequest="40"/>
-            </Grid>
+            <!-- TITLE -->
+            <Label
+                Grid.Column="1"
+                Text="Games"
+                FontSize="23"
+                FontAttributes="Bold"
+                TextColor="White"
+                HorizontalOptions="Center"
+                VerticalOptions="Center" />
 
-            <!-- CONTENT -->
-            <VerticalStackLayout Grid.Row="1" Spacing="14">
-
-                <!-- FILTERS -->
-                <Label Text="Filters"
-                   TextColor="White"
-                   Opacity="0.8"/>
-
-                <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10">
-
-                <Border Grid.Column="0"
-                        BackgroundColor="{Binding IsSetupSelected, Converter={StaticResource BoolToColor}}"
-                        StrokeShape="RoundRectangle 12"
-                        Padding="10">
-
-                    <Label Text="Setup"
-                           HorizontalOptions="Center"
-                           TextColor="White">
-                        <Label.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding ToggleSetupCommand}"/>
-                        </Label.GestureRecognizers>
-                    </Label>
-                </Border>
-
-                <Border Grid.Column="1"
-                        BackgroundColor="{Binding IsInProgressSelected, Converter={StaticResource BoolToColor}}"
-                        StrokeShape="RoundRectangle 12"
-                        Padding="10">
-
-                        <Label Text="In Progress"
-                           HorizontalOptions="Center"
-                           TextColor="White">
-                            <Label.GestureRecognizers>
-                                <TapGestureRecognizer Command="{Binding ToggleInProgressCommand}"/>
-                            </Label.GestureRecognizers>
-                        </Label>
-                    </Border>
-
-                    <Border Grid.Column="2"
-                        BackgroundColor="{Binding IsFinishedSelected, Converter={StaticResource BoolToColor}}"
-                        StrokeShape="RoundRectangle 12"
-                        Padding="10">
-
-                        <Label Text="Finished"
-                           HorizontalOptions="Center"
-                           TextColor="White">
-                            <Label.GestureRecognizers>
-                                <TapGestureRecognizer Command="{Binding ToggleFinishedCommand}"/>
-                            </Label.GestureRecognizers>
-                        </Label>
-                    </Border>
-
-                </Grid>
-
-                <!-- LIST -->
-                <CollectionView ItemsSource="{Binding Games}" SelectionMode="None">
-
-                    <CollectionView.EmptyView>
-                        <Label Text="No games yet. Tap + to create one."
-                           TextColor="White"
-                           Opacity="0.6"
-                           HorizontalOptions="Center"/>
-                    </CollectionView.EmptyView>
-
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate>
-
-                            <!-- CARD -->
-                            <Border BackgroundColor="White"
-                                StrokeThickness="0"
-                                StrokeShape="RoundRectangle 16"
-                                Padding="14"
-                                Margin="0,6"
-                                Shadow="0,4,10,#00000033">
-
-                                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
-
-                                    <VerticalStackLayout Spacing="4">
-                                        <Label Text="{Binding Name}"
-                                           FontAttributes="Bold"
-                                           FontSize="16"
-                                           TextColor="#222"/>
-
-                                        <Label Text="{Binding Status}"
-                                           FontSize="12"
-                                           TextColor="#666"/>
-                                    </VerticalStackLayout>
-
-                                    <!-- OPEN BUTTON -->
-                                    <Border Grid.Column="1"
-                                        BackgroundColor="{StaticResource AccentGreen}"
-                                        StrokeShape="RoundRectangle 10"
-                                        Padding="10,6">
-
-                                        <Label Text="Open"
-                                           TextColor="White"
-                                           FontAttributes="Bold">
-                                            <Label.GestureRecognizers>
-                                                <TapGestureRecognizer
-                                                Command="{Binding Source={x:Reference Root}, Path=BindingContext.OpenGameCommand}"
-                                                CommandParameter="{Binding Id}"/>
-                                            </Label.GestureRecognizers>
-                                        </Label>
-
-                                    </Border>
-
-                                </Grid>
-
-                            </Border>
-
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-
-                </CollectionView>
-
-            </VerticalStackLayout>
+            <!-- NEW GAME -->
+            <Button
+                Grid.Column="2"
+                Text="+"
+                Command="{Binding NewGameCommand}"
+                BackgroundColor="{StaticResource AccentGreen}"
+                TextColor="White"
+                FontSize="25"
+                CornerRadius="13"
+                WidthRequest="44"
+                HeightRequest="44"
+                Padding="0" />
 
         </Grid>
-    </ContentView>
+
+        <!-- FILTERS -->
+        <VerticalStackLayout
+            Grid.Row="1"
+            Spacing="10">
+
+            <Label
+                Text="Filters"
+                TextColor="#C9DDCF"
+                FontSize="13" />
+
+            <Grid
+                ColumnDefinitions="*,*,*"
+                ColumnSpacing="8">
+
+                <!-- SETUP -->
+                <Border
+                    Grid.Column="0"
+                    BackgroundColor="{Binding IsSetupSelected, Converter={StaticResource BoolToColor}}"
+                    Stroke="#7BB88B"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 13"
+                    Padding="8,11">
+
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer
+                            Command="{Binding ToggleSetupCommand}" />
+                    </Border.GestureRecognizers>
+
+                    <Label
+                        Text="Setup"
+                        TextColor="White"
+                        FontSize="13"
+                        FontAttributes="Bold"
+                        HorizontalTextAlignment="Center"
+                        VerticalTextAlignment="Center"
+                        InputTransparent="True" />
+
+                </Border>
+
+                <!-- IN PROGRESS -->
+                <Border
+                    Grid.Column="1"
+                    BackgroundColor="{Binding IsInProgressSelected, Converter={StaticResource BoolToColor}}"
+                    Stroke="#7BB88B"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 13"
+                    Padding="8,11">
+
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer
+                            Command="{Binding ToggleInProgressCommand}" />
+                    </Border.GestureRecognizers>
+
+                    <Label
+                        Text="In Progress"
+                        TextColor="White"
+                        FontSize="13"
+                        FontAttributes="Bold"
+                        HorizontalTextAlignment="Center"
+                        VerticalTextAlignment="Center"
+                        InputTransparent="True" />
+
+                </Border>
+
+                <!-- FINISHED -->
+                <Border
+                    Grid.Column="2"
+                    BackgroundColor="{Binding IsFinishedSelected, Converter={StaticResource BoolToColor}}"
+                    Stroke="#7BB88B"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 13"
+                    Padding="8,11">
+
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer
+                            Command="{Binding ToggleFinishedCommand}" />
+                    </Border.GestureRecognizers>
+
+                    <Label
+                        Text="Finished"
+                        TextColor="White"
+                        FontSize="13"
+                        FontAttributes="Bold"
+                        HorizontalTextAlignment="Center"
+                        VerticalTextAlignment="Center"
+                        InputTransparent="True" />
+
+                </Border>
+
+            </Grid>
+        </VerticalStackLayout>
+
+        <!-- GAMES LIST -->
+        <CollectionView
+            Grid.Row="2"
+            ItemsSource="{Binding Games}"
+            SelectionMode="None"
+            VerticalOptions="Fill">
+
+            <CollectionView.EmptyView>
+                <VerticalStackLayout
+                    Padding="20,45"
+                    Spacing="12"
+                    HorizontalOptions="Center">
+
+                    <Label
+                        Text="♠"
+                        FontSize="42"
+                        TextColor="#83B99A"
+                        HorizontalTextAlignment="Center" />
+
+                    <Label
+                        Text="No games yet"
+                        FontSize="18"
+                        FontAttributes="Bold"
+                        TextColor="White"
+                        HorizontalTextAlignment="Center" />
+
+                    <Label
+                        Text="Tap + to create your first game."
+                        FontSize="13"
+                        TextColor="#C9DDCF"
+                        HorizontalTextAlignment="Center" />
+
+                </VerticalStackLayout>
+            </CollectionView.EmptyView>
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+
+                    <!-- GREEN GAME CARD -->
+                    <Border
+                        BackgroundColor="#B51B5E43"
+                        Stroke="#568E72"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 15"
+                        Padding="14,13"
+                        Margin="0,0,0,11">
+
+                        <!-- ENTIRE CARD IS CLICKABLE -->
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer
+                                Command="{Binding Source={x:Reference Root},
+                                                  Path=BindingContext.OpenGameCommand}"
+                                CommandParameter="{Binding Id}" />
+                        </Border.GestureRecognizers>
+
+                        <Grid
+                            ColumnDefinitions="40,*,24"
+                            ColumnSpacing="12"
+                            MinimumHeightRequest="46">
+
+                            <!-- CARD SYMBOL -->
+                            <Label
+                                Grid.Column="0"
+                                Text="{Binding Status, Converter={StaticResource GameStatusIcon}}"
+                                TextColor="{Binding Status, Converter={StaticResource GameStatusColor}}"
+                                FontSize="35"
+                                FontAttributes="Bold"
+                                HorizontalTextAlignment="Center"
+                                VerticalTextAlignment="Center"
+                                InputTransparent="True" />
+
+                            <!-- GAME INFORMATION -->
+                            <VerticalStackLayout
+                                Grid.Column="1"
+                                VerticalOptions="Center"
+                                Spacing="5"
+                                InputTransparent="True">
+
+                                <Label
+                                    Text="{Binding Name}"
+                                    FontSize="16"
+                                    FontAttributes="Bold"
+                                    TextColor="#FFFFFF"
+                                    LineBreakMode="TailTruncation" />
+
+                                <!-- STATUS -->
+                                <HorizontalStackLayout
+                                    Spacing="5">
+
+                                    <Border
+                                        BackgroundColor="{Binding Status, Converter={StaticResource GameStatusColor}}"
+                                        StrokeThickness="0"
+                                        StrokeShape="RoundRectangle 5"
+                                        WidthRequest="7"
+                                        HeightRequest="7"
+                                        VerticalOptions="Center" />
+
+                                    <Label
+                                        Text="{Binding Status}"
+                                        FontSize="11"
+                                        TextColor="#DBEBDF"
+                                        VerticalOptions="Center" />
+
+                                </HorizontalStackLayout>
+
+                            </VerticalStackLayout>
+
+                            <!-- OPEN ARROW -->
+                            <Label
+                                Grid.Column="2"
+                                Text="›"
+                                FontSize="30"
+                                TextColor="#D9F1E1"
+                                HorizontalOptions="Center"
+                                VerticalOptions="Center"
+                                InputTransparent="True" />
+
+                        </Grid>
+
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+
+        </CollectionView>
+
+    </Grid>
+</ContentView>

@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Maui.Extensions;
 using CommunityToolkit.Maui.Views;
+using Microsoft.Extensions.DependencyInjection;
 using RikikiApp.Core.Abstractions;
 using RikikiApp.Core.Popups;
 using RikikiApp.Features.Main.Views;
@@ -7,7 +8,10 @@ using RikikiApp.Features.Main.Views;
 public class NavigationService
 {
     private readonly IServiceProvider _services;
+
     private readonly Stack<(View view, object vm)> _stack = new();
+
+    private readonly SemaphoreSlim _navigationLock = new(1, 1);
 
     public NavigationService(IServiceProvider services)
     {
@@ -22,7 +26,50 @@ public class NavigationService
                 "MainLayoutPage not found.");
     }
 
-    public async Task SetRoot<TView, TViewModel>(Func<TViewModel, Task>? initAsync = null)
+    private async Task InitializeAsync<TViewModel>(
+        TViewModel vm,
+        Func<TViewModel, Task>? initAsync)
+        where TViewModel : class
+    {
+        if (initAsync != null)
+        {
+            await initAsync(vm);
+        }
+        else if (vm is IInitializable initializable)
+        {
+            await initializable.InitAsync();
+        }
+    }
+
+    // COMMON NAVIGATION GUARD
+    private async Task ExecuteNavigationAsync(
+        Func<Task> action,
+        bool showLoading = false)
+    {
+        // Ignore repeated navigation taps
+        if (!await _navigationLock.WaitAsync(0))
+            return;
+
+        try
+        {
+            if (showLoading)
+            {
+                await RunWithLoading(action);
+            }
+            else
+            {
+                await action();
+            }
+        }
+        finally
+        {
+            _navigationLock.Release();
+        }
+    }
+
+    // INTERNAL ROOT
+    private async Task SetRootCoreAsync<TView, TViewModel>(
+        Func<TViewModel, Task>? initAsync)
         where TView : View
         where TViewModel : class
     {
@@ -31,58 +78,19 @@ public class NavigationService
 
         view.BindingContext = vm;
 
-        if (initAsync != null)
-        {
-            await initAsync(vm);
-        }
-        else if (vm is IInitializable initVm)
-        {
-            await initVm.InitAsync();
-        }
+        await InitializeAsync(vm, initAsync);
+
+        var layout = GetMainLayout();
+
+        layout.SetContent(view);
 
         _stack.Clear();
         _stack.Push((view, vm));
-
-        GetMainLayout().SetContent(view);
-    }
-    public async Task SetRootWithLoading<TView, TViewModel>(Func<TViewModel, Task>? initAsync = null)
-    where TView : View
-    where TViewModel : class
-    {
-        await RunWithLoading(async () =>
-        {
-            var view = _services.GetRequiredService<TView>();
-            var vm = _services.GetRequiredService<TViewModel>();
-
-            view.BindingContext = vm;
-
-            if (initAsync != null)
-            {
-                await initAsync(vm);
-            }
-            else if (vm is IInitializable initVm)
-            {
-                await initVm.InitAsync();
-            }
-
-            _stack.Clear();
-            _stack.Push((view, vm));
-
-            GetMainLayout().SetContent(view);
-        });
     }
 
-    public async Task PushWithLoading<TView, TViewModel>(Func<TViewModel, Task>? initAsync = null)
-        where TView : View
-        where TViewModel : class
-    {
-        await RunWithLoading(async () =>
-        {
-            await Push<TView, TViewModel>(initAsync);
-        });
-    }
-
-    public async Task Push<TView, TViewModel>(Func<TViewModel, Task>? initAsync = null)
+    // INTERNAL PUSH
+    private async Task PushCoreAsync<TView, TViewModel>(
+        Func<TViewModel, Task>? initAsync)
         where TView : View
         where TViewModel : class
     {
@@ -91,31 +99,75 @@ public class NavigationService
 
         view.BindingContext = vm;
 
-        if (initAsync != null)
-            await initAsync(vm);
-        else if (vm is IInitializable initVm)
-            await initVm.InitAsync();
+        await InitializeAsync(vm, initAsync);
+
+        GetMainLayout().SetContent(view);
 
         _stack.Push((view, vm));
-
-        GetMainLayout().SetContent(view);
     }
 
-    public async Task Pop()
+    // SET ROOT
+    public Task SetRoot<TView, TViewModel>(
+        Func<TViewModel, Task>? initAsync = null)
+        where TView : View
+        where TViewModel : class
     {
-        if (_stack.Count <= 1)
-            return;
-
-        _stack.Pop();
-
-        var (view, vm) = _stack.Peek();
-
-        if (vm is IInitializable initVm)
-            await initVm.InitAsync();
-
-        GetMainLayout().SetContent(view);
+        return ExecuteNavigationAsync(
+            () => SetRootCoreAsync<TView, TViewModel>(initAsync));
     }
 
+    // SET ROOT WITH LOADING
+    public Task SetRootWithLoading<TView, TViewModel>(
+        Func<TViewModel, Task>? initAsync = null)
+        where TView : View
+        where TViewModel : class
+    {
+        return ExecuteNavigationAsync(
+            () => SetRootCoreAsync<TView, TViewModel>(initAsync),
+            showLoading: true);
+    }
+
+    // PUSH
+    public Task Push<TView, TViewModel>(
+        Func<TViewModel, Task>? initAsync = null)
+        where TView : View
+        where TViewModel : class
+    {
+        return ExecuteNavigationAsync(
+            () => PushCoreAsync<TView, TViewModel>(initAsync));
+    }
+
+    // PUSH WITH LOADING
+    public Task PushWithLoading<TView, TViewModel>(
+        Func<TViewModel, Task>? initAsync = null)
+        where TView : View
+        where TViewModel : class
+    {
+        return ExecuteNavigationAsync(
+            () => PushCoreAsync<TView, TViewModel>(initAsync),
+            showLoading: true);
+    }
+
+    // POP
+    public Task Pop()
+    {
+        return ExecuteNavigationAsync(async () =>
+        {
+            if (_stack.Count <= 1)
+                return;
+
+            var previous = _stack.ElementAt(1);
+
+            if (previous.vm is IRefreshable refreshable)
+                await refreshable.RefreshAsync();
+
+            GetMainLayout().SetContent(previous.view);
+
+            _stack.Pop();
+        });
+    }
+
+    // NORMAL POPUPS
     public async Task<TResult?> ShowPopupAsync<TView, TViewModel, TResult>(
         Func<TViewModel, Task>? initAsync = null)
         where TView : Popup
@@ -129,24 +181,23 @@ public class NavigationService
         if (vm is IPopupAware popupVm)
             popupVm.PopupInstance = popup;
 
-        if (initAsync != null)
-        {
-            await initAsync(vm);
-        }
-        else if (vm is IInitializable initVm)
-        {
-            await initVm.InitAsync();
-        }
+        await InitializeAsync(vm, initAsync);
 
-        var page = Application.Current!.MainPage!;
+        var page = GetMainLayout();
+
+        var resultTask = (vm as IPopupResults<TResult>)?.ResultTask;
+
+        popup.CanBeDismissedByTappingOutsideOfPopup = false;
+
         await page.ShowPopupAsync(popup);
 
-        if (vm is IPopupResults<TResult> resultVm)
-            return await resultVm.ResultTask;
+        if (resultTask?.IsCompletedSuccessfully == true)
+            return await resultTask;
 
         return default;
     }
 
+    // LOADING OVERLAY
     public async Task RunWithLoading(Func<Task> action)
     {
         var layout = GetMainLayout();

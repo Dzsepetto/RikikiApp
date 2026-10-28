@@ -1,39 +1,240 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="RikikiApp.Features.Profile.Views.Components.ManagePlayersView">
-    
-    <VerticalStackLayout Padding="20" Spacing="10">
-        <Button Text="Back" Command="{Binding BackCommand}"></Button>
+<ContentView
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="RikikiApp.Features.Profile.Views.Components.ManagePlayersView">
 
-        <Label Text="Your Players" FontSize="24" HorizontalOptions="Center" />
+    <Grid BackgroundColor="Transparent">
 
-        <!-- Input -->
-        <Grid ColumnDefinitions="*, Auto">
-            <Entry Text="{Binding NewPlayerName}" Placeholder="Enter player name" Grid.Column="0" />
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
 
-            <Button Text="Add" Command="{Binding AddPlayerCommand}" Grid.Column="1" />
+        <!-- HEADER -->
+        <Grid Grid.Row="0"
+              Padding="20,18,20,12"
+              ColumnDefinitions="50,*,50">
+
+            <Button
+                Grid.Column="0"
+                Text="‹"
+                Command="{Binding BackCommand}"
+                FontSize="30"
+                TextColor="White"
+                BackgroundColor="#66001F12"
+                CornerRadius="14"
+                WidthRequest="46"
+                HeightRequest="46"
+                Padding="0"/>
+
+            <VerticalStackLayout
+                Grid.Column="1"
+                HorizontalOptions="Center"
+                VerticalOptions="Center"
+                Spacing="3">
+
+                <Label
+                    Text="Your Players"
+                    FontSize="25"
+                    FontAttributes="Bold"
+                    TextColor="White"
+                    HorizontalTextAlignment="Center"/>
+
+                <Label
+                    Text="Manage your Rikiki players"
+                    FontSize="12"
+                    TextColor="#D5E9DB"
+                    HorizontalTextAlignment="Center"/>
+
+            </VerticalStackLayout>
+
         </Grid>
-    
-        <!-- List -->
-        <CollectionView ItemsSource="{Binding Players}">
-            <CollectionView.ItemTemplate>
-                <DataTemplate>
-                    <Border Padding="10" Margin="5">
-                        <Grid ColumnDefinitions="*, Auto, Auto" ColumnSpacing="8">
 
-                            <Label Grid.Column="0" Text="{Binding Name}" FontSize="18" VerticalOptions="Center" />
+        <!-- SCROLLABLE CONTENT -->
+        <ScrollView Grid.Row="1">
 
-                            <Button Grid.Column="1" Text="Edit" Command="{Binding Source={RelativeSource AncestorType={x:Type ContentView}}, Path=BindingContext.EditPlayerCommand}" CommandParameter="{Binding .}" />
+            <VerticalStackLayout
+                Padding="18,12,18,25"
+                Spacing="20">
 
-                            <Button Grid.Column="2" Text="Delete" Command="{Binding Source={RelativeSource AncestorType={x:Type ContentView}}, Path=BindingContext.DeletePlayerCommand}" CommandParameter="{Binding .}" />
+                <!-- ADD PLAYER CARD -->
+                <Border
+                    BackgroundColor="#FFF9ED"
+                    Stroke="#D8CDBB"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 18"
+                    Padding="18">
 
-                        </Grid>
-                    </Border>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
+                    <VerticalStackLayout Spacing="14">
 
-    </VerticalStackLayout>
+                        <HorizontalStackLayout Spacing="9">
+
+                            <Label
+                                Text="♣"
+                                FontSize="23"
+                                TextColor="#08743B"
+                                VerticalOptions="Center"/>
+
+                            <Label
+                                Text="Add new player"
+                                FontSize="18"
+                                FontAttributes="Bold"
+                                TextColor="#202020"
+                                VerticalOptions="Center"/>
+
+                        </HorizontalStackLayout>
+
+                        <!-- NAME INPUT -->
+                        <Border
+                            BackgroundColor="White"
+                            Stroke="#DFD7CA"
+                            StrokeThickness="1"
+                            StrokeShape="RoundRectangle 11"
+                            Padding="10,0">
+
+                            <Entry
+                                Text="{Binding NewPlayerName}"
+                                Placeholder="Enter player name"
+                                PlaceholderColor="#999999"
+                                TextColor="#202020"
+                                BackgroundColor="Transparent"
+                                FontSize="16"
+                                HeightRequest="48"
+                                ClearButtonVisibility="WhileEditing"/>
+
+                        </Border>
+
+                        <!-- ADD BUTTON -->
+                        <Button
+                            Text="+  Add Player"
+                            Command="{Binding AddPlayerCommand}"
+                            BackgroundColor="{StaticResource AccentGreen}"
+                            TextColor="White"
+                            FontSize="16"
+                            FontAttributes="Bold"
+                            CornerRadius="12"
+                            HeightRequest="50"/>
+
+                    </VerticalStackLayout>
+
+                </Border>
+
+                <!-- PLAYER LIST TITLE -->
+                <Grid ColumnDefinitions="*,Auto"
+                      Padding="2,0">
+
+                    <Label
+                        Grid.Column="0"
+                        Text="Saved Players"
+                        FontSize="20"
+                        FontAttributes="Bold"
+                        TextColor="White"
+                        VerticalOptions="Center"/>
+
+                    <Label
+                        Grid.Column="1"
+                        Text="PLAYER LIST"
+                        FontSize="11"
+                        TextColor="#C7E0CE"
+                        VerticalOptions="Center"/>
+
+                </Grid>
+
+                <!-- PLAYER LIST -->
+                <CollectionView
+                    ItemsSource="{Binding Players}"
+                    SelectionMode="None"
+                    VerticalOptions="Fill"
+                    EmptyView="No players added yet.">
+
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+
+                            <Border
+                                BackgroundColor="#FFF9ED"
+                                Stroke="#D8CDBB"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 14"
+                                Padding="12"
+                                Margin="0,0,0,10">
+
+                                <Grid
+                                    ColumnDefinitions="44,*,42,42"
+                                    ColumnSpacing="10">
+
+                                    <!-- CARD SYMBOL -->
+                                    <Border
+                                        Grid.Column="0"
+                                        BackgroundColor="#E7F0E4"
+                                        StrokeThickness="0"
+                                        StrokeShape="RoundRectangle 10"
+                                        WidthRequest="44"
+                                        HeightRequest="44">
+
+                                        <Label
+                                            Text="♠"
+                                            FontSize="25"
+                                            TextColor="#08743B"
+                                            HorizontalTextAlignment="Center"
+                                            VerticalTextAlignment="Center"/>
+
+                                    </Border>
+
+                                    <!-- PLAYER NAME -->
+                                    <Label
+                                        Grid.Column="1"
+                                        Text="{Binding Name}"
+                                        FontSize="17"
+                                        FontAttributes="Bold"
+                                        TextColor="#202020"
+                                        VerticalOptions="Center"
+                                        LineBreakMode="TailTruncation"/>
+
+                                    <!-- EDIT -->
+                                    <Button
+                                        Grid.Column="2"
+                                        Text="✎"
+                                        FontSize="19"
+                                        TextColor="#08743B"
+                                        BackgroundColor="#E4F3E7"
+                                        CornerRadius="10"
+                                        WidthRequest="42"
+                                        HeightRequest="42"
+                                        Padding="0"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type ContentView}},
+                                                          Path=BindingContext.EditPlayerCommand}"
+                                        CommandParameter="{Binding .}"/>
+
+                                    <!-- DELETE -->
+                                    <Button
+                                        Grid.Column="3"
+                                        Text="✕"
+                                        FontSize="18"
+                                        FontAttributes="Bold"
+                                        TextColor="#B82730"
+                                        BackgroundColor="#FBE8E8"
+                                        CornerRadius="10"
+                                        WidthRequest="42"
+                                        HeightRequest="42"
+                                        Padding="0"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type ContentView}},
+                                                          Path=BindingContext.DeletePlayerCommand}"
+                                        CommandParameter="{Binding .}"/>
+
+                                </Grid>
+
+                            </Border>
+
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+
+                </CollectionView>
+
+            </VerticalStackLayout>
+
+        </ScrollView>
+
+    </Grid>
 
 </ContentView>

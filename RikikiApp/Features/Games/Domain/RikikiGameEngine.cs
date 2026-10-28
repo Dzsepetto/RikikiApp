@@ -156,26 +156,25 @@ public class RikikiGameEngine
 
     public async Task StartRound(List<Call> calls)
     {
-        foreach (var call in calls)
-        {
-            if (call.Id == 0)
-            {
-                await _calls.AddAsync(call);
-            }
-            else
-            {
-                await _calls.UpdateAsync(call);
-            }
-        }
+        if (calls.Count == 0)
+            throw new InvalidOperationException("No calls provided.");
 
-        var round = await _rounds.GetByIdAsync(calls.First().RoundId);
+        var round = await _rounds.GetByIdAsync(calls[0].RoundId);
 
         if (round == null || round.State != RoundState.Calling)
-            throw new Exception("Round not in calling state.");
+            throw new InvalidOperationException(
+                "Round not in calling state.");
 
         foreach (var call in calls)
         {
-            await _calls.UpdateAsync(call);
+            if (call.RoundId != round.Id)
+                throw new InvalidOperationException(
+                    "Calls belong to different rounds.");
+
+            if (call.Id == 0)
+                await _calls.AddAsync(call);
+            else
+                await _calls.UpdateAsync(call);
         }
 
         round.State = RoundState.Playing;

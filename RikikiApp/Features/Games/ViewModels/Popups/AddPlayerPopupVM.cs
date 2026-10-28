@@ -140,9 +140,10 @@ public partial class AddPlayerPopupVM : ObservableObject, IInitializable, IPopup
             await Close();
             return;
         }
-        var selected = Players
-            .Where(p => p.IsSelected)
+        var selected = _allPlayers
+            .Where(p => p.IsSelected && !p.IsDisabled)
             .Select(p => p.Name)
+            .Distinct(StringComparer.OrdinalIgnoreCase)
             .ToList();
 
         if (!selected.Any())

@@ -169,13 +169,12 @@ public partial class GameSetupVM : ObservableObject, IInitializable
 
     public void MovePlayerToIndex(GamePlayerItemVM player, int newIndex)
     {
-        var oldIndex = Players.IndexOf(player);
+        int oldIndex = Players.IndexOf(player);
 
-        if (oldIndex == -1)
+        if (oldIndex < 0)
             return;
 
-        if (newIndex > Players.Count)
-            newIndex = Players.Count;
+        newIndex = Math.Clamp(newIndex, 0, Players.Count);
 
         if (oldIndex < newIndex)
             newIndex--;
@@ -191,6 +190,24 @@ public partial class GameSetupVM : ObservableObject, IInitializable
         }
 
         _orderChanged = true;
+    }
+
+    private async Task SavePlayerOrderAsync()
+    {
+        if (!_orderChanged || _game == null)
+            return;
+
+        for (int i = 0; i < Players.Count; i++)
+        {
+            var player = Players[i];
+
+            player.SeatOrder = i + 1;
+            player.Model.SeatOrder = i + 1;
+
+            await _gamePlayers.UpdateAsync(player.Model);
+        }
+
+        _orderChanged = false;
     }
 
     [RelayCommand]
@@ -294,6 +311,8 @@ public partial class GameSetupVM : ObservableObject, IInitializable
         if (_game == null)
             return;
 
+        await SavePlayerOrderAsync();
+
         if (_orderChanged)
         {
             foreach (var p in Players)
@@ -369,14 +388,7 @@ public partial class GameSetupVM : ObservableObject, IInitializable
     [RelayCommand]
     private async Task Back()
     {
-        if (_orderChanged)
-        {
-            foreach (var p in Players)
-            {
-                await _gamePlayers.UpdateAsync(p.Model);
-            }
-        }
-
+        await SavePlayerOrderAsync();
         await _nav.Pop();
     }
 

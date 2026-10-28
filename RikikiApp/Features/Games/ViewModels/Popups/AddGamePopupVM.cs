@@ -22,6 +22,9 @@ public partial class AddGamePopupVM : ObservableObject, IPopupResults<GameEntity
     private string gameName;
 
     [ObservableProperty]
+    private bool isSaving;
+
+    [ObservableProperty]
     private ScoringType selectedScoringType;
 
     public List<ScoringType> ScoringTypes { get; } =
@@ -37,36 +40,57 @@ public partial class AddGamePopupVM : ObservableObject, IPopupResults<GameEntity
         SelectedScoringType = ScoringType.Basic;
     }
 
-    //SAVE
     [RelayCommand]
     private async Task Save()
     {
+        if (IsSaving || _tcs.Task.IsCompleted)
+            return;
+
         if (string.IsNullOrWhiteSpace(GameName))
         {
-            await Application.Current.MainPage.DisplayAlertAsync("Error", "Name required", "OK");
+            var page = Application.Current?.Windows.FirstOrDefault()?.Page;
+
+            if (page != null)
+                await page.DisplayAlertAsync(
+                    "Error",
+                    "Name required",
+                    "OK");
+
             return;
         }
 
-        var game = new GameEntity
+        IsSaving = true;
+
+        try
         {
-            Name = GameName.Trim(),
-            CreatedAt = DateTime.UtcNow,
-            ScoringType = SelectedScoringType,
-            Status = GameStatus.Setup
-        };
+            var game = new GameEntity
+            {
+                Name = GameName.Trim(),
+                CreatedAt = DateTime.UtcNow,
+                ScoringType = SelectedScoringType,
+                Status = GameStatus.Setup
+            };
 
-        game = await _games.UpsertAsync(game);
+            game = await _games.UpsertAsync(game);
 
-        _tcs.SetResult(game);
+            _tcs.TrySetResult(game);
 
-        await Close();
+            await Close();
+        }
+        finally
+        {
+            IsSaving = false;
+        }
     }
 
-    //CANCEL
     [RelayCommand]
     private async Task Cancel()
     {
-        _tcs.SetResult(null);
+        if (IsSaving || _tcs.Task.IsCompleted)
+            return;
+
+        _tcs.TrySetResult(null);
+
         await Close();
     }
 

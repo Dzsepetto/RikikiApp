@@ -127,6 +127,11 @@ public partial class GamePlayVM : ObservableObject, IInitializable
 
     private void UpdateUI()
     {
+        IsGameVisible = false;
+        IsResultVisible = false;
+        IsFixCallsVisible = false;
+        IsEndRoundVisible = false;
+
         if (_round == null)
             return;
 
@@ -134,23 +139,15 @@ public partial class GamePlayVM : ObservableObject, IInitializable
         {
             case RoundState.Calling:
                 IsGameVisible = true;
-                IsResultVisible = false;
-
                 IsFixCallsVisible = true;
-                IsEndRoundVisible = false;
                 break;
 
             case RoundState.Playing:
                 IsGameVisible = true;
-                IsResultVisible = false;
-
-                IsFixCallsVisible = false;
                 IsEndRoundVisible = true;
                 break;
 
             case RoundState.WaitingForNextRound:
-                IsGameVisible = false;
-                IsEndRoundVisible = false;
                 IsResultVisible = true;
                 break;
         }
