@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿
+using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using RikikiApp.Core.Abstractions;
@@ -21,7 +22,7 @@ public partial class GamePlayVM : ObservableObject, IInitializable
     private readonly RikikiGameEngine _engine;
     private readonly NavigationService _nav;
 
-    public string GameId { get; set; }
+    public string GameId { get; set; } = string.Empty;
 
     private Game? _game;
     private Round? _round;
@@ -30,7 +31,7 @@ public partial class GamePlayVM : ObservableObject, IInitializable
     public ObservableCollection<ScoreView> Results { get; } = new();
 
     [ObservableProperty]
-    private string roundText;
+    private string roundText = string.Empty;
 
     [ObservableProperty]
     private bool isGameVisible;
@@ -70,6 +71,7 @@ public partial class GamePlayVM : ObservableObject, IInitializable
             return;
 
         _game = await _games.GetByIdAsync(id);
+
         if (_game == null)
             return;
 
@@ -81,7 +83,8 @@ public partial class GamePlayVM : ObservableObject, IInitializable
         if (_round == null)
             return;
 
-        RoundText = $"Round {_round.RoundIndex} ({_round.HandSize} cards)";
+        RoundText =
+            $"Round {_round.RoundIndex} ({_round.HandSize} cards)";
 
         await LoadCalls();
 
@@ -114,13 +117,21 @@ public partial class GamePlayVM : ObservableObject, IInitializable
                 CallId = call?.Id ?? 0,
                 GamePlayerId = p.Id,
                 PlayerName = p.GuestName,
+
+                // Alapértelmezett érték: 0
                 Called = call?.Called ?? 0,
                 Won = call?.Won ?? 0,
+
                 MaxValue = _round.HandSize,
 
-                IsCallEnabled = _round.State == RoundState.Calling,
-                IsWonEnabled = _round.State == RoundState.Playing,
-                IsWonVisible = _round.State == RoundState.Playing
+                IsCallEnabled =
+                    _round.State == RoundState.Calling,
+
+                IsWonEnabled =
+                    _round.State == RoundState.Playing,
+
+                IsWonVisible =
+                    _round.State == RoundState.Playing
             });
         }
     }
@@ -152,6 +163,7 @@ public partial class GamePlayVM : ObservableObject, IInitializable
                 break;
         }
     }
+
     private void ShowResultsUI()
     {
         IsGameVisible = false;
@@ -171,7 +183,7 @@ public partial class GamePlayVM : ObservableObject, IInitializable
             Id = c.CallId,
             RoundId = _round.Id,
             GamePlayerId = c.GamePlayerId,
-            Called = (int)c.Called
+            Called = c.Called
         }).ToList();
 
         await _engine.StartRound(calls);
@@ -193,8 +205,8 @@ public partial class GamePlayVM : ObservableObject, IInitializable
             Id = c.CallId,
             RoundId = _round.Id,
             GamePlayerId = c.GamePlayerId,
-            Called = (int)c.Called,
-            Won = (int)c.Won
+            Called = c.Called,
+            Won = c.Won
         }).ToList();
 
         await _engine.EndRound(calls);
@@ -202,16 +214,19 @@ public partial class GamePlayVM : ObservableObject, IInitializable
         _round.State = RoundState.WaitingForNextRound;
 
         await LoadResults();
-
         UpdateUI();
     }
 
     private async Task LoadResults()
     {
+        if (_round == null)
+            return;
+
         Results.Clear();
 
-        var scores = await _roundScore.GetByRoundIdAsync(_round!.Id);
+        var scores = await _roundScore.GetByRoundIdAsync(_round.Id);
         var players = await _players.GetByGameIdAsync(_round.GameId);
+
         var dict = players.ToDictionary(p => p.Id);
 
         foreach (var s in scores)
@@ -232,12 +247,16 @@ public partial class GamePlayVM : ObservableObject, IInitializable
     [RelayCommand]
     private async Task Less()
     {
-        if (_round!.HandSize <= 1)
+        if (_round == null)
+            return;
+
+        if (_round.HandSize <= 1)
         {
             await Application.Current.MainPage.DisplayAlert(
                 "Hiba",
                 "A hand size nem lehet 1-nél kevesebb.",
                 "OK");
+
             return;
         }
 
@@ -245,10 +264,22 @@ public partial class GamePlayVM : ObservableObject, IInitializable
     }
 
     [RelayCommand]
-    private async Task Same() => await CreateNextRound(_round!.HandSize);
+    private async Task Same()
+    {
+        if (_round == null)
+            return;
+
+        await CreateNextRound(_round.HandSize);
+    }
 
     [RelayCommand]
-    private async Task More() => await CreateNextRound(_round!.HandSize + 1);
+    private async Task More()
+    {
+        if (_round == null)
+            return;
+
+        await CreateNextRound(_round.HandSize + 1);
+    }
 
     private async Task CreateNextRound(int size)
     {
@@ -261,7 +292,9 @@ public partial class GamePlayVM : ObservableObject, IInitializable
             return;
         }
 
-        var next = await _engine.FinishRoundAndCreateNext(_round.GameId, size);
+        var next = await _engine.FinishRoundAndCreateNext(
+            _round.GameId,
+            size);
 
         if (next == null)
         {
@@ -271,7 +304,8 @@ public partial class GamePlayVM : ObservableObject, IInitializable
 
         _round = next;
 
-        RoundText = $"Round {_round.RoundIndex} ({_round.HandSize} cards)";
+        RoundText =
+            $"Round {_round.RoundIndex} ({_round.HandSize} cards)";
 
         await LoadCalls();
         UpdateUI();

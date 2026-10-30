@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 namespace RikikiApp.Features.Games.ViewModels;
@@ -6,10 +7,10 @@ namespace RikikiApp.Features.Games.ViewModels;
 public partial class CallViewVM : ObservableObject
 {
     [ObservableProperty]
-    private int called;
+    private int called = 0;
 
     [ObservableProperty]
-    private int won;
+    private int won = 0;
 
     [ObservableProperty]
     private int maxValue;

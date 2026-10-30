@@ -1,34 +1,157 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<mct:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-           xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-           xmlns:mct="clr-namespace:CommunityToolkit.Maui.Views;assembly=CommunityToolkit.Maui"
-           x:Class="RikikiApp.Features.Games.Views.Popups.AddGamePopup"
-           BackgroundColor="{StaticResource AccentGreen}">
-    
-    <Grid VerticalOptions="Center" HorizontalOptions="Center" WidthRequest="320" MaximumWidthRequest="400" Margin="0">
+<mct:Popup
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:mct="clr-namespace:CommunityToolkit.Maui.Views;assembly=CommunityToolkit.Maui"
+    x:Class="RikikiApp.Features.Games.Views.Popups.AddGamePopup"
+    BackgroundColor="#073E29"
+    CanBeDismissedByTappingOutsideOfPopup="False">
 
-        <VerticalStackLayout Spacing="16" Padding="20">
+    <!-- MAIN POPUP CONTAINER -->
 
-            <Label Text="Add Game" FontAttributes="Bold" FontSize="22" HorizontalOptions="Center" TextColor="white"/>
+        <VerticalStackLayout Spacing="18">
 
-            <Entry  Text="{Binding GameName}" Placeholder="Game name" FontSize="16" HeightRequest="45" TextColor="White"/>
+            <!-- HEADER -->
+            <VerticalStackLayout Spacing="6">
 
+                <HorizontalStackLayout
+                    HorizontalOptions="Center"
+                    Spacing="10">
 
-            <Label Text="Scoring version" FontAttributes="Bold" TextColor="White" />
-            <Picker ItemsSource="{Binding ScoringTypes}" SelectedItem="{Binding SelectedScoringType}" TextColor="White"/>
+                    <Label
+                        Text="♠"
+                        FontSize="28"
+                        TextColor="#F0C36E"
+                        VerticalOptions="Center" />
 
-            <HorizontalStackLayout Spacing="12" HorizontalOptions="Center">
+                    <Label
+                        Text="Create New Game"
+                        FontSize="22"
+                        FontAttributes="Bold"
+                        TextColor="White"
+                        VerticalOptions="Center" />
 
+                </HorizontalStackLayout>
 
+                <Label
+                    Text="Set up your next Rikiki game"
+                    FontSize="12"
+                    TextColor="#CEE5D5"
+                    HorizontalTextAlignment="Center" />
 
-                <Button Text="Cancel"
-        Command="{Binding CancelCommand}" BackgroundColor="{StaticResource DeleteColor}"/>
-                <Button Text="Save"
-        Command="{Binding SaveCommand}" BackgroundColor="{StaticResource PrimaryGreen}"/>
+            </VerticalStackLayout>
 
-            </HorizontalStackLayout>
+            <!-- FORM CARD -->
+            <Border
+                BackgroundColor="#FFF9ED"
+                Stroke="#D8CDBB"
+                StrokeThickness="1"
+                StrokeShape="RoundRectangle 17"
+                Padding="15">
+
+                <VerticalStackLayout Spacing="17">
+
+                    <!-- GAME NAME -->
+                    <VerticalStackLayout Spacing="8">
+
+                        <Label
+                            Text="GAME NAME"
+                            FontSize="12"
+                            FontAttributes="Bold"
+                            CharacterSpacing="1"
+                            TextColor="#526358" />
+
+                        <Border
+                            BackgroundColor="White"
+                            Stroke="#DFD7C9"
+                            StrokeThickness="1"
+                            StrokeShape="RoundRectangle 11"
+                            Padding="10,0">
+
+                            <Entry
+                                Text="{Binding GameName}"
+                                Placeholder="Enter game name..."
+                                PlaceholderColor="#999999"
+                                TextColor="#202020"
+                                FontSize="16"
+                                BackgroundColor="Transparent"
+                                HeightRequest="49"
+                                ClearButtonVisibility="WhileEditing"
+                                ReturnType="Done" />
+
+                        </Border>
+
+                    </VerticalStackLayout>
+
+                    <!-- SCORING TYPE -->
+                    <VerticalStackLayout Spacing="8">
+
+                        <Label
+                            Text="SCORING VERSION"
+                            FontSize="12"
+                            FontAttributes="Bold"
+                            CharacterSpacing="1"
+                            TextColor="#526358" />
+
+                        <Border
+                            BackgroundColor="White"
+                            Stroke="#DFD7C9"
+                            StrokeThickness="1"
+                            StrokeShape="RoundRectangle 11"
+                            Padding="10,0">
+
+                            <Picker
+                                ItemsSource="{Binding ScoringTypes}"
+                                SelectedItem="{Binding SelectedScoringType}"
+                                Title="Select scoring version"
+                                TitleColor="#999999"
+                                TextColor="#202020"
+                                FontSize="16"
+                                BackgroundColor="Transparent"
+                                HeightRequest="49"
+                                HorizontalOptions="Fill" />
+
+                        </Border>
+
+                    </VerticalStackLayout>
+
+                </VerticalStackLayout>
+
+            </Border>
+
+            <!-- ACTION BUTTONS -->
+            <Grid
+                ColumnDefinitions="*,*"
+                ColumnSpacing="10">
+
+                <!-- CANCEL -->
+                <Button
+                    Grid.Column="0"
+                    Text="Cancel"
+                    Command="{Binding CancelCommand}"
+                    BackgroundColor="#82303C"
+                    TextColor="White"
+                    FontSize="15"
+                    FontAttributes="Bold"
+                    CornerRadius="12"
+                    HeightRequest="49"
+                    HorizontalOptions="Fill" />
+
+                <!-- CREATE GAME -->
+                <Button
+                    Grid.Column="1"
+                    Text="Create Game"
+                    Command="{Binding SaveCommand}"
+                    BackgroundColor="#128B47"
+                    TextColor="White"
+                    FontSize="14"
+                    FontAttributes="Bold"
+                    CornerRadius="12"
+                    HeightRequest="49"
+                    HorizontalOptions="Fill" />
+
+            </Grid>
 
         </VerticalStackLayout>
 
-    </Grid>
- </mct:Popup>
+</mct:Popup>

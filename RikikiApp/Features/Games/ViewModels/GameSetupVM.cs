@@ -1,17 +1,18 @@
-﻿using System.Diagnostics;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using RikikiApp.Core.Session;
 using RikikiApp.Core.Abstractions;
+using RikikiApp.Core.Session;
 using RikikiApp.Features.Games.Domain;
 using RikikiApp.Features.Games.Domain.Entities;
+using RikikiApp.Features.Games.ViewModels.Popups;
+using RikikiApp.Features.Games.ViewModels.UiWrappers;
 using RikikiApp.Features.Games.Views;
 using RikikiApp.Features.Games.Views.Popups;
-using RikikiApp.Features.Games.ViewModels.UiWrappers;
-using RikikiApp.Features.Games.ViewModels.Popups;
 using RikikiApp.Repositories.Interfaces;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.Diagnostics;
+using static Android.Views.WindowInsetsAnimation;
 
 
 namespace RikikiApp.Features.Games.ViewModels;
@@ -305,40 +306,37 @@ public partial class GameSetupVM : ObservableObject, IInitializable
     [RelayCommand]
     private async Task StartGame()
     {
-        Debug.WriteLine("Game started");
-
         if (_game == null)
             return;
 
-        await SavePlayerOrderAsync();
-
-        if (_orderChanged)
-        {
-            foreach (var p in Players)
-            {
-                await _gamePlayers.UpdateAsync(p.Model);
-            }
-
-            _orderChanged = false;
-        }
-
         try
         {
-            var updatedGame = await _engine.StartGame(_game.Id);
-
-            if (updatedGame == null)
+            if (_game.Status == GameStatus.Finished)
                 return;
 
-            _game = updatedGame;
-
-            if (_game.Status == GameStatus.InProgress)
+            if (_game.Status != GameStatus.InProgress)
             {
-                await _nav.PushWithLoading<GamePlayView, GamePlayVM>(async vm =>
-                {
-                    vm.GameId = _game.Id.ToString();
-                    await vm.InitAsync();
-                });
+                await SavePlayerOrderAsync();
+
+                var startedGame = await _engine.StartGame(_game.Id);
+
+                if (startedGame == null)
+                    return;
+
+                _game = startedGame;
             }
+
+            var currentRound = await _engine.ContinueGame(_game.Id);
+
+            if (currentRound == null)
+                throw new InvalidOperationException(
+                    "No active round found for this game.");
+
+            await _nav.PushWithLoading<GamePlayView, GamePlayVM>(async vm =>
+            {
+                vm.GameId = _game.Id.ToString();
+                await vm.InitAsync();
+            });
         }
         catch (Exception ex)
         {
@@ -348,6 +346,7 @@ public partial class GameSetupVM : ObservableObject, IInitializable
                 "OK");
         }
     }
+
     [RelayCommand]
     private async Task EndGame()
     {

@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using RikikiApp.Core.Session;
 using RikikiApp.Features.Games.Domain;
 using RikikiApp.Features.Games.Domain.Scoring.Service;
+using RikikiApp.Features.Games.Domain.Validation;
 using RikikiApp.Features.Games.ViewModels;
 using RikikiApp.Features.Games.ViewModels.Popups;
 using RikikiApp.Features.Games.Views;
@@ -49,6 +50,7 @@ namespace RikikiApp
             builder.Services.AddSingleton<IPlayerRepository, SQLitePlayerRepository>();
             builder.Services.AddSingleton<IUserRepository, SQLiteUserRepository>();
             builder.Services.AddSingleton<IRoundScoreRepository, SQLiteRoundScoreRepository>();
+            builder.Services.AddSingleton<IRoundFinalizationRepository,SQLiteRoundFinalizationRepository>();
             builder.Services.AddSingleton<IGameResultRepository, SQLiteGameResultRepository>();
 
             //services
@@ -56,6 +58,7 @@ namespace RikikiApp
             builder.Services.AddSingleton<NavigationService>();
             builder.Services.AddSingleton<UserSessionService>();
             builder.Services.AddSingleton<IScoringService, ScoringService>();
+            builder.Services.AddTransient<RoundValidator>();
 
             //page
             builder.Services.AddSingleton<MainLayoutPage>();
